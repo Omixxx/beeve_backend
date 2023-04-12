@@ -1,0 +1,12 @@
+services:
+  vino-db:
+    container_name: "vino"
+    environment:
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    image: "mariadb:10.11-rc-jammy"
+    ports:
+      - 3306:3306
+    restart: always
