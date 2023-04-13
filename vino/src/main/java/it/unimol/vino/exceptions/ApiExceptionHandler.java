@@ -2,12 +2,15 @@ package it.unimol.vino.exceptions;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import org.hibernate.JDBCException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLClientInfoException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.ZonedDateTime;
 
 @ControllerAdvice
@@ -45,6 +48,17 @@ public class ApiExceptionHandler {
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {UserAlreadyRegistered.class})
+    public ResponseEntity<Object> handleApiRequestException(UserAlreadyRegistered e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.CONFLICT,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = {PasswordNotValidException.class})

@@ -2,6 +2,7 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.configuration.JwtService;
 import it.unimol.vino.exceptions.PasswordNotValidException;
+import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.enums.Role;
 import it.unimol.vino.models.request.AuthenticationRequest;
@@ -30,6 +31,10 @@ public class AuthService {
         if (!isPasswordValid(request.getPassword())) {
             throw new PasswordNotValidException("Password not valid, it must be between 8 and 30 characters, " +
                     "and must contain at least one uppercase letter, one lowercase letter and one number)");
+        }
+
+        if(this.userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserAlreadyRegistered("Email already in use");
         }
 
         var user = User.builder()

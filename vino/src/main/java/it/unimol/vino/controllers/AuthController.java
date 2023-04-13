@@ -1,6 +1,7 @@
 package it.unimol.vino.controllers;
 
 import it.unimol.vino.exceptions.PasswordNotValidException;
+import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.request.AuthenticationRequest;
 import it.unimol.vino.models.request.RegisterRequest;
 import it.unimol.vino.models.response.AuthenticationResponse;
@@ -21,7 +22,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest registerRequest)
-            throws PasswordNotValidException {
+            throws PasswordNotValidException, UserAlreadyRegistered {
         return ResponseEntity.ok(this.authService.register(registerRequest));
     }
 
