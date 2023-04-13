@@ -11,11 +11,11 @@ import lombok.*;
 @Builder
 public class RegisterRequest {
     @NonNull()
-    @NotBlank(message = "firstname must be not blank")
+    @NotBlank(message = "firstName must be not blank")
     private String firstName;
 
     @NonNull()
-    @NotBlank(message = "lastname must be not blank")
+    @NotBlank(message = "lastName must be not blank")
     private String lastName;
 
     @NonNull()

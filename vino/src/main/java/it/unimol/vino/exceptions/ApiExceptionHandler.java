@@ -25,7 +25,6 @@ public class ApiExceptionHandler {
     }
 
 
-
     @ExceptionHandler(value = {UsernameNotFoundException.class})
     public ResponseEntity<Object> handleApiRequestException(UsernameNotFoundException e) {
         ApiException apiException = new ApiException(
@@ -59,7 +58,7 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
-    // todo: fix this
+    // todo: find the way to handle spring security exceptions
     @ExceptionHandler(value = {JwtException.class})
     public ResponseEntity<Object> handleApiRequestException(MalformedJwtException e) {
         ApiException apiException = new ApiException(

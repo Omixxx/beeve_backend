@@ -33,7 +33,8 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
     private String password;
-    // ci serve per dire a spring di usare il valore come una stringa
+
+    // ci serve per dire a spring di usare il valore come se fosse una stringa
     @Enumerated(EnumType.STRING)
     private Role role;
 
