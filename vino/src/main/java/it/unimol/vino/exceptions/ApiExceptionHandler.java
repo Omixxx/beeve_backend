@@ -2,15 +2,12 @@ package it.unimol.vino.exceptions;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import org.hibernate.JDBCException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.sql.SQLClientInfoException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.ZonedDateTime;
 
 @ControllerAdvice
