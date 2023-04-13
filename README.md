@@ -33,7 +33,7 @@ the `ApiExceptionHandler` class sticking to the following
 format
 
 ```java
-   @ExceptionHandler(value = {UserNotFoundException.class})
+@ExceptionHandler(value = {UserNotFoundException.class})
 public ResponseEntity<Object> handleApiRequestException(UserNotFoundException e){
         ApiException apiException=new ApiException(
         e.getMessage(),
