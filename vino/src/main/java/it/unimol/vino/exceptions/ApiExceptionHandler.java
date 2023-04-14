@@ -80,4 +80,27 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(value = {PermissionNotFound.class})
+    public ResponseEntity<Object> handleApiRequestException(PermissionNotFound e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {PermissionAlreadyAssigned.class})
+    public ResponseEntity<Object> handleApiRequestException(PermissionAlreadyAssigned e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.CONFLICT,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
+    }
+
 }

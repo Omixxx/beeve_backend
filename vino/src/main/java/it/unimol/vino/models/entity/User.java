@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Getter
@@ -18,6 +19,7 @@ import java.util.List;
 @Builder
 @Entity(name = "user")
 @Table(name = "user")
+@EqualsAndHashCode(exclude = "password")
 public class User implements UserDetails {
 
     @Id
@@ -38,6 +40,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Permission> permissions;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
