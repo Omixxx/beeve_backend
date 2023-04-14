@@ -1,6 +1,5 @@
 package it.unimol.vino.services;
 
-import it.unimol.vino.configuration.JwtService;
 import it.unimol.vino.exceptions.PasswordNotValidException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.entity.User;

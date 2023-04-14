@@ -1,5 +1,6 @@
 package it.unimol.vino.configuration;
 
+import it.unimol.vino.services.JwtService;
 import it.unimol.vino.utils.Logger;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
