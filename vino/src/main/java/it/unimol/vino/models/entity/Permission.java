@@ -20,12 +20,7 @@ public class Permission {
     @Column(unique = true)
     private String sector;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_permission",
-            joinColumns = @JoinColumn(name = "permission_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @ManyToMany(mappedBy = "permissions")
     private Set<User> users = new HashSet<>();
 
     public Permission(String sector) {
