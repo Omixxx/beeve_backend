@@ -3,13 +3,13 @@ package it.unimol.vino.models.entity;
 import it.unimol.vino.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 
 @Data
 @Getter
@@ -20,7 +20,7 @@ import java.util.Set;
 @Entity(name = "user")
 @Table(name = "user")
 @EqualsAndHashCode(exclude = "password")
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,13 +40,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_have_permission",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id")
-    )
-    private Set<Permission> permissions;
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<UserPermission> permissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -77,4 +72,11 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public void addPermission(@NonNull Permission permission) {
+        UserPermission userPermission = new UserPermission(this, permission);
+        this.permissions.add(userPermission);
+        permission.getUsers().add(userPermission);
+    }
+
 }

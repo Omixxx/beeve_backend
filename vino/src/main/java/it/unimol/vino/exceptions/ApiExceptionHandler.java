@@ -103,4 +103,15 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(value = {PermissionAlreadyExist.class})
+    public ResponseEntity<Object> handleApiRequestException(PermissionAlreadyExist e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.CONFLICT,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
+    }
+
 }

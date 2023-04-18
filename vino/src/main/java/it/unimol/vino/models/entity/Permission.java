@@ -1,29 +1,31 @@
 package it.unimol.vino.models.entity;
 
+import it.unimol.vino.models.enums.Sector;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Permission {
+@AllArgsConstructor
+public class Permission implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
-    private String sector;
+    @Enumerated(EnumType.STRING)
+    private Sector sector;
 
-    @ManyToMany(mappedBy = "permissions")
-    private Set<User> users = new HashSet<>();
+    @OneToMany(mappedBy = "permission", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<UserPermission> users;
 
-    public Permission(String sector) {
+    public Permission(Sector sector) {
         this.sector = sector;
     }
 }
