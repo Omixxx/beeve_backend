@@ -1,6 +1,6 @@
 package it.unimol.vino.models.enums;
 
-public enum Sector {
+public enum SectorName {
     CONFERIMENTO,
     FORNITURA,
     MAGAZZINO,

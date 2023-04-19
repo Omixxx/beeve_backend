@@ -114,4 +114,15 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
+
+    @ExceptionHandler(value = {SectorNotFoundException.class})
+    public ResponseEntity<Object> handleApiRequestException(SectorNotFoundException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
 }

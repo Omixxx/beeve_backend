@@ -9,7 +9,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserPermission implements Serializable {
+@AllArgsConstructor
+public class UserSectorPermission implements Serializable {
 
     @Id
     @ManyToOne
@@ -17,7 +18,7 @@ public class UserPermission implements Serializable {
 
     @Id
     @ManyToOne
-    private Permission permission;
+    private Sector sector;
 
     private Boolean canRead;
 
@@ -27,15 +28,6 @@ public class UserPermission implements Serializable {
 
     private Boolean canUpdate;
 
-
-    public UserPermission(User user, Permission permission) {
-        this.user = user;
-        this.permission = permission;
-        this.canRead = true;
-        this.canWrite = false;
-        this.canDelete = false;
-        this.canUpdate = false;
-    }
 
 }
 

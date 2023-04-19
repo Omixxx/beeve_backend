@@ -1,8 +1,8 @@
 package it.unimol.vino.utils;
 
-import it.unimol.vino.models.entity.Permission;
-import it.unimol.vino.models.enums.Sector;
-import it.unimol.vino.repository.PermissionRepository;
+import it.unimol.vino.models.entity.Sector;
+import it.unimol.vino.models.enums.SectorName;
+import it.unimol.vino.repository.SectorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,14 +12,14 @@ import java.util.stream.Stream;
 @Component
 @AllArgsConstructor
 public class RuntimeExecutor implements CommandLineRunner {
-    PermissionRepository permissionRepository;
+    SectorRepository sectorRepository;
 
     @Override
     public void run(String... args) {
-        Stream.of(Sector.values()).forEach(sector -> {
-            Permission permission = new Permission(sector);
-            if (this.permissionRepository.findPermissionBySector(permission.getSector()).isEmpty())
-                this.permissionRepository.save(permission);
+        Stream.of(SectorName.values()).forEach(sectorName -> {
+            Sector permission = new Sector(sectorName);
+            if (this.sectorRepository.findSectorBySectorName(permission.getSectorName()).isEmpty())
+                this.sectorRepository.save(permission);
         });
     }
 }

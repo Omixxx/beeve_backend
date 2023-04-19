@@ -1,9 +1,15 @@
 package it.unimol.vino.models.request;
 
-import it.unimol.vino.models.entity.Permission;
+import it.unimol.vino.models.entity.UserSectorPermission;
+import it.unimol.vino.models.enums.SectorName;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
-import java.util.Set;
+import java.util.HashMap;
 
+
+@RequiredArgsConstructor
+@Data
 public class UpdatePermissionsRequest {
-    Set<Permission> permissions;
+    private HashMap<SectorName, UserSectorPermission> permissions;
 }

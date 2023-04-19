@@ -1,6 +1,6 @@
 package it.unimol.vino.models.entity;
 
-import it.unimol.vino.models.enums.Sector;
+import it.unimol.vino.models.enums.SectorName;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Permission implements Serializable {
+public class Sector implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,12 +20,12 @@ public class Permission implements Serializable {
 
     @Column(unique = true)
     @Enumerated(EnumType.STRING)
-    private Sector sector;
+    private SectorName sectorName;
 
-    @OneToMany(mappedBy = "permission", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<UserPermission> users;
+    @OneToMany(mappedBy = "sector", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<UserSectorPermission> users;
 
-    public Permission(Sector sector) {
-        this.sector = sector;
+    public Sector(SectorName sectorName) {
+        this.sectorName = sectorName;
     }
 }

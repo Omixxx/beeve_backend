@@ -3,7 +3,6 @@ package it.unimol.vino.models.entity;
 import it.unimol.vino.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,7 +40,7 @@ public class User implements UserDetails, Serializable {
     private Role role;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<UserPermission> permissions;
+    private List<UserSectorPermission> permissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -73,10 +72,27 @@ public class User implements UserDetails, Serializable {
         return true;
     }
 
-    public void addPermission(@NonNull Permission permission) {
-        UserPermission userPermission = new UserPermission(this, permission);
-        this.permissions.add(userPermission);
-        permission.getUsers().add(userPermission);
+    public void addPermission(@NonNull Sector sector) {
+        UserSectorPermission userSectorPermission = new UserSectorPermission(
+                this,
+                sector,
+                true,
+                false,
+                false,
+                false
+        );
+        this.permissions.add(userSectorPermission);
     }
 
+    public void updatePermission(@NonNull Sector sector, @NonNull UserSectorPermission permissions) {
+        this.permissions.stream()
+                .filter(userSectorPermission -> userSectorPermission.getSector().equals(sector))
+                .findFirst()
+                .ifPresent(userSectorPermission -> {
+                    userSectorPermission.setCanRead(permissions.getCanRead());
+                    userSectorPermission.setCanWrite(permissions.getCanWrite());
+                    userSectorPermission.setCanDelete(permissions.getCanDelete());
+                    userSectorPermission.setCanUpdate(permissions.getCanUpdate());
+                });
+    }
 }

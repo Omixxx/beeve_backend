@@ -2,13 +2,13 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.exceptions.PasswordNotValidException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
-import it.unimol.vino.models.entity.Permission;
+import it.unimol.vino.models.entity.Sector;
 import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.enums.Role;
 import it.unimol.vino.models.request.AuthenticationRequest;
 import it.unimol.vino.models.request.RegisterRequest;
 import it.unimol.vino.models.response.AuthenticationResponse;
-import it.unimol.vino.repository.PermissionRepository;
+import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -30,7 +30,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final PermissionRepository permissionRepository;
+    private final SectorRepository sectorRepository;
 
 
     @Transactional
@@ -55,8 +55,8 @@ public class AuthService {
                 .build();
 
 
-        List<Permission> permissions = this.permissionRepository.findAll();
-        permissions.forEach(user::addPermission);
+        List<Sector> sectors = this.sectorRepository.findAll();
+        sectors.forEach(user::addPermission);
         this.userRepository.save(user);
 
         var jwtToken = jwtService.generateToken(user);
