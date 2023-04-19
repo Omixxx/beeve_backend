@@ -1,5 +1,6 @@
 package it.unimol.vino.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,10 +15,12 @@ public class UserSectorPermission implements Serializable {
 
     @Id
     @ManyToOne
+    @JsonIgnore
     private User user;
 
     @Id
     @ManyToOne
+    @JsonIgnore
     private Sector sector;
 
     private Boolean canRead;
