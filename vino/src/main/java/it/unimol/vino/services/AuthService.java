@@ -2,6 +2,7 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.exceptions.PasswordNotValidException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
+import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Sector;
 import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.enums.Role;
@@ -74,7 +75,9 @@ public class AuthService {
         );
         var user = this.userRepository
                 .findByEmail(request.getEmail())
-                .orElseThrow();
+                .orElseThrow(
+                        () -> new UserNotFoundException("User not found")
+                );
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
