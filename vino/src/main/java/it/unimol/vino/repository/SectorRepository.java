@@ -12,5 +12,4 @@ import java.util.Optional;
 public interface SectorRepository extends JpaRepository<Sector, Long> {
     Optional<Sector> findSectorBySectorName(SectorName sectorName);
 
-    Optional<List<Sector>> findSectorsBySectorName(SectorName sectorName);
 }
