@@ -1,6 +1,5 @@
 package it.unimol.vino.exceptions;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
@@ -18,7 +16,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(ApiRequestException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
@@ -30,7 +27,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(UsernameNotFoundException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
@@ -41,7 +37,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(UserNotFoundException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
@@ -52,7 +47,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(UserAlreadyRegistered e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.CONFLICT,
                 ZonedDateTime.now()
         );
@@ -63,7 +57,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(PasswordNotValidException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
@@ -74,7 +67,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(PermissionNotFound e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
@@ -85,7 +77,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(PermissionAlreadyAssigned e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.CONFLICT,
                 ZonedDateTime.now()
         );
@@ -96,7 +87,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(PermissionAlreadyExist e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.CONFLICT,
                 ZonedDateTime.now()
         );
@@ -108,18 +98,17 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(SectorNotFoundException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
 
+
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     public ResponseEntity<Object> handleApiRequestException(HttpMessageNotReadableException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                ExceptionUtils.getStackTrace(e),
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );

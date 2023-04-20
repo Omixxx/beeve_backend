@@ -18,7 +18,10 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/update_permissions")
-    public ResponseEntity<UpdatePermissionResponse> updatePermissions(@RequestBody @Valid UpdatePermissionsRequest updatePermissionsRequest) {
+    public ResponseEntity<UpdatePermissionResponse> updatePermissions(
+            @Valid @RequestBody
+            UpdatePermissionsRequest updatePermissionsRequest
+    ) {
         return ResponseEntity.ok(this.userService.updatePermissions(updatePermissionsRequest));
     }
 }
