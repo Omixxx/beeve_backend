@@ -2,6 +2,8 @@ package it.unimol.vino.controllers;
 import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.services.CategoryService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,11 +30,12 @@ public class CategoryController {
 
     }
     @DeleteMapping("/{category}")
-    public void deleteCategory(@PathVariable String category) {
+    public ResponseEntity<String> deleteCategory(@PathVariable String category) {
         try {
             service.deleteCategory(category);
+            return new ResponseEntity<>("Success", HttpStatus.OK);
         } catch (Exception e) {
-            //Gestire Eccezzione
+            return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
