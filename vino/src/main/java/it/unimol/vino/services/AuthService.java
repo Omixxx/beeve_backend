@@ -37,12 +37,12 @@ public class AuthService {
     @Transactional
     public AuthenticationResponse register(@Valid RegisterRequest request) throws PasswordNotValidException {
         if (!isPasswordValid(request.getPassword())) {
-            throw new PasswordNotValidException("Password not valid, it must be between 8 and 30 characters, " +
-                    "and must contain at least one uppercase letter, one lowercase letter and one number)");
+            throw new PasswordNotValidException("La password non è valida, deve essere compresa tra 8 e 30 caratteri, " +
+                    "e deve contenere almeno una lettera maiuscola, una lettera minuscola e un numero...");
         }
 
         if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new UserAlreadyRegistered("Email already in use");
+            throw new UserAlreadyRegistered("Email gia in uso");
         }
 
         //todo: check if Role should be passed by request

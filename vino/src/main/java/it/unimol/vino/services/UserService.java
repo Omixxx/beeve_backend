@@ -30,26 +30,26 @@ public class UserService {
     public UpdatePermissionResponse updatePermissions(UpdatePermissionsRequest updatePermissionsRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userRepository.findByEmail(email).orElseThrow(
-                () -> new UserNotFoundException("User with email " + email + " not found")
+                () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
         );
         updatePermissionsRequest.getPermissions().forEach((sectorName, permissions) -> {
 
             Sector sector = this.sectorRepository.findSectorBySectorName(sectorName).orElseThrow(
                     () -> new SectorNotFoundException(
-                            "Sector with name " + sectorName + " does not belong to "
+                            "Il settore con il nome " + sectorName + " non appartiene alla lista dei settori: "
                                     + Arrays.toString(SectorName.values())
                     )
             );
             user.updatePermission(sector, permissions);
         });
         this.userRepository.save(user);
-        return new UpdatePermissionResponse("Permissions updated successfully!");
+        return new UpdatePermissionResponse("Permessi aggiornati con successo!");
     }
 
     public List<UserSectorPermission> getPermissions() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userRepository.findByEmail(email).orElseThrow(
-                () -> new UserNotFoundException("User with email " + email + " not found")
+                () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
         );
         return user.getPermissions();
     }
