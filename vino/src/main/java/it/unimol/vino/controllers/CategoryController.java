@@ -28,9 +28,14 @@ public class CategoryController {
 
     }
     @DeleteMapping("/{category}")
-    public void deleteCategory(@PathVariable String category){
-        this.service.deleteCategory(category);
+    public void deleteCategory(@PathVariable String category) {
+        try {
+            service.deleteCategory(category);
+        } catch (Exception e) {
+            //Gestire Eccezzione
+        }
     }
+
     @PostMapping
     public Category putCategory(@Valid @RequestBody Category category){
         return this.service.putCategory(category);

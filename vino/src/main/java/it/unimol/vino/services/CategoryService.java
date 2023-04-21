@@ -1,7 +1,8 @@
 
 package it.unimol.vino.services;
-import it.unimol.vino.repository.CategoryRepository;
+
 import it.unimol.vino.models.entity.Category;
+import it.unimol.vino.repository.CategoryRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,12 @@ public class CategoryService {
         return this.categoryRepository.findAll();}
     public Category putCategory(@Valid Category category) {
         return this.categoryRepository.save(category);}
-    public void deleteCategory(String category) {
-        this.categoryRepository.deleteCategory(category.toUpperCase());
+
+        public void deleteCategory(String category) {
+            List<Category> categoriesToDelete = categoryRepository.findByCategory(category);
+            for(Category c : categoriesToDelete) {
+                categoryRepository.delete(c);
+
+        }
     }
 }
