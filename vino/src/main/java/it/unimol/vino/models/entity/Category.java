@@ -11,7 +11,6 @@ import lombok.*;
 public class Category {
 
     @Id
-    @Column(name = "Category",unique = true)
-    @NotBlank(message = "il nome non può essere vuoto")
-    private String category;
+    @Column(name = "name",unique = true)
+    private String name;
 }

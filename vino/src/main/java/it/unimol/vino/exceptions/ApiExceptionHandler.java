@@ -80,4 +80,25 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
     }
+    @ExceptionHandler(value = {DeleteCategoryException.class})
+    public ResponseEntity<Object> handleApiRequestException(DeleteCategoryException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {PutCategoryException.class})
+    public ResponseEntity<Object> handleApiRequestException(PutCategoryException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.CONFLICT,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
+    }
 }
