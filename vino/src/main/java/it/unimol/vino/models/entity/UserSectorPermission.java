@@ -14,13 +14,12 @@ import java.io.Serializable;
 public class UserSectorPermission implements Serializable {
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;
 
     @Id
-    @ManyToOne
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     private Sector sector;
 
     private Boolean canRead;

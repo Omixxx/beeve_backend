@@ -5,6 +5,7 @@ import it.unimol.vino.exceptions.SectorNotFoundException;
 import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Sector;
 import it.unimol.vino.models.entity.User;
+import it.unimol.vino.models.entity.UserSectorPermission;
 import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.models.request.UpdatePermissionsRequest;
 import it.unimol.vino.models.response.UpdatePermissionResponse;
@@ -16,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,5 +44,13 @@ public class UserService {
         });
         this.userRepository.save(user);
         return new UpdatePermissionResponse("Permissions updated successfully!");
+    }
+
+    public List<UserSectorPermission> getPermissions() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = this.userRepository.findByEmail(email).orElseThrow(
+                () -> new UserNotFoundException("User with email " + email + " not found")
+        );
+        return user.getPermissions();
     }
 }
