@@ -20,27 +20,23 @@ public class CategoryService {
     }
 
     public boolean isCategoryPresent(String categoryName) {
-        Category category=this.categoryRepository.findByName(categoryName.toUpperCase());
-        if(category!= null)
-            return true;
-        return false;
+        return this.categoryRepository.findByName(categoryName).isPresent();
     }
     public List<Category> getAllCategory(){
      return this.categoryRepository.findAll();}
 
     public Category putCategory(Category category) throws PutCategoryException {
-        Category control=this.categoryRepository.findByName(category.getName());
-        if(control!=null)
-            throw new PutCategoryException("category already exists");
+        if(this.categoryRepository.findByName(category.getName()).isPresent())
+            throw new PutCategoryException("categoria già esistente");
         return this.categoryRepository.save(category);
     }
 
         public void deleteCategory(String categoryname)throws DeleteCategoryException {
-           Category categoryFound= categoryRepository.findByName(categoryname.toUpperCase());
-            if(categoryFound.getName().isEmpty()){
-                throw new DeleteCategoryException("category not found");
+
+            if(!this.categoryRepository.findByName(categoryname).isPresent()){
+                throw new DeleteCategoryException("categoria non trovata");
             }
-               this.categoryRepository.delete(categoryFound);
+               this.categoryRepository.deleteByName(categoryname);
     }
 
 }
