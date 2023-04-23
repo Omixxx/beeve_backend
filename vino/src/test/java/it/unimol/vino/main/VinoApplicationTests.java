@@ -1,4 +1,4 @@
-package it.unimol.vino;
+package it.unimol.vino.main;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

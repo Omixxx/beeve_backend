@@ -1,6 +1,6 @@
 package it.unimol.vino.controllers;
-import it.unimol.vino.exceptions.DeleteCategoryException;
-import it.unimol.vino.exceptions.PutCategoryException;
+import it.unimol.vino.exceptions.CategoryNotFoundException;
+import it.unimol.vino.exceptions.CategoryExistingException;
 import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.services.CategoryService;
 import jakarta.validation.Valid;
@@ -28,13 +28,13 @@ public class CategoryController {
         return ResponseEntity.ok( this.service.isCategoryPresent(categoryname));
     }
     @DeleteMapping("/{category}")
-    public ResponseEntity<?> deleteCategory(@PathVariable String categoryname) throws DeleteCategoryException {
+    public ResponseEntity<?> deleteCategory(@PathVariable String categoryname) throws CategoryNotFoundException {
         this.service.deleteCategory(categoryname);
         return ResponseEntity.ok("success");
     }
 
     @PostMapping
-    public ResponseEntity<Category> postCategory(@Valid @RequestBody Category category)throws PutCategoryException {
+    public ResponseEntity<Category> postCategory(@Valid @RequestBody Category category)throws CategoryExistingException {
         return ResponseEntity.ok(this.service.postCategory(category));
 
     }

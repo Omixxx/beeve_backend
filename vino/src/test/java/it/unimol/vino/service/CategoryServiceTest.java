@@ -1,7 +1,7 @@
 package it.unimol.vino.service;
 
-import it.unimol.vino.exceptions.DeleteCategoryException;
-import it.unimol.vino.exceptions.PutCategoryException;
+import it.unimol.vino.exceptions.CategoryNotFoundException;
+import it.unimol.vino.exceptions.CategoryExistingException;
 import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.repository.CategoryRepository;
 import it.unimol.vino.services.CategoryService;
@@ -65,7 +65,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    void postCategory_withMissingCategory_shouldReturnSavedCategory() throws PutCategoryException {
+    void postCategory_withMissingCategory_shouldReturnSavedCategory() throws CategoryExistingException {
         Category newCategory = new Category("newCategory");
         Category existingCategory = new Category("existingCategory");
 
@@ -87,7 +87,7 @@ class CategoryServiceTest {
 
         when(categoryRepository.findByName("existingCategory")).thenReturn(Optional.of(category));
 
-        assertThrows(PutCategoryException.class, () -> {
+        assertThrows(CategoryExistingException.class, () -> {
             categoryService.postCategory(category);
         });
 
@@ -96,7 +96,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    void deleteCategory_withExistingCategory_shouldDeleteCategory() throws DeleteCategoryException {
+    void deleteCategory_withExistingCategory_shouldDeleteCategory() throws CategoryNotFoundException {
         Category category = new Category("categoryToDelete");
 
         when(categoryRepository.findByName("categoryToDelete")).thenReturn(Optional.of(category));
@@ -111,7 +111,7 @@ class CategoryServiceTest {
     void deleteCategory_withMissingCategory_shouldThrowException() {
         when(categoryRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(DeleteCategoryException.class, () -> {
+        assertThrows(CategoryNotFoundException.class, () -> {
             categoryService.deleteCategory("missingCategory");
         });
 

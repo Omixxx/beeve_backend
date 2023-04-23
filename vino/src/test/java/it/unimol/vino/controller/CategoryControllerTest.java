@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unimol.vino.controllers.CategoryController;
-import it.unimol.vino.exceptions.DeleteCategoryException;
-import it.unimol.vino.exceptions.PutCategoryException;
+import it.unimol.vino.exceptions.CategoryNotFoundException;
+import it.unimol.vino.exceptions.CategoryExistingException;
 import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.services.CategoryService;
 
@@ -63,7 +63,7 @@ public class CategoryControllerTest {
     }
 
     @Test
-    void deleteCategory_withValidCategory_shouldReturn200OK() throws DeleteCategoryException {
+    void deleteCategory_withValidCategory_shouldReturn200OK() throws CategoryNotFoundException {
         String categoryName = "existingCategoryName";
 
         doNothing().when(categoryService).deleteCategory(categoryName);
@@ -79,19 +79,19 @@ public class CategoryControllerTest {
     }
 
     @Test
-    void deleteCategory_withInvalidCategory_shouldThrowException() throws DeleteCategoryException {
+    void deleteCategory_withInvalidCategory_shouldThrowException() throws CategoryNotFoundException {
         String categoryName = "missingCategoryName";
 
-        doThrow(DeleteCategoryException.class).when(categoryService).deleteCategory(categoryName);
+        doThrow(CategoryNotFoundException.class).when(categoryService).deleteCategory(categoryName);
 
-        assertThrows(DeleteCategoryException.class, () -> categoryController.deleteCategory(categoryName));
+        assertThrows(CategoryNotFoundException.class, () -> categoryController.deleteCategory(categoryName));
 
         // verify that the service method was called once with the expected argument
         verify(categoryService, times(1)).deleteCategory(categoryName);
     }
 
     @Test
-    void postCategory_withValidCategory_shouldReturnSavedCategory() throws PutCategoryException {
+    void postCategory_withValidCategory_shouldReturnSavedCategory() throws CategoryExistingException {
         Category newCategory = new Category("newCategory");
 
         when(categoryService.postCategory(any(Category.class))).thenReturn(newCategory);
@@ -104,12 +104,12 @@ public class CategoryControllerTest {
     }
 
     @Test
-    void postCategory_withExistingCategory_shouldThrowException() throws PutCategoryException {
+    void postCategory_withExistingCategory_shouldThrowException() throws CategoryExistingException {
         Category existingCategory = new Category("existingCategory");
 
-        when(categoryService.postCategory(any(Category.class))).thenThrow(PutCategoryException.class);
+        when(categoryService.postCategory(any(Category.class))).thenThrow(CategoryExistingException.class);
 
-        assertThrows(PutCategoryException.class, () -> categoryController.postCategory(existingCategory));
+        assertThrows(CategoryExistingException.class, () -> categoryController.postCategory(existingCategory));
 
         verify(categoryService, times(1)).postCategory(any(Category.class));
     }
