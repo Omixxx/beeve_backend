@@ -5,7 +5,6 @@ import it.unimol.vino.exceptions.DeleteCategoryException;
 import it.unimol.vino.exceptions.PutCategoryException;
 import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.repository.CategoryRepository;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
