@@ -7,8 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
+import java.io.Serializable;
+import java.util.*;
 
 @Data
 @Getter
@@ -18,7 +18,8 @@ import java.util.List;
 @Builder
 @Entity(name = "user")
 @Table(name = "user")
-public class User implements UserDetails {
+@EqualsAndHashCode(exclude = "password")
+public class User implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +38,9 @@ public class User implements UserDetails {
     // ci serve per dire a spring di usare il valore come se fosse una stringa
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<UserSectorPermission> permissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -66,5 +70,29 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void addPermission(@NonNull Sector sector) {
+        UserSectorPermission userSectorPermission = new UserSectorPermission(
+                this,
+                sector,
+                true,
+                false,
+                false,
+                false
+        );
+        this.permissions.add(userSectorPermission);
+    }
+
+    public void updatePermission(@NonNull Sector sector, @NonNull UserSectorPermission permissions) {
+        this.permissions.stream()
+                .filter(userSectorPermission -> userSectorPermission.getSector().equals(sector))
+                .findFirst()
+                .ifPresent(userSectorPermission -> {
+                    userSectorPermission.setCanRead(permissions.getCanRead());
+                    userSectorPermission.setCanWrite(permissions.getCanWrite());
+                    userSectorPermission.setCanDelete(permissions.getCanDelete());
+                    userSectorPermission.setCanUpdate(permissions.getCanUpdate());
+                });
     }
 }

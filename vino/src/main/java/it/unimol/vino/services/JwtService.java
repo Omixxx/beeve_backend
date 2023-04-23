@@ -1,4 +1,4 @@
-package it.unimol.vino.configuration;
+package it.unimol.vino.services;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;

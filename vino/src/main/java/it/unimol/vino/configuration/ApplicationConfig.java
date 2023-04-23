@@ -23,7 +23,7 @@ public class ApplicationConfig {
     public UserDetailsService userDetailsService() {
 
         return username -> userRepository.findByEmail(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("l'utente " + username + " non esiste"));
     }
 
     @Bean
