@@ -24,10 +24,15 @@ public class CategoryService {
     public List<Category> getAllCategory(){
      return this.categoryRepository.findAll();}
 
-    public Category putCategory(Category category) throws PutCategoryException {
+    public Category postCategory(Category category) throws PutCategoryException {
         if(this.categoryRepository.findByName(category.getName()).isPresent())
             throw new PutCategoryException("categoria già esistente");
-        return this.categoryRepository.save(category);
+        var cate = Category.builder()
+                .name(category.getName())
+                .build();
+
+         return this.categoryRepository.save(cate);
+
     }
 
         public void deleteCategory(String categoryname)throws DeleteCategoryException {

@@ -1,7 +1,7 @@
-package it.unimol.vino.models.entity;
+package it.unimol.vino.models.entity;;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+
 
 @Getter
 @Setter
@@ -11,6 +11,9 @@ import lombok.*;
 public class Category {
 
     @Id
-    @Column(name = "name",unique = true)
+    @Column(name = "name", unique = true)
     private String name;
+    public Category(String name) {
+        this.name = name;
+    }
 }

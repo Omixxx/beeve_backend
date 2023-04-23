@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/vi/category")
+@RequestMapping("/api/v1/category")
 public class CategoryController {
     private final CategoryService service;
 
@@ -28,14 +28,14 @@ public class CategoryController {
         return ResponseEntity.ok( this.service.isCategoryPresent(categoryname));
     }
     @DeleteMapping("/{category}")
-    public void deleteCategory(@PathVariable String categoryname) throws DeleteCategoryException {
+    public ResponseEntity<?> deleteCategory(@PathVariable String categoryname) throws DeleteCategoryException {
         this.service.deleteCategory(categoryname);
-        ResponseEntity.ok("succes");
+        return ResponseEntity.ok("success");
     }
 
-    @PutMapping
-    public ResponseEntity<Category> putCategory(@Valid @RequestBody Category category)throws PutCategoryException {
-        return ResponseEntity.ok( this.service.putCategory(category));
+    @PostMapping
+    public ResponseEntity<Category> postCategory(@Valid @RequestBody Category category)throws PutCategoryException {
+        return ResponseEntity.ok(this.service.postCategory(category));
 
     }
 
