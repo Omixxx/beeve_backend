@@ -9,5 +9,5 @@ public interface CategoryRepository extends JpaRepository<Category,String> {
 
    Optional<Category> findByName(String categoryName);
 
-    void deleteByName(String categoryname);
+    void deleteByName(String categoryName);
 }

@@ -24,12 +24,12 @@ public class CategoryController {
 
     }
     @GetMapping("/{category}")
-    public ResponseEntity<Boolean>isCategoryPresent(@Valid @RequestBody   String categoryname)  {
-        return ResponseEntity.ok( this.service.isCategoryPresent(categoryname));
+    public ResponseEntity<Boolean>isCategoryPresent(@Valid @RequestBody   String categoryName)  {
+        return ResponseEntity.ok( this.service.isCategoryPresent(categoryName));
     }
     @DeleteMapping("/{category}")
-    public ResponseEntity<?> deleteCategory(@PathVariable String categoryname) throws CategoryNotFoundException {
-        this.service.deleteCategory(categoryname);
+    public ResponseEntity<?> deleteCategory(@PathVariable String categoryName) throws CategoryNotFoundException {
+        this.service.deleteCategory(categoryName);
         return ResponseEntity.ok("success");
     }
 

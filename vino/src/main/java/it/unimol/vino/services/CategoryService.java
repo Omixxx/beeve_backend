@@ -35,12 +35,12 @@ public class CategoryService {
 
     }
 
-        public void deleteCategory(String categoryname)throws CategoryNotFoundException {
+        public void deleteCategory(String categoryName)throws CategoryNotFoundException {
 
-            if(this.categoryRepository.findByName(categoryname).isEmpty()){
+            if(this.categoryRepository.findByName(categoryName).isEmpty()){
                 throw new CategoryNotFoundException("categoria non trovata");
             }
-               this.categoryRepository.deleteByName(categoryname);
+               this.categoryRepository.deleteByName(categoryName);
     }
 
 }
