@@ -47,6 +47,17 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {ProviderNotFoundException.class})
+    public ResponseEntity<Object> handleApiRequestException(ProviderNotFoundException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(value = {UserAlreadyRegistered.class})
     public ResponseEntity<Object> handleApiRequestException(UserAlreadyRegistered e) {
         ApiException apiException = new ApiException(
