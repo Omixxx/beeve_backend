@@ -34,7 +34,4 @@ public class ItemController {
         return ResponseEntity.ok(this.itemService.itemRegister(registerItemRequest));
     }
 
-
-
-
 }
