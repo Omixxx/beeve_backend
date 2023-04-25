@@ -8,12 +8,16 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
+
 import it.unimol.vino.models.entity.GrapeType;
 import it.unimol.vino.services.GrapeTypeService;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/v1/grapetype")
+@RequestMapping("api/v1/grape-type")
 public class GrapeTypeController {
     
     private final GrapeTypeService grapeTypeService;
@@ -28,13 +32,33 @@ public class GrapeTypeController {
     }
 
     @DeleteMapping
-    public void deleteAll(){
-        this.grapeTypeService.delete();
+    public void delete(){
+        this.grapeTypeService.deleteByName();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GrapeType> get(@PathVariable String id){
-        GrapeType grapeType = this.grapeTypeService.get(id);
+    @DeleteMapping(params = "color")
+    public void deleteByColor(@Valid @RequestParam String color){
+        this.grapeTypeService.deleteAllByColor(color);
+    }
+
+    @DeleteMapping(params = "species")
+    public void deleteBySpecies(@Valid @RequestParam String species){
+        this.grapeTypeService.deleteAllBySpecies(species);
+    }
+
+    @DeleteMapping("/{name}")
+    public void delete(@PathVariable String name){
+        this.grapeTypeService.deleteByName(name);
+    }
+
+    @PostMapping
+    public GrapeType put(@RequestBody GrapeType grapeType){
+        return this.grapeTypeService.put(grapeType);
+    }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<GrapeType> get(@PathVariable String name){
+        GrapeType grapeType = this.grapeTypeService.get(name);
 
         if(grapeType == null){
             return ResponseEntity.notFound().build();
@@ -43,38 +67,50 @@ public class GrapeTypeController {
         return ResponseEntity.ok(grapeType);
     }
 
-    @PostMapping
-    public GrapeType put(@RequestBody GrapeType grapeType){
-        return this.grapeTypeService.put(grapeType);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable String name){
-        this.grapeTypeService.delete(name);
-    }
-
-    @PutMapping("/{id}")
-    public GrapeType replace(@PathVariable String name, @RequestBody GrapeType grapeType){
-        return this.grapeTypeService.replace(name, grapeType);
-    }
-
-    @PatchMapping("/{id}")
-    public void updateColor(@PathVariable String name, @Valid @RequestParam String grapeColor){
-        this.grapeTypeService.updateColor(name, grapeColor);
-    }
-    
-    @PatchMapping("/{id}")
-    public void updateSpecies(@PathVariable String name, @Valid @RequestParam String grapeSpecies){
-        this.grapeTypeService.updateSpecies(name, grapeSpecies);
-    }
-
     @GetMapping(params = "grapeColor")
     public List<GrapeType> findByColor(@Valid @RequestParam String grapeColor){
-        return this.grapeTypeService.findByColor(grapeColor);
+        List<GrapeType> grapesByColor = this.grapeTypeService.findByColor(grapeColor);
+        if(grapesByColor.isEmpty())
+            throw new GrapeTypeNotFoundException("Non ci sono tipi d'uva con il colore " + grapeColor);
+
+        return grapesByColor;
     }
 
     @GetMapping(params = "species")
     public List<GrapeType> findBySpecies(@Valid @RequestParam String species){
-        return this.grapeTypeService.findBySpecies(species);
+        List<GrapeType> grapesBySpecies = this.grapeTypeService.findBySpecies(species);
+        if(grapesBySpecies.isEmpty())
+            throw new GrapeTypeNotFoundException("Non ci sono tipi d'uva con la specie " + species);
+
+        return grapesBySpecies;
     }
+
+    @PutMapping("/{name}")
+    public GrapeType replace(@PathVariable String name, @RequestBody GrapeType grapeType){
+        try{
+            return this.grapeTypeService.replace(name, grapeType);
+        }catch(EntityNotFoundException e){
+            throw new GrapeTypeNotFoundException(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{name}")
+    public void updateColor(@PathVariable String name, @Valid @RequestParam String grapeColor){
+        try{
+            this.grapeTypeService.updateColor(name, grapeColor);
+        }catch(EntityNotFoundException e){
+            throw new GrapeTypeNotFoundException(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{name}")
+    public void updateSpecies(@PathVariable String name, @Valid @RequestParam String grapeSpecies){
+        try {
+            this.grapeTypeService.updateSpecies(name, grapeSpecies);
+        } catch (EntityNotFoundException e) {
+            throw new GrapeTypeNotFoundException(e.getMessage());
+        }
+
+    }
+
 }

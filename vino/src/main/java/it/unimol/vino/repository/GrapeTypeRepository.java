@@ -9,14 +9,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GrapeTypeRepository extends JpaRepository<GrapeType,Long>{
     
-    void deleteById(String name);
+    void deleteByName(String name);
 
-    boolean existsById(String name);
+    boolean existsByName(String name);
 
-    GrapeType findById(String name);
+    GrapeType findByName(String name);
 
     List<GrapeType> findByColor(String color);
 
     List<GrapeType> findBySpecies(String species);
 
+    void deleteAllByColor(String color);
+
+    void deleteAllBySpecies(String species);
 }
