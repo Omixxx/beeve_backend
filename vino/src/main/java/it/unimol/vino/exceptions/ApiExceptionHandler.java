@@ -56,7 +56,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(ProviderNotFoundException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                e,
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
