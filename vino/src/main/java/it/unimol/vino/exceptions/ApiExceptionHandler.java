@@ -59,8 +59,22 @@ public class ApiExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(value = {ItemNotFoundException.class})
+    public ResponseEntity<Object> handleApiRequestException(ItemNotFoundException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
+
 
     @ExceptionHandler(value = {UserAlreadyRegistered.class})
     protected ResponseEntity<Object> handleApiRequestException(UserAlreadyRegistered e) {

@@ -1,5 +1,6 @@
 package it.unimol.vino.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,6 +38,7 @@ public class Provider implements Serializable {
     private String website_url;
 
     @OneToMany(mappedBy = "provider",orphanRemoval = true, cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<ProviderSupplyItem> providerSupplyItemList;
 
 }
