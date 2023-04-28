@@ -1,12 +1,12 @@
 package it.unimol.vino.controllers;
 
 
-
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.entity.Provider;
 
 import it.unimol.vino.models.request.RegisterProviderRequest;
 
+import it.unimol.vino.models.response.ItemsProvidedByProvider;
 import it.unimol.vino.services.ProviderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,11 @@ public class ProviderController {
     @GetMapping("/")
     public ResponseEntity<List<Provider>>getAllProviders(){
         return ResponseEntity.ok(this.providerService.getAll());
+    }
+
+    @GetMapping("/providedBy/{id}")
+    public  ResponseEntity<List<ItemsProvidedByProvider>>getAllProvidedItemsById(@PathVariable Long id){
+        return ResponseEntity.ok(this.providerService.getAllProvidedItemsById(id));
     }
     @PostMapping("/register")
     public ResponseEntity<Long> register(@RequestBody @Valid RegisterProviderRequest registerProviderRequest)

@@ -19,7 +19,7 @@ import java.util.List;
 @Entity(name="item")
 @Table(name="item")
 
-public class Item implements Serializable{
+public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

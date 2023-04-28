@@ -1,11 +1,14 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 
 import it.unimol.vino.models.entity.Provider;
 
 import it.unimol.vino.models.request.RegisterProviderRequest;
 
+import it.unimol.vino.models.response.ItemsProvidedByProvider;
+import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProviderRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
@@ -17,9 +20,13 @@ import java.util.List;
 public class ProviderService {
 
     private final ProviderRepository providerRepository;
+    private final ItemRepository itemRepository;
 
-    public ProviderService(ProviderRepository providerRepository) {
+
+
+    public ProviderService(ProviderRepository providerRepository, ItemRepository itemRepository) {
         this.providerRepository = providerRepository;
+        this.itemRepository = itemRepository;
     }
 
     public List<Provider> getAll() {
@@ -45,5 +52,12 @@ public class ProviderService {
     }
 
 
+    public List<ItemsProvidedByProvider> getAllProvidedItemsById(Long id) {
 
+        Provider provider = this.providerRepository.findById(id).orElseThrow(
+                () -> new ProviderNotFoundException("IL provider con ID " + id + " non è stato trovato")
+        );
+
+        return this.providerRepository.findProvidedItemsById(id);
+    }
 }
