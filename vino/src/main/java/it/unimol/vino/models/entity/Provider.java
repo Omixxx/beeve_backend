@@ -2,6 +2,7 @@ package it.unimol.vino.models.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unimol.vino.models.response.ItemsProvidedByProvider;
+import it.unimol.vino.models.response.ProviderBookResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,16 @@ import java.util.List;
                                                                 @ColumnResult(name = "descr"),
                                                                 @ColumnResult(name="qua"),
                                                                 @ColumnResult(name="dat")}))
+
+@NamedNativeQuery(name ="Provider.findAllSorted",
+        query = "SELECT provider.id as pid,provider.name as name,provider.phone_number as phone,provider.email as email FROM provider ORDER BY provider.name",
+        resultSetMapping = "Mapping.ProviderBookResponse")
+@SqlResultSetMapping(name="Mapping.ProviderBookResponse",
+        classes = @ConstructorResult(targetClass = ProviderBookResponse.class,
+                columns = {@ColumnResult(name="pid"),
+                        @ColumnResult(name="name"),
+                        @ColumnResult(name = "phone"),
+                        @ColumnResult(name="email")}))
 public class Provider implements Serializable {
 
     @Id

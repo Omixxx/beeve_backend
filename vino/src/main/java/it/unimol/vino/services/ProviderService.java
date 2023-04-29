@@ -8,6 +8,7 @@ import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.RegisterProviderRequest;
 
 import it.unimol.vino.models.response.ItemsProvidedByProvider;
+import it.unimol.vino.models.response.ProviderBookResponse;
 import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProviderRepository;
 import jakarta.validation.Valid;
@@ -59,5 +60,9 @@ public class ProviderService {
         );
 
         return this.providerRepository.findProvidedItemsById(id);
+    }
+
+    public List<ProviderBookResponse> getProviderBook(){
+        return this.providerRepository.findAllSorted();
     }
 }

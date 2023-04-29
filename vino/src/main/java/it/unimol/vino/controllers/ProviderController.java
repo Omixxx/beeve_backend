@@ -7,6 +7,7 @@ import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.RegisterProviderRequest;
 
 import it.unimol.vino.models.response.ItemsProvidedByProvider;
+import it.unimol.vino.models.response.ProviderBookResponse;
 import it.unimol.vino.services.ProviderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,12 @@ public class ProviderController {
     public  ResponseEntity<List<ItemsProvidedByProvider>>getAllProvidedItemsById(@PathVariable Long id){
         return ResponseEntity.ok(this.providerService.getAllProvidedItemsById(id));
     }
+
+    @GetMapping("/book")
+    public ResponseEntity<List<ProviderBookResponse>>getProviderBook(){
+        return ResponseEntity.ok(this.providerService.getProviderBook());
+    }
+
     @PostMapping("/register")
     public ResponseEntity<Long> register(@RequestBody @Valid RegisterProviderRequest registerProviderRequest)
             throws UserAlreadyRegistered{
