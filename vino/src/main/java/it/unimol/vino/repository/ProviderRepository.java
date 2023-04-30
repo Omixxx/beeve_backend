@@ -25,7 +25,5 @@ public interface ProviderRepository extends JpaRepository<Provider,Long> {
     @Query(nativeQuery = true)
     List<ItemsProvidedByProvider> findProvidedItemsById(Long id);
 
-    @Query(nativeQuery = true)
-    List<ProviderBookResponse> findAllSorted();
 }
 //item.id,item.capacity,item.description
