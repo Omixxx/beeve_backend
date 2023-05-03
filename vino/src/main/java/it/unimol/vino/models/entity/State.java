@@ -1,18 +1,15 @@
 package it.unimol.vino.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.websocket.OnError;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
 @Entity
@@ -20,13 +17,13 @@ public class State {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String description;
-    private String wasteUnit;
 
-//    @OneToMany(mappedBy = "state")
-//    @JsonIgnore
-//    private List<Process> processesNowOpened;
+    @NonNull
+    @NotBlank(message = "Il nome dello stato non può essere vuoto")
+    private String name;
+
+    @NonNull
+    private Boolean doesProduceWaste;
 
     @OneToMany(mappedBy = "state", cascade = CascadeType.ALL)
     private List<ProcessHasStates> processes;

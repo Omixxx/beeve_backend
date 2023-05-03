@@ -1,20 +1,18 @@
 package it.unimol.vino.models.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
 
-@Data
-@NoArgsConstructor(force = true)
 @AllArgsConstructor
-@Builder
+@Getter
 public class NewStateRequest {
-    @NonNull()
-    @NotBlank(message = "Name must not be blank")
-    private String name;
 
-    private String description = null;
+    @NonNull
+    @NotBlank
+    private String stateName;
 
-    private String wasteUnit = null;
-
-
+    @NonNull
+    private Boolean doesProduceWaste;
 }

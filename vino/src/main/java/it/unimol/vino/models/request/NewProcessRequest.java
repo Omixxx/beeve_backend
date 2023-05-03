@@ -1,9 +1,9 @@
 package it.unimol.vino.models.request;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
-import java.util.Date;
+import java.util.HashMap;
 
 @Data
 @NoArgsConstructor(force = true)
@@ -11,8 +11,7 @@ import java.util.Date;
 @Builder
 public class NewProcessRequest {
 
-    @NonNull()
-    private Date date;
-
-    private String name;
+    @NonNull
+    @NotEmpty(message = "Il processo deve necessariamente avere almeno uno stato")
+    private HashMap<Long, Integer> stateIdSequence;
 }

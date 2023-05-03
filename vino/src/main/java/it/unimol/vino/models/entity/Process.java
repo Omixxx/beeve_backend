@@ -2,53 +2,92 @@ package it.unimol.vino.models.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.annotation.CreatedDate;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 @Data
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(force = true)
 @Entity
 public class Process {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date startDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Date creationDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ProcessHasStates state;
-
-    private String name;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @NonNull
+    private ProcessHasStates currentState;
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL)
+    @NonNull
     List<ProcessHasStates> states;
 
-    public void addState(State state, Long sequence){
-        ProcessHasStates processHasStates = new ProcessHasStates(this, state, sequence, null, null, null);
-//        processHasStates.setProcess(this);
-//        processHasStates.setState(state);
-//        processHasStates.setSequence(sequence);
-//        System.out.println(processHasStates.getProcess().id);
+    @NonNull
+    @Min(value = 0, message = "Wine waste must be greater than 0")
+    @Column(nullable = false)
+    private Integer wineWaste;
+
+    @NonNull
+    @Min(value = 0, message = "Wine waste must be greater than 0")
+    @Column(nullable = false)
+    private Integer stalkWaste;
+
+    @NonNull
+    @Min(value = 0, message = "Wine waste must be greater than 0")
+    @Column(nullable = false)
+    private Integer currentWaste;
+
+
+    public Process(@NotEmpty List<State> states) {
+        this.currentWaste = 0;
+        this.stalkWaste = 0;
+        this.wineWaste = 0;
+        this.creationDate = new Date();
+        this.states = states.stream()
+                .map(state -> ProcessHasStates.builder()
+                        .process(this)
+                        .state(state)
+                        .sequence((long) states.indexOf(state))
+                        .build())
+                .toList();
+    }
+
+    public void addState(State state, Long sequence) {
+        ProcessHasStates processHasStates = ProcessHasStates.builder()
+                .process(this)
+                .state(state)
+                .sequence(sequence)
+                .build();
+
         this.states.add(processHasStates);
-        System.out.println(this.states.get(0).getProcess().getId());
     }
 
-    public void setState(ProcessHasStates state){
-        this.state = state;
-    }
-    public void setState(State state){
-        this.setState(this.getStates().stream().filter(processHasStates ->
-                processHasStates.getState().getId().equals(state.getId())).findFirst().get());
+    public void setCurrentState(@NotNull ProcessHasStates state) {
+        this.currentState = state;
     }
 
-    public void setWaste(Long waste){
-        this.getState().setWaste(waste);
+
+    public void setNextState() {
+        this.setCurrentState(this.getNextState());
+    }
+
+    //todo: handle exception if there is no next state
+    public ProcessHasStates getNextState() {
+        List<ProcessHasStates> sortedStates = this.states.stream()
+                .sorted(Comparator.comparing(ProcessHasStates::getSequence))
+                .toList();
+        return sortedStates.get(sortedStates.indexOf(this.currentState) + 1);
     }
 }

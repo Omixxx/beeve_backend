@@ -2,8 +2,8 @@ spring:
   datasource:
     # Jdbc è il protocollo, maria db è il driver che andremo a utilizzare. (vedi il pom)
     url: jdbc:mariadb://localhost:3306/vino
-    username: unimol
-    password: unimol
+    username: vino
+    password: vino
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:

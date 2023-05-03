@@ -80,4 +80,26 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(value = {ProcessNotFoundException.class})
+    public ResponseEntity<Object> handleApiRequestException(ProcessNotFoundException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {StateNotFoundException.class})
+    public ResponseEntity<Object> handleApiRequestException(StateNotFoundException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                e,
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
 }
