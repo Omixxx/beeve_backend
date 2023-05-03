@@ -43,8 +43,7 @@ public class Contribution {
     @Column(name = "quantity")
     private double quantity;
 
-
-    @Column(name = "grape_type")
+    @JoinColumn(name = "grape_type")
     @ManyToOne
     private GrapeType associatedGrapeType;
 }

@@ -5,26 +5,27 @@ import it.unimol.vino.models.entity.GrapeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ContributionRepository extends JpaRepository<Contribution,Long> {
 
-    List<Contribution> findByOrigin(String origin);
+    Optional<List<Contribution>> findByOrigin(String origin);
 
-    List<Contribution> findByCountry(String country);
+    Optional<List<Contribution>> findByCountry(String country);
 
-    List<Contribution> findBySugarDegree(double sugarDegree);
+    Optional<List<Contribution>> findBySugarDegree(double sugarDegree);
 
-    List<Contribution> findBySugarDegreeGreaterThanEqual(double sugarDegree);
+    Optional<List<Contribution>> findBySugarDegreeGreaterThanEqual(double sugarDegree);
 
-    List<Contribution> findBySugarDegreeLessThanEqual(double sugarDegree);
+    Optional<List<Contribution>> findBySugarDegreeLessThanEqual(double sugarDegree);
 
-    List<Contribution> findByQuantity(double quantity);
+    Optional<List<Contribution>> findByQuantity(double quantity);
 
-    List<Contribution> findByQuantityGreaterThanEqual(double quantity);
+    Optional<List<Contribution>> findByQuantityGreaterThanEqual(double quantity);
 
-    List<Contribution> findByQuantityLessThanEqual(double quantity);
+    Optional<List<Contribution>> findByQuantityLessThanEqual(double quantity);
 
-    List<Contribution> findByAssociatedGrapeType(GrapeType grapeType);
+    Optional<List<Contribution>> findByAssociatedGrapeType(GrapeType grapeType);
 
     void deleteAllByOrigin(String origin);
 

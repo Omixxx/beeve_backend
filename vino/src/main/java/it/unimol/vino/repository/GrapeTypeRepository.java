@@ -3,21 +3,24 @@ package it.unimol.vino.repository;
 import it.unimol.vino.models.entity.GrapeType;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface GrapeTypeRepository extends JpaRepository<GrapeType,Long>{
     
-    void deleteByName(String name);
+    void delete(String name);
 
-    boolean existsByName(String name);
+    boolean existsById(String name);
 
-    GrapeType findByName(String name);
+    Optional<GrapeType> findById(String id);
 
-    List<GrapeType> findByColor(String color);
 
-    List<GrapeType> findBySpecies(String species);
+
+    Optional<List<GrapeType>> findByColor(String color);
+
+    Optional<List<GrapeType>> findBySpecies(String species);
 
     void deleteAllByColor(String color);
 
