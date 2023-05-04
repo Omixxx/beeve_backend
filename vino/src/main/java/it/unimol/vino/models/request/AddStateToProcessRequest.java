@@ -17,7 +17,7 @@ public class AddStateToProcessRequest {
     private Long processId;
 
     @NonNull
-    private Long sequence;
+    private Integer sequence;
 
     private Long waste = null;
 

@@ -23,7 +23,7 @@ public class ProcessHasStates {
     private State state;
 
     @NonNull
-    private Long sequence;
+    private Integer sequence;
 
     private Date startDate;
 

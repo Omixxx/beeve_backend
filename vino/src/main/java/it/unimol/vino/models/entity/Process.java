@@ -8,9 +8,7 @@ import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Data
 @Getter
@@ -50,21 +48,19 @@ public class Process {
     private Integer currentWaste;
 
 
-    public Process(@NotEmpty List<State> states) {
+    public Process(@NotEmpty Map<State, Integer> stateSequenceMap) {
         this.currentWaste = 0;
         this.stalkWaste = 0;
         this.wineWaste = 0;
         this.creationDate = new Date();
-        this.states = states.stream()
-                .map(state -> ProcessHasStates.builder()
-                        .process(this)
-                        .state(state)
-                        .sequence((long) states.indexOf(state))
-                        .build())
-                .toList();
+
+        if (Objects.isNull(this.states))
+            this.states = new ArrayList<>();
+
+        stateSequenceMap.forEach(this::addState);
     }
 
-    public void addState(State state, Long sequence) {
+    public void addState(State state, Integer sequence) {
         ProcessHasStates processHasStates = ProcessHasStates.builder()
                 .process(this)
                 .state(state)
