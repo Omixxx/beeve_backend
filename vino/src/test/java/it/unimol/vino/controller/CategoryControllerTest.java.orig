@@ -9,12 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unimol.vino.controllers.CategoryController;
+<<<<<<< HEAD
+=======
 import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.CategoryAlreadyExistingException;
 import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.services.CategoryService;
 
+>>>>>>> 0f9b822218c194f2cd04404a2a1953b811b0beee
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -29,8 +32,13 @@ import it.unimol.vino.services.CategoryService;
 
 @SpringBootTest
 public class CategoryControllerTest {
+<<<<<<< HEAD
 
     private CategoryController categoryController;
+=======
+/*
+    CategoryController categoryController;
+>>>>>>> 0f9b822218c194f2cd04404a2a1953b811b0beee
 
     @Mock
     private CategoryService categoryService;
@@ -74,13 +82,8 @@ public class CategoryControllerTest {
 
         ResponseEntity<String> responseEntity = categoryController.deleteCategory(categoryName);
 
-        ResponseEntity<?> responseEntity = categoryController.deleteCategory(categoryName);
-
-        assertNotNull(responseEntity);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals("success", responseEntity.getBody());
-
-        // verify that the service method was called once with the expected argument
         verify(categoryService, times(1)).deleteCategory(categoryName);
     }
 
@@ -92,9 +95,13 @@ public class CategoryControllerTest {
 
         ResponseEntity<Category> responseEntity = categoryController.postCategory(category);
 
+<<<<<<< HEAD
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals("Food", responseEntity.getBody().getName());
         verify(categoryService, times(1)).postCategory(category);
+=======
+        // verify that the service method was called once with the expected argument
+        verify(categoryService, times(1)).deleteCategory(categoryName);
     }
 
     /*
@@ -120,6 +127,7 @@ public class CategoryControllerTest {
         assertThrows(CategoryAlreadyExistingException.class, () -> categoryController.postCategory(existingCategory));
 
         verify(categoryService, times(1)).postCategory(any(Category.class));
+>>>>>>> 0f9b822218c194f2cd04404a2a1953b811b0beee
     }
 
      */

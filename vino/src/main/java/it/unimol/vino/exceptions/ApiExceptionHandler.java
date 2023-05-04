@@ -164,8 +164,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {CategoryExistingException.class})
-    public ResponseEntity<Object> handleApiRequestException(CategoryExistingException e) {
+    @ExceptionHandler(value = {CategoryAlreadyExistingException.class})
+    public ResponseEntity<Object> handleApiRequestException(CategoryAlreadyExistingException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.CONFLICT,

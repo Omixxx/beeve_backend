@@ -27,7 +27,10 @@ public class RegisterItemRequest {
     private Date date;
 
     @NonNull()
-    private Long quantity;
+    private Integer quantity;
+
+    @NonNull()
+    private String categoryName;
 
 
     public RegisterItemRequest(Long providerId, Long capacity, String description, ProviderSupplyItem providerSupplyItem) {

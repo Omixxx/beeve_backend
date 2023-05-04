@@ -2,6 +2,9 @@ package it.unimol.vino.models.entity;;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -10,11 +13,15 @@ import lombok.*;
 @AllArgsConstructor
 @Entity(name = "category")
 @Table(name = "category")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
 
     @Id
     @Column(name = "name", unique = true)
     private String name;
+<<<<<<< HEAD
+=======
 
     @OneToMany
     private List<Item> itemList;
@@ -22,4 +29,6 @@ public class Category {
     public void addItem(Item item){
         this.itemList.add(item);
     }
+
+>>>>>>> 0f9b822218c194f2cd04404a2a1953b811b0beee
 }
