@@ -18,17 +18,17 @@ public class CategoryController {
     public CategoryController(CategoryService service) {
         this.service = service;
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<Category>> getAllCategory() {
         return ResponseEntity.ok(this.service.getAllCategory());
 
     }
-    @GetMapping("/{category}")
-    public ResponseEntity<Boolean>isCategoryPresent(@Valid @RequestBody   String categoryName)  {
+    @GetMapping("/is_present")
+    public ResponseEntity<Boolean>isCategoryPresent(@Valid @RequestParam String categoryName)  {
         return ResponseEntity.ok( this.service.isCategoryPresent(categoryName));
     }
-    @DeleteMapping("/{category}")
-    public ResponseEntity<?> deleteCategory(@PathVariable String categoryName) throws CategoryNotFoundException {
+    @DeleteMapping
+    public ResponseEntity<String> deleteCategory(@RequestParam String categoryName) throws CategoryNotFoundException {
         this.service.deleteCategory(categoryName);
         return ResponseEntity.ok("success");
     }
@@ -38,6 +38,5 @@ public class CategoryController {
         return ResponseEntity.ok(this.service.postCategory(category));
 
     }
-
-    }
+}
 
