@@ -142,6 +142,29 @@ public class ApiExceptionHandler {
         LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
+    
+    @ExceptionHandler(value = {GrapeTypeNotFoundException.class})
+    protected ResponseEntity<Object> handleApiRequestException(GrapeTypeNotFoundException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(value = {ContributionNotFoundException.class})
+    protected ResponseEntity<Object> handleApiRequestException(ContributionNotFoundException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
 
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
