@@ -69,7 +69,7 @@ public class CategoryControllerTest {
         ResponseEntity<String> responseEntity = categoryController.deleteCategory(categoryName);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("succes", responseEntity.getBody());
+        assertEquals("success", responseEntity.getBody());
         verify(categoryService, times(1)).deleteCategory(categoryName);
     }
 
