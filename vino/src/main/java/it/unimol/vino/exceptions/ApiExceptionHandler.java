@@ -144,7 +144,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(CategoryNotFoundException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                e,
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
@@ -155,7 +154,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(CategoryExistingException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                e,
                 HttpStatus.CONFLICT,
                 ZonedDateTime.now()
         );
