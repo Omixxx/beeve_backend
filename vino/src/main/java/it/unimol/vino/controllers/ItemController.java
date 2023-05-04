@@ -1,11 +1,12 @@
 package it.unimol.vino.controllers;
 
 
+import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.ItemNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.entity.Item;
 
-import it.unimol.vino.models.request.MappingItemRequest;
+
 import it.unimol.vino.models.request.RegisterItemRequest;
 
 import it.unimol.vino.services.ItemService;
@@ -35,7 +36,7 @@ public class ItemController {
     }
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid RegisterItemRequest registerItemRequest)
-            throws UserAlreadyRegistered{
+            throws UserAlreadyRegistered, CategoryNotFoundException {
 
         return ResponseEntity.ok(this.itemService.itemRegister(registerItemRequest));
     }

@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
-
 import java.util.Date;
 import java.util.List;
 
@@ -36,8 +34,12 @@ public class Item {
     @JsonIgnore
     private List<ProviderSupplyItem> providerSupplyItemList;
 
+    @ManyToOne
+    @JsonIgnore
+    private Category category;
 
-    public void addMapping(@NonNull Provider provider, @NonNull Long quantity , @NonNull Date date){
+
+    public void addProviderMapping(@NonNull Provider provider, @NonNull Integer quantity , @NonNull Date date){
 
         ProviderSupplyItem providerSupplyItem = new ProviderSupplyItem(
                 quantity,
@@ -48,9 +50,7 @@ public class Item {
 
         this.providerSupplyItemList.add(providerSupplyItem);
 
-
         }
-
 
     }
 

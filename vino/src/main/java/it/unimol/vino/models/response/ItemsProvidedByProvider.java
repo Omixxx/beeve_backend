@@ -19,7 +19,7 @@ public class ItemsProvidedByProvider {
 
     private String description;
 
-    private Long quantity;
+    private Integer quantity;
 
     private Date date;
 }

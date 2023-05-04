@@ -2,10 +2,13 @@
 package it.unimol.vino.services;
 
 import it.unimol.vino.exceptions.CategoryNotFoundException;
-import it.unimol.vino.exceptions.CategoryExistingException;
+import it.unimol.vino.exceptions.CategoryAlreadyExistingException;
 import it.unimol.vino.models.entity.Category;
+import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,14 +27,17 @@ public class CategoryService {
     public List<Category> getAllCategory(){
      return this.categoryRepository.findAll();}
 
-    public Category postCategory(Category category) throws CategoryExistingException {
-        if(this.categoryRepository.findByName(category.getName()).isPresent())
-            throw new CategoryExistingException("categoria già esistente");
-        var cate = Category.builder()
-                .name(category.getName())
+    public String postCategory(CategoryRequest request) throws CategoryAlreadyExistingException {
+        if(this.categoryRepository.findByName(request.getName()).isPresent())
+            throw new CategoryAlreadyExistingException("categoria già esistente");
+
+        var category = Category.builder()
+                .name(request.getName())
+                .itemList(new ArrayList<>())
                 .build();
 
-         return this.categoryRepository.save(cate);
+        this.categoryRepository.save(category);
+         return "Registrato";
 
     }
 

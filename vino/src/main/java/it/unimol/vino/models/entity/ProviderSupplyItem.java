@@ -18,7 +18,7 @@ public class ProviderSupplyItem implements Serializable{
 
 
     @Column(name = "quantity")
-    private Long quantity;
+    private Integer quantity;
 
     @Column(name = "date")
     private Date date;

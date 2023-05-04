@@ -1,11 +1,14 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.ItemNotFoundException;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
+import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.models.entity.Item;
 import it.unimol.vino.models.entity.Provider;
-import it.unimol.vino.models.request.MappingItemRequest;
+
 import it.unimol.vino.models.request.RegisterItemRequest;
+import it.unimol.vino.repository.CategoryRepository;
 import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProviderRepository;
 import jakarta.transaction.Transactional;
@@ -20,10 +23,13 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ProviderRepository providerRepository;
 
+    private final CategoryRepository categoryRepository;
 
-    public ItemService(ItemRepository itemRepository, ProviderRepository providerRepository) {
+
+    public ItemService(ItemRepository itemRepository, ProviderRepository providerRepository, CategoryRepository categoryRepository) {
         this.itemRepository = itemRepository;
         this.providerRepository = providerRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public Item getItem(Long id){
@@ -42,6 +48,9 @@ public class ItemService {
         Provider provider = this.providerRepository.findById(provider_id).orElseThrow(
                 () -> new ProviderNotFoundException("IL provider con ID " + provider_id + " non è stato trovato")
         );
+        Category category = this.categoryRepository.findByName(request.getCategoryName()).orElseThrow(
+                ()-> new CategoryNotFoundException("La categoria con nome: " +request.getCategoryName()+" non è stata trovata")
+        );
 
 
 
@@ -49,10 +58,11 @@ public class ItemService {
                 .capacity(request.getCapacity())
                 .description(request.getDescription())
                 .providerSupplyItemList(new ArrayList<>())
+                .category(category)
                 .build();
 
-        item.addMapping(provider,request.getQuantity(),request.getDate());
-
+        item.addProviderMapping(provider,request.getQuantity(),request.getDate());
+        category.addItem(item);
         this.itemRepository.save(item);
 
          return "Registrato";

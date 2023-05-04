@@ -29,7 +29,10 @@ public class RegisterItemRequest {
     private Date date;
 
     @NonNull()
-    private Long quantity;
+    private Integer quantity;
+
+    @NonNull()
+    private String categoryName;
 
 
 }
