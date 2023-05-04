@@ -2,6 +2,8 @@ package it.unimol.vino.models.entity;;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 
 @Getter
 @Setter

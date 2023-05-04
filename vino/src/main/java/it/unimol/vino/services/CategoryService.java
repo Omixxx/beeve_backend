@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -22,31 +23,31 @@ public class CategoryService {
     }
 
     public boolean isCategoryPresent(String categoryName) {
-        return this.categoryRepository.findByName(categoryName).isPresent();
+        return this.categoryRepository.findByName(categoryName.toUpperCase()).isPresent();
     }
     public List<Category> getAllCategory(){
      return this.categoryRepository.findAll();}
 
-    public String postCategory(CategoryRequest request) throws CategoryAlreadyExistingException {
-        if(this.categoryRepository.findByName(request.getName()).isPresent())
+    public Category postCategory(CategoryRequest request) throws CategoryAlreadyExistingException {
+        if(this.isCategoryPresent(request.getName()))
             throw new CategoryAlreadyExistingException("categoria già esistente");
 
         var category = Category.builder()
-                .name(request.getName())
+                .name(request.getName().toUpperCase())
                 .itemList(new ArrayList<>())
                 .build();
 
         this.categoryRepository.save(category);
-         return "Registrato";
+         return category;
 
     }
 
-        public void deleteCategory(String categoryName)throws CategoryNotFoundException {
-
-            if(this.categoryRepository.findByName(categoryName).isEmpty()){
-                throw new CategoryNotFoundException("categoria non trovata");
-            }
-               this.categoryRepository.deleteByName(categoryName);
+    public void deleteCategory(String categoryName)throws CategoryNotFoundException {
+        Optional<Category> category=this.categoryRepository.findByName(categoryName.toUpperCase());
+        if(((Optional<?>) category).isEmpty()){
+            throw new CategoryNotFoundException("categoria non trovata");
+        }
+        this.categoryRepository.delete(category.get());
     }
 
 }

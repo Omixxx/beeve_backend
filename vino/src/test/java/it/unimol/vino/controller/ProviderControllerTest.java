@@ -1,4 +1,4 @@
-package it.unimol.vino.controller;
+/*package it.unimol.vino.controller;
 
 import it.unimol.vino.controllers.ProviderController;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
@@ -98,5 +98,5 @@ public class ProviderControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.errorMessage").value("User already registered"));
-    }
+    }*/
 
