@@ -1,18 +1,17 @@
 package it.unimol.vino.models.entity;
 
 
+import it.unimol.vino.exceptions.StateNotFoundException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.util.*;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor(force = true)
 @Entity
 public class Process {
@@ -24,11 +23,11 @@ public class Process {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date creationDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @NonNull
-    private ProcessHasStates currentState;
-
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "process",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
     @NonNull
     List<ProcessHasStates> states;
 
@@ -70,20 +69,27 @@ public class Process {
         this.states.add(processHasStates);
     }
 
-    public void setCurrentState(@NotNull ProcessHasStates state) {
-        this.currentState = state;
-    }
-
-
-    public void setNextState() {
-        this.setCurrentState(this.getNextState());
-    }
-
-    //todo: handle exception if there is no next state
     public ProcessHasStates getNextState() {
-        List<ProcessHasStates> sortedStates = this.states.stream()
+        List<ProcessHasStates> sortedStates = this.getStates();
+        ProcessHasStates currentState = this.getCurrentState().orElseThrow(
+                () -> new StateNotFoundException("Il processo non possiede uno stato corrente")
+        );
+
+        return sortedStates.stream().filter(state -> state.getSequence().equals(currentState.getSequence() + 1))
+                .findFirst().orElseThrow(() -> new StateNotFoundException("Non ci sono stati successivi"));
+    }
+
+    public List<ProcessHasStates> getStates() {
+        return this.states.stream()
                 .sorted(Comparator.comparing(ProcessHasStates::getSequence))
                 .toList();
-        return sortedStates.get(sortedStates.indexOf(this.currentState) + 1);
+    }
+
+    public Optional<ProcessHasStates> getCurrentState() {
+        return this.states
+                .stream()
+                .filter(state -> Objects.nonNull(state.getStartDate()) &&
+                        Objects.isNull(state.getEndDate()))
+                .findFirst();
     }
 }

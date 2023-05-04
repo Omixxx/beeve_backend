@@ -21,19 +21,28 @@ public class ProcessController {
         );
     }
 
-    @PutMapping("/{processId}/progressState")
-    public ResponseEntity<String> progressState(@PathVariable Long processId) {
-        return ResponseEntity.ok("Processo " +
-                this.processService.progressState(processId) + " aggiornato con successo"
-        );
-    }
-
     @PutMapping("/addState")
     public ResponseEntity<String> addStates(@RequestBody @Valid AddStateToProcessRequest request) {
         this.processService.addState(request);
         return ResponseEntity.ok("Stato " +
                 request.getStateId() + " aggiunto al processo " +
                 request.getProcessId() + " con successo"
+        );
+    }
+
+    @PostMapping("/{process_id}/start")
+    public ResponseEntity<String> startProcess(@PathVariable("process_id") Long processId) {
+        this.processService.startProcess(processId);
+        return ResponseEntity.ok("Processo " +
+                processId + " avviato con successo"
+        );
+    }
+
+    @PostMapping("/{process_id}/progress")
+    public ResponseEntity<String> progressProcess(@PathVariable("process_id") Long processId) {
+        return ResponseEntity.ok("Processo " +
+                processId + " avanzato con successo verso lo stato " +
+                this.processService.progressState(processId)
         );
     }
 

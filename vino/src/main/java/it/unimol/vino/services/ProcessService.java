@@ -1,8 +1,11 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.exceptions.ProcessAlreadyStarted;
+import it.unimol.vino.exceptions.ProcessHasNoStatesException;
 import it.unimol.vino.exceptions.ProcessNotFoundException;
 import it.unimol.vino.exceptions.StateNotFoundException;
 import it.unimol.vino.models.entity.Process;
+import it.unimol.vino.models.entity.ProcessHasStates;
 import it.unimol.vino.models.entity.State;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
@@ -12,6 +15,7 @@ import it.unimol.vino.utils.Sorter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 
 @Service
@@ -35,14 +39,6 @@ public class ProcessService {
         return this.processRepository.save(process).getId();
     }
 
-    public String progressState(Long processId) {
-        Process process = this.processRepository.findById(processId).orElseThrow(
-                () -> new ProcessNotFoundException("Processo non trovato")
-        );
-
-        process.setNextState();
-        return process.getCurrentState().getState().getName();
-    }
 
     public void addState(AddStateToProcessRequest request) {
         Process process = this.processRepository.findById(request.getProcessId()).orElseThrow(
@@ -56,4 +52,35 @@ public class ProcessService {
         process.addState(state, request.getSequence());
     }
 
+    public void startProcess(Long processId) {
+        Process process = this.processRepository.findById(processId).orElseThrow(
+                () -> new ProcessNotFoundException("Processo non trovato")
+        );
+
+        if (process.getStates().isEmpty())
+            throw new ProcessHasNoStatesException("Il processo non ha stati");
+
+        if (process.getCurrentState().isPresent())
+            throw new ProcessAlreadyStarted("Il processo è gia stato avviato");
+
+        ProcessHasStates initialState = process.getStates().get(0);
+        initialState.setStartDate(new Date());
+        this.processRepository.save(process);
+    }
+
+
+    public String progressState(Long processId) {
+        Process process = this.processRepository.findById(processId).orElseThrow(
+                () -> new ProcessNotFoundException("Processo non trovato")
+        );
+
+        if (process.getCurrentState().isEmpty())
+            throw new ProcessAlreadyStarted("Il processo non è stato avviato, quindi non può progredire");
+
+        process.getCurrentState().get().setEndDate(new Date());
+
+        ProcessHasStates nextState = process.getNextState();
+        nextState.setStartDate(new Date());
+        return nextState.getState().getName();
+    }
 }
