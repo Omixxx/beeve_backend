@@ -1,16 +1,15 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.exceptions.ItemNotFoundException;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.models.entity.Item;
 import it.unimol.vino.models.entity.Provider;
-import it.unimol.vino.models.entity.ProviderSupplyItem;
+import it.unimol.vino.models.request.MappingItemRequest;
 import it.unimol.vino.models.request.RegisterItemRequest;
 import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProviderRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,31 +26,46 @@ public class ItemService {
         this.providerRepository = providerRepository;
     }
 
-    public List<Item> getItem(Long id){
-        if(id != null){
-            return this.itemRepository.findAllById(id);
-        } else {
-            return this.itemRepository.findAll();
-        }
+    public Item getItem(Long id){
+            return this.itemRepository.findById(id).orElse(null);
+    }
+
+    public  List<Item> getItems(){
+        return this.itemRepository.findAll();
     }
 
     @Transactional
-    public Long itemRegister(@Valid RegisterItemRequest request) {
+    public String itemRegister(@Valid RegisterItemRequest request) {
 
         Long provider_id = request.getProvider_id();
+
         Provider provider = this.providerRepository.findById(provider_id).orElseThrow(
-                () -> new ProviderNotFoundException("Il provider con ID " + provider_id + " non è stato trovato")
+                () -> new ProviderNotFoundException("IL provider con ID " + provider_id + " non è stato trovato")
         );
+
 
 
         var item = Item.builder()
                 .capacity(request.getCapacity())
                 .description(request.getDescription())
+                .providerSupplyItemList(new ArrayList<>())
                 .build();
 
-        item.addMapping(provider,request.getProviderSupplyItem());
+        item.addMapping(provider,request.getQuantity(),request.getDate());
 
-        return this.itemRepository.save(item).getId();
+        this.itemRepository.save(item);
 
+         return "Registrato";
+
+    }
+
+    @Transactional
+    public String deleteItem(Long item_id){
+        Item item = this.itemRepository.findById(item_id).orElseThrow(
+                () -> new ItemNotFoundException("L'item con ID " + item_id + " non è stato trovato")
+        );
+
+        this.itemRepository.delete(item);
+        return "Item è stato eliminato con successo";
     }
 }

@@ -4,21 +4,18 @@ package it.unimol.vino.models.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
-@Data
+@Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Entity(name="provider_supply")
-@Table(name="provider_supply")
-public class ProviderSupplyItem {
+@EqualsAndHashCode
+@IdClass(ProviderSupplyItemId.class)
+public class ProviderSupplyItem implements Serializable{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "quantity")
     private Long quantity;
@@ -26,12 +23,13 @@ public class ProviderSupplyItem {
     @Column(name = "date")
     private Date date;
 
+    @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="provider_id")
     private Provider provider;
 
+
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="item_id")
     private Item item;
 
 }

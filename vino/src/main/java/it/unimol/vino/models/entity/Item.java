@@ -1,11 +1,13 @@
 package it.unimol.vino.models.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -17,7 +19,7 @@ import java.util.List;
 @Entity(name="item")
 @Table(name="item")
 
-public class Item implements Serializable {
+public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,22 +33,22 @@ public class Item implements Serializable {
     private String description;
 
     @OneToMany(mappedBy = "item" , orphanRemoval = true, cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<ProviderSupplyItem> providerSupplyItemList;
 
 
-    public void addMapping(@NonNull Provider provider, @NonNull ProviderSupplyItem providerSupplyItem){
+    public void addMapping(@NonNull Provider provider, @NonNull Long quantity , @NonNull Date date){
 
-        ProviderSupplyItem providerSupplyItem1 = ProviderSupplyItem.builder()
-                .quantity(providerSupplyItem.getQuantity())
-                .item(this)
-                .provider(provider)
-                .date(providerSupplyItem.getDate())
-                .build();
+        ProviderSupplyItem providerSupplyItem = new ProviderSupplyItem(
+                quantity,
+                date,
+                provider,
+                this);
 
-        if(this.providerSupplyItemList ==null){
-            this.providerSupplyItemList=new ArrayList<>();
-        }
-        this.providerSupplyItemList.add(providerSupplyItem1);
+
+        this.providerSupplyItemList.add(providerSupplyItem);
+
+
         }
 
 

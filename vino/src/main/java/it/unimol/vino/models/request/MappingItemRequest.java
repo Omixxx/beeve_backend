@@ -2,7 +2,6 @@ package it.unimol.vino.models.request;
 
 
 import it.unimol.vino.models.entity.ProviderSupplyItem;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.util.Date;
@@ -11,14 +10,10 @@ import java.util.Date;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
-public class RegisterItemRequest {
+public class MappingItemRequest {
 
     @NonNull()
-    @Positive
-    private Long capacity;
-
-    @NonNull()
-    private String description;
+    private Long item_id;
 
     @NonNull()
     private Long provider_id;
@@ -28,8 +23,4 @@ public class RegisterItemRequest {
 
     @NonNull()
     private Long quantity;
-
-
-    public RegisterItemRequest(Long providerId, Long capacity, String description, ProviderSupplyItem providerSupplyItem) {
-    }
 }
