@@ -33,6 +33,7 @@ class AuthControllerTest {
         authService = mock(AuthService.class);
         authController = new AuthController(authService);
     }
+    
 
     @Test
     void register_withValidRequest_shouldReturn200OK() throws PasswordNotValidException, UserAlreadyRegistered {

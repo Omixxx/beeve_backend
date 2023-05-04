@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
 @Entity(name="item")

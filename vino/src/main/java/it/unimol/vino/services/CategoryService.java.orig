@@ -28,26 +28,35 @@ public class CategoryService {
     public List<Category> getAllCategory(){
      return this.categoryRepository.findAll();}
 
-    public Category postCategory(CategoryRequest request) throws CategoryAlreadyExistingException {
-        if(this.isCategoryPresent(request.getName()))
+<<<<<<< HEAD
+    public Category postCategory(Category category) throws CategoryExistingException {
+        if(this.categoryRepository.findByName(category.getName()).isPresent())
+            throw new CategoryExistingException("categoria già esistente");
+        Category cate = Category.builder()
+                .name(category.getName().toUpperCase())
+=======
+    public String postCategory(CategoryRequest request) throws CategoryAlreadyExistingException {
+        if(this.categoryRepository.findByName(request.getName()).isPresent())
             throw new CategoryAlreadyExistingException("categoria già esistente");
 
         var category = Category.builder()
-                .name(request.getName().toUpperCase())
+                .name(request.getName())
                 .itemList(new ArrayList<>())
+>>>>>>> 0f9b822218c194f2cd04404a2a1953b811b0beee
                 .build();
 
         this.categoryRepository.save(category);
-         return category;
+         return "Registrato";
 
     }
 
-    public void deleteCategory(String categoryName)throws CategoryNotFoundException {
-        Optional<Category> category=this.categoryRepository.findByName(categoryName.toUpperCase());
-        if(((Optional<?>) category).isEmpty()){
-            throw new CategoryNotFoundException("categoria non trovata");
-        }
-        this.categoryRepository.delete(category.get());
+        public void deleteCategory(String categoryName)throws CategoryNotFoundException {
+         Optional<Category> category=this.categoryRepository.findByName(categoryName.toUpperCase());
+            if(category.isEmpty()){
+                throw new CategoryNotFoundException("categoria non trovata");
+            }
+              this.categoryRepository.delete(category.get());
     }
 
 }
+

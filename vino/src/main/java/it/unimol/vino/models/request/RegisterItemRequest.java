@@ -2,8 +2,6 @@ package it.unimol.vino.models.request;
 
 
 import it.unimol.vino.models.entity.ProviderSupplyItem;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
@@ -35,4 +33,6 @@ public class RegisterItemRequest {
     private String categoryName;
 
 
+    public RegisterItemRequest(Long providerId, Long capacity, String description, ProviderSupplyItem providerSupplyItem) {
+    }
 }
