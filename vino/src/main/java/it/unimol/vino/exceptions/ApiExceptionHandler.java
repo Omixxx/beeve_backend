@@ -201,7 +201,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(ProcessNotFoundException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                e,
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
@@ -212,7 +211,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(StateNotFoundException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                e,
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
@@ -223,7 +221,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(ProcessHasNoStatesException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                e,
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
@@ -234,7 +231,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(ProcessAlreadyStarted e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                e,
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );

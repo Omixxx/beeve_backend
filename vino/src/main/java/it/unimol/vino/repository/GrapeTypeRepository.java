@@ -6,17 +6,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 
-public interface GrapeTypeRepository extends JpaRepository<GrapeType,Long>{
-    
-    void delete(String name);
+@Repository
+public interface GrapeTypeRepository extends JpaRepository<GrapeType, Long> {
+
 
     boolean existsById(String name);
 
     Optional<GrapeType> findById(String id);
-
-
 
     Optional<List<GrapeType>> findByColor(String color);
 
@@ -25,4 +24,5 @@ public interface GrapeTypeRepository extends JpaRepository<GrapeType,Long>{
     void deleteAllByColor(String color);
 
     void deleteAllBySpecies(String species);
+
 }

@@ -13,6 +13,7 @@ import it.unimol.vino.models.response.ProviderBookResponse;
 import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProviderRepository;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -20,19 +21,12 @@ import java.util.List;
 
 
 @Service
+@AllArgsConstructor
 public class ProviderService {
 
     private final ProviderRepository providerRepository;
-    private final ItemRepository itemRepository;
     private final ProviderDTOMapper providerDTOMapper;
 
-
-
-    public ProviderService(ProviderRepository providerRepository, ItemRepository itemRepository, ProviderDTOMapper providerDTOMapper) {
-        this.providerRepository = providerRepository;
-        this.itemRepository = itemRepository;
-        this.providerDTOMapper = providerDTOMapper;
-    }
 
     public List<Provider> getAll() {
         return this.providerRepository.findAll();
@@ -44,7 +38,7 @@ public class ProviderService {
             throw new UserAlreadyRegistered("Email already in use");
         }
 
-        var provider = Provider.builder()
+        Provider provider = Provider.builder()
                 .name(request.getName())
                 .phone_number(request.getPhone_number())
                 .email(request.getEmail())
@@ -59,14 +53,14 @@ public class ProviderService {
 
     public List<ItemsProvidedByProvider> getAllProvidedItemsById(Long id) {
 
-        Provider provider = this.providerRepository.findById(id).orElseThrow(
+        this.providerRepository.findById(id).orElseThrow(
                 () -> new ProviderNotFoundException("IL provider con ID " + id + " non è stato trovato")
         );
 
         return this.providerRepository.findProvidedItemsById(id);
     }
 
-    public List<ProviderBookResponse> getProviderBook(){
+    public List<ProviderBookResponse> getProviderBook() {
 
         return this.providerRepository.findAll()
                 .stream()

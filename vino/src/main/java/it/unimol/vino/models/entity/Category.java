@@ -1,4 +1,6 @@
-package it.unimol.vino.models.entity;;
+package it.unimol.vino.models.entity;
+
+;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +23,7 @@ public class Category {
     @OneToMany
     private List<Item> itemList;
 
-    public void addItem(Item item){
+    public void addItem(Item item) {
         this.itemList.add(item);
     }
 }

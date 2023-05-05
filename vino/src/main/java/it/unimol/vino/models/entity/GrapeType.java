@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "grape_type")
 @EqualsAndHashCode()
 public class GrapeType {
-    
+
     @Id
     @NotBlank(message = "Il nome non può essere vuoto")
     @Column(name = "grape_type")

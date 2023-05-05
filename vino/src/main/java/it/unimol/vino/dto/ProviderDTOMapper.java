@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import java.util.function.Function;
 
 @Service
-public class ProviderDTOMapper implements Function<Provider,ProviderBookResponse> {
+public class ProviderDTOMapper implements Function<Provider, ProviderBookResponse> {
 
     @Override
     public ProviderBookResponse apply(Provider provider) {
-        return  new ProviderBookResponse(
+        return new ProviderBookResponse(
                 provider.getId(),
                 provider.getName(),
                 provider.getPhone_number(),
