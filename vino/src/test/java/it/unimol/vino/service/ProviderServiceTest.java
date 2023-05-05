@@ -1,10 +1,13 @@
 package it.unimol.vino.service;
-
+import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.RegisterProviderRequest;
+import it.unimol.vino.models.response.ItemsProvidedByProvider;
+import it.unimol.vino.models.response.ProviderBookResponse;
 import it.unimol.vino.repository.ProviderRepository;
 import it.unimol.vino.services.ProviderService;
+import it.unimol.vino.dto.ProviderDTOMapper;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -14,14 +17,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ProviderServiceTest {
+    private ProviderDTOMapper providerDTOMapper;
 
     private static final Long ID = 1L;
     private static final String NAME = "Provider Name";
@@ -29,8 +35,6 @@ class ProviderServiceTest {
     private static final String EMAIL = "email@example.com";
     private static final String ADDRESS = "Provider Address";
     private static final String WEBSITE_URL = "http://www.provider.com";
-
-    private Validator validator;
 
     @Mock
     private ProviderRepository providerRepository;
@@ -41,8 +45,10 @@ class ProviderServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        providerDTOMapper = new ProviderDTOMapper();
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+        Validator validator = factory.getValidator();
+        providerService = new ProviderService(providerRepository, providerDTOMapper);
     }
 
     @Test
@@ -80,18 +86,83 @@ class ProviderServiceTest {
         verify(providerRepository).findByEmail(EMAIL);
         verify(providerRepository, never()).save(any(Provider.class));
     }
+
     @Test
-    void testGetAllEmpty() {
-        when(providerRepository.findAll()).thenReturn(Collections.emptyList());
+    void testGetAllProvidedItemsById() {
+        Long id = 1L;
 
-        List<Provider> actualProviders = providerService.getAll();
+        Provider provider = new Provider();
+        provider.setId(id);
 
-        assertTrue(actualProviders.isEmpty());
-        verify(providerRepository).findAll();
+        ItemsProvidedByProvider expectedItems = new ItemsProvidedByProvider();
+        when(providerRepository.findById(id)).thenReturn(Optional.of(provider));
+        when(providerRepository.findProvidedItemsById(id)).thenReturn(Collections.singletonList(expectedItems));
+
+        List<ItemsProvidedByProvider> actualItems = providerService.getAllProvidedItemsById(id);
+
+        assertEquals(Collections.singletonList(expectedItems), actualItems);
+        verify(providerRepository).findById(id);
+        verify(providerRepository).findProvidedItemsById(id);
     }
 
+    @Test
+    void testGetAllProvidedItemsByIdThrowsProviderNotFoundException() {
+        Long id = 1L;
+
+        when(providerRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(ProviderNotFoundException.class, () -> providerService.getAllProvidedItemsById(id));
+
+        verify(providerRepository).findById(id);
+        verify(providerRepository, never()).findProvidedItemsById(id);
+    }
+    @Test
+    void testGetProviderBook() {
+
+        List<Provider> providers = new ArrayList<>();
+        providers.add(
+                Provider.builder()
+                        .id(1L)
+                        .name("Provider A")
+                        .phone_number("1234567890")
+                        .email("providerA@example.com")
+                        .build()
+        );
+        providers.add(
+                Provider.builder()
+                        .id(2L)
+                        .name("Provider B")
+                        .phone_number("0987654321")
+                        .email("providerB@example.com")
+                        .build()
+        );
 
 
+        when(providerRepository.findAll()).thenReturn(providers);
+
+        List<ProviderBookResponse> expected = new ArrayList<>();
+        expected.add(
+                new ProviderBookResponse(
+                        1L,
+                        "Provider A",
+                        "1234567890",
+                        "providerA@example.com"
+                )
+        );
+        expected.add(
+                new ProviderBookResponse(
+                        2L,
+                        "Provider B",
+                        "0987654321",
+                        "providerB@example.com"
+                )
+        );
+
+
+        List<ProviderBookResponse> actual = providerService.getProviderBook();
+
+
+        assertEquals(expected, actual);
+    }
 }
-
 
