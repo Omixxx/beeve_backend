@@ -5,6 +5,7 @@ import it.unimol.vino.exceptions.StateNotFoundException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -19,9 +20,28 @@ public class Process {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "created_by", nullable = false, updatable = false)
+    private User creator;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date creationDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "deleted_by")
+    private User deleter;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "deletion_date")
+    private Date deletionDate;
+
+    @Column(name = "deletion_description")
+    private String deletionDescription;
+
+    @OneToMany
+    private List<UserModifyProcess> modifiers;
+
 
     @OneToMany(
             mappedBy = "process",
@@ -30,6 +50,11 @@ public class Process {
     )
     @NonNull
     List<ProcessHasStates> states;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ProcessHasStates currentState;
+
 
     @NonNull
     @Min(value = 0, message = "Wine waste must be greater than 0")

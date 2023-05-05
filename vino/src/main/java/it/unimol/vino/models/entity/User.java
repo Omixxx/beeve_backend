@@ -35,9 +35,20 @@ public class User implements UserDetails, Serializable {
     private String email;
     private String password;
 
-    // ci serve per dire a spring di usare il valore come se fosse una stringa
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Process> deletedProcesses;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Process> createdProcesses;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Process> updatedProcesses;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Process> modifiedProcesses;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserSectorPermission> permissions;
