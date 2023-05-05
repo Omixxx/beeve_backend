@@ -31,6 +31,14 @@ public class Process {
     @NonNull
     List<ProcessHasStates> states;
 
+    @OneToMany(
+            mappedBy = "process",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    @NonNull
+    List<ProcessUseItem> item;
+
     @NonNull
     @Min(value = 0, message = "Wine waste must be greater than 0")
     @Column(nullable = false)
@@ -47,7 +55,7 @@ public class Process {
     private Integer currentWaste;
 
 
-    public Process(@NotEmpty Map<State, Integer> stateSequenceMap) {
+    public Process(@NotEmpty Map<State, Integer> stateSequenceMap, @NotEmpty Map<Item, Integer> itemList) {
         this.currentWaste = 0;
         this.stalkWaste = 0;
         this.wineWaste = 0;
@@ -57,6 +65,11 @@ public class Process {
             this.states = new ArrayList<>();
 
         stateSequenceMap.forEach(this::addState);
+
+        if (Objects.isNull(this.item))
+            this.item = new ArrayList<>();
+
+        itemList.forEach(this::addItem);
     }
 
     public void addState(State state, Integer sequence) {
@@ -91,5 +104,15 @@ public class Process {
                 .filter(state -> Objects.nonNull(state.getStartDate()) &&
                         Objects.isNull(state.getEndDate()))
                 .findFirst();
+    }
+
+    public void addItem(Item item ,Integer used_quantity){
+        ProcessUseItem processUseItem = ProcessUseItem.builder()
+                .item(item)
+                .process(this)
+                .usedQuantity(used_quantity)
+                .build();
+
+        this.item.add(processUseItem);
     }
 }

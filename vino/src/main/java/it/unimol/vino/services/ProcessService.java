@@ -1,22 +1,18 @@
 package it.unimol.vino.services;
 
-import it.unimol.vino.exceptions.ProcessAlreadyStarted;
-import it.unimol.vino.exceptions.ProcessHasNoStatesException;
-import it.unimol.vino.exceptions.ProcessNotFoundException;
-import it.unimol.vino.exceptions.StateNotFoundException;
+import it.unimol.vino.exceptions.*;
+import it.unimol.vino.models.entity.*;
 import it.unimol.vino.models.entity.Process;
-import it.unimol.vino.models.entity.ProcessHasStates;
-import it.unimol.vino.models.entity.State;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
+import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
 import it.unimol.vino.utils.Sorter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +20,7 @@ public class ProcessService {
 
     private final ProcessRepository processRepository;
     private final StateRepository stateRepository;
+    private final ItemRepository itemRepository;
 
     public Long createNewProcess(NewProcessRequest request) {
         HashMap<State, Integer> stateSequenceMap = new HashMap<>();
@@ -35,7 +32,21 @@ public class ProcessService {
         });
         Sorter.sortMapByValue(stateSequenceMap);
 
-        Process process = new Process(stateSequenceMap);
+        HashMap<Item, Integer> items = new HashMap<>();
+        request.getItemIdUsedQuantity().forEach((itemId, quantity) -> {
+            Item item = this.itemRepository.findById(itemId).orElseThrow(
+                    () -> new ItemNotFoundException("Item con id " + itemId + " non trovato")
+            );
+            Integer total_quantity = item.getProviderSupplyItemList().get(0).getQuantity();
+            if(total_quantity < quantity)
+                throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() + " richiesta: " + quantity + " disponibile: " + item.getProviderSupplyItemList().get(0).getQuantity());
+            item.getProviderSupplyItemList().get(0).setQuantity(total_quantity - quantity);
+            items.put(item, quantity);
+        });
+
+
+
+        Process process = new Process(stateSequenceMap, items);
         return this.processRepository.save(process).getId();
     }
 
