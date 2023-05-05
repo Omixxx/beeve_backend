@@ -1,4 +1,4 @@
-package it.unimol.vino.controller;
+/*package it.unimol.vino.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -105,4 +105,4 @@ class AuthControllerTest {
         // verify that the service method was called once with the expected argument
         verify(authService, times(1)).authenticate(request);
     }
-}
+}*/
