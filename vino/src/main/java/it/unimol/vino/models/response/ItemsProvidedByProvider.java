@@ -22,4 +22,5 @@ public class ItemsProvidedByProvider {
     private Integer quantity;
 
     private Date date;
+
 }

@@ -1,126 +1,77 @@
-/*package it.unimol.vino.controller;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
+package it.unimol.vino.controller;
 
 import it.unimol.vino.controllers.CategoryController;
-import it.unimol.vino.exceptions.CategoryNotFoundException;
-import it.unimol.vino.exceptions.CategoryAlreadyExistingException;
 import it.unimol.vino.models.entity.Category;
-import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.services.CategoryService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import java.util.ArrayList;
+import java.util.List;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import it.unimol.vino.exceptions.CategoryExistingException;
-import it.unimol.vino.exceptions.CategoryNotFoundException;
-import it.unimol.vino.models.entity.Category;
-import it.unimol.vino.services.CategoryService;
-
-@SpringBootTest
-public class CategoryControllerTest {
-
-    private CategoryController categoryController;
+class CategoryControllerTest {
 
     @Mock
     private CategoryService categoryService;
 
+    @InjectMocks
+    private CategoryController categoryController;
+
+    private MockMvc mockMvc;
+
     @BeforeEach
-    public void setUp() {
-        categoryService = org.mockito.Mockito.mock(CategoryService.class);
-        categoryController = new CategoryController(categoryService);
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(categoryController).build();
     }
 
     @Test
-    public void testGetAllCategory() {
+    void testGetAllCategory() throws Exception {
         List<Category> categories = new ArrayList<>();
-        categories.add(new Category("Food"));
-        categories.add(new Category("Drink"));
+        categories.add(Category.builder().name("Category 1").build());
+        categories.add(Category.builder().name("Category 2").build());
 
         when(categoryService.getAllCategory()).thenReturn(categories);
 
-        ResponseEntity<List<Category>> responseEntity = categoryController.getAllCategory();
-
-        assertEquals(2, responseEntity.getBody().size());
-        verify(categoryService, times(1)).getAllCategory();
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/category"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Category 1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value("Category 2"))
+                .andDo(print());
     }
 
     @Test
-    public void testIsCategoryPresent() {
-        String categoryName = "Food";
+    void testIsCategoryPresent() throws Exception {
+        when(categoryService.isCategoryPresent("Category 1")).thenReturn(true);
 
-        when(categoryService.isCategoryPresent(categoryName)).thenReturn(true);
-
-        ResponseEntity<Boolean> responseEntity = categoryController.isCategoryPresent(categoryName);
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(true, responseEntity.getBody());
-        verify(categoryService, times(1)).isCategoryPresent(categoryName);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/category/is_present")
+                        .param("categoryName", "Category 1"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("true"))
+                .andDo(print());
     }
 
     @Test
-    public void testDeleteCategory() throws CategoryNotFoundException {
-        String categoryName = "Food";
+    void testDeleteCategory() throws Exception {
+        doNothing().when(categoryService).deleteCategory("Category 1");
 
-        ResponseEntity<String> responseEntity = categoryController.deleteCategory(categoryName);
-
-        ResponseEntity<?> responseEntity = categoryController.deleteCategory(categoryName);
-
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("success", responseEntity.getBody());
-
-        // verify that the service method was called once with the expected argument
-        verify(categoryService, times(1)).deleteCategory(categoryName);
+        mockMvc.perform(delete("/api/v1/category")
+                        .param("categoryName", "Category 1"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("success"))
+                .andDo(print());
     }
 
-    @Test
-    public void testPostCategory() throws CategoryExistingException {
-        Category category = new Category("Food");
-
-        when(categoryService.postCategory(category)).thenReturn(category);
-
-        ResponseEntity<Category> responseEntity = categoryController.postCategory(category);
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("Food", responseEntity.getBody().getName());
-        verify(categoryService, times(1)).postCategory(category);
-    }
-
-    /*
-    @Test
-    void postCategory_withValidCategory_shouldReturnSavedCategory() throws CategoryAlreadyExistingException {
-        CategoryRequest newCategory = new CategoryRequest("newCategory");
-
-        when(categoryService.postCategory(any(CategoryRequest.class))).thenReturn("Registrato");
-
-        ResponseEntity<String> result = categoryController.postCategory(newCategory);
-
-        assertNotNull(result);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(result.getBody().equals("Registrato"), newCategory.getName());
-    }
-
-    @Test
-    void postCategory_withExistingCategory_shouldThrowException() throws CategoryAlreadyExistingException {
-        Category existingCategory = new Category("existingCategory");
-
-        when(categoryService.postCategory(any(Category.class))).thenThrow(CategoryAlreadyExistingException.class);
-
-        assertThrows(CategoryAlreadyExistingException.class, () -> categoryController.postCategory(existingCategory));
-
-        verify(categoryService, times(1)).postCategory(any(Category.class));
-    }
-
-
-}*/
+}
