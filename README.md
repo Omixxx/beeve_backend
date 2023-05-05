@@ -33,13 +33,13 @@ format
 ```java
 @ExceptionHandler(value = {UserNotFoundException.class})
 public ResponseEntity<Object> handleApiRequestException(UserNotFoundException e){
-        ApiException apiException=new ApiException(
-        e.getMessage(),
-        HttpStatus.NOT_FOUND,
-        ZonedDateTime.now()
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiException,HttpStatus.NOT_FOUND);
-        }
+}
 ```
 
 as you can see, with the `@ExceptionHandler` annotation we specify the exception we want to handle and the HttpStatus we
