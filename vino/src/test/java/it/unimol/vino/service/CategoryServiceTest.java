@@ -1,107 +1,97 @@
-/*package it.unimol.vino.service;
+package it.unimol.vino.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import it.unimol.vino.exceptions.CategoryAlreadyExistingException;
+import it.unimol.vino.exceptions.CategoryNotFoundException;
+import it.unimol.vino.models.entity.Category;
+import it.unimol.vino.models.request.CategoryRequest;
+import it.unimol.vino.repository.CategoryRepository;
+import it.unimol.vino.services.CategoryService;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
-import it.unimol.vino.services.CategoryService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import it.unimol.vino.exceptions.CategoryExistingException;
-import it.unimol.vino.exceptions.CategoryNotFoundException;
-import it.unimol.vino.models.entity.Category;
-import it.unimol.vino.repository.CategoryRepository;
-
-@SpringBootTest
-public class CategoryServiceTest {
+class CategoryServiceTest {
 
     @Mock
     private CategoryRepository categoryRepository;
 
+    @InjectMocks
     private CategoryService categoryService;
 
     @BeforeEach
-    public void setUp() {
-        categoryRepository = org.mockito.Mockito.mock(CategoryRepository.class);
-        categoryService = new CategoryService(categoryRepository);
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetAllCategory() {
-        List<Category> categories = new ArrayList<>();
-        categories.add(new Category("Food"));
-        categories.add(new Category("Drink"));
+    void testIsCategoryPresent() {
+        String categoryName = "Red Wines";
+        when(categoryRepository.findByName(categoryName.toUpperCase())).thenReturn(Optional.of(new Category()));
+        boolean isPresent = categoryService.isCategoryPresent(categoryName);
+        Assertions.assertTrue(isPresent);
 
-        when(categoryRepository.findAll()).thenReturn(categories);
-
-        List<Category> result = categoryService.getAllCategory();
-
-        assertEquals(2, result.size());
-        verify(categoryRepository, times(1)).findAll();
-    }
-
-    @Test
-    void getAllCategory_shouldReturnAllCategories() {
-        List<Category> categoryList = new ArrayList<>();
-        categoryList.add(new Category("category1"));
-        categoryList.add(new Category("category2"));
-
-        when(categoryRepository.findAll()).thenReturn(categoryList);
-
-        List<Category> result = categoryService.getAllCategory();
-
-        assertEquals(result.size(), 2);
-    }
-
-    @Test
-    public void testIsCategoryPresentWhenNotExists() {
-        assertFalse(categoryService.isCategoryPresent("Non existing category"));
-    }
-
-    @Test
-    public void testPostCategoryWithExistingCategory() {
-        Category existingCategory = new Category("Food");
-
-        when(categoryRepository.findByName(existingCategory.getName())).thenReturn(Optional.of(existingCategory));
-
-        assertThrows(CategoryExistingException.class, () -> categoryService.postCategory(existingCategory));
-        verify(categoryRepository, times(1)).findByName(existingCategory.getName());
-    }
-
-    @Test
-    void deleteCategory_withExistingCategory_shouldDeleteCategory() throws CategoryNotFoundException {
-        Category category = new Category("categoryToDelete");
-
-        @Test
-        public void testDeleteNonExistingCategory() {
-            assertThrows(CategoryNotFoundException.class, () -> categoryService.deleteCategory("Non existing category"));
-        }
-
-        categoryService.deleteCategory("categoryToDelete");
-
-        verify(categoryRepository, times(1)).findByName(category.getName());
-        verify(categoryRepository, times(1)).deleteByName(category.getName());
-    }
-
-    @Test
-    void deleteCategory_withMissingCategory_shouldThrowException() {
         when(categoryRepository.findByName(anyString())).thenReturn(Optional.empty());
-
-        assertThrows(CategoryNotFoundException.class, () -> {
-            categoryService.deleteCategory("missingCategory");
-        });
-
-        verify(categoryRepository, never()).deleteByName(anyString());
+        isPresent = categoryService.isCategoryPresent("Non Existing Category");
+        Assertions.assertFalse(isPresent);
     }
 
+    @Test
+    void testGetAllCategory() {
+        List<Category> categoryList = new ArrayList<>();
+        categoryList.add(Category.builder().name("Red Wines").build());
+        categoryList.add(Category.builder().name("White Wines").build());
+        when(categoryRepository.findAll()).thenReturn(categoryList);
+        List<Category> allCategories = categoryService.getAllCategory();
+        Assertions.assertEquals(2, allCategories.size());
+        Assertions.assertEquals(categoryList, allCategories);
+    }
 
-}*/
+    @Test
+    void testPostCategory() throws CategoryAlreadyExistingException {
+        String categoryName = "Red Wines";
+        CategoryRequest categoryRequest = new CategoryRequest();
+        categoryRequest.setName(categoryName);
+
+        when(categoryRepository.findByName(categoryName.toUpperCase())).thenReturn(Optional.empty());
+        when(categoryRepository.save(Category.builder().name(categoryName.toUpperCase()).itemList(new ArrayList<>()).build()))
+                .thenReturn(Category.builder().name(categoryName.toUpperCase()).itemList(new ArrayList<>()).build());
+        Category category = categoryService.postCategory(categoryRequest);
+        Assertions.assertEquals(categoryName.toUpperCase(), category.getName());
+    }
+
+    @Test
+    void testDeleteCategory() throws CategoryNotFoundException {
+        String categoryName = "Red Wines";
+        Category category = Category.builder().name(categoryName.toUpperCase()).itemList(new ArrayList<>()).build();
+        when(categoryRepository.findByName(categoryName.toUpperCase())).thenReturn(Optional.of(category));
+        categoryService.deleteCategory(categoryName);
+    }
+
+    @Test
+    void testDeleteNonExistingCategory() {
+        String categoryName = "Non Existing Category";
+        when(categoryRepository.findByName(categoryName.toUpperCase())).thenReturn(Optional.empty());
+        Assertions.assertThrows(CategoryNotFoundException.class, () -> categoryService.deleteCategory(categoryName));
+    }
+
+    @Test
+    void testPostExistingCategory() {
+        String categoryName = "Red Wines";
+        CategoryRequest categoryRequest = new CategoryRequest();
+        categoryRequest.setName(categoryName);
+
+        when(categoryRepository.findByName(categoryName.toUpperCase())).thenReturn(Optional.of(Category.builder().build()));
+        Assertions.assertThrows(CategoryAlreadyExistingException.class, () -> categoryService.postCategory(categoryRequest));
+    }
+}
+
