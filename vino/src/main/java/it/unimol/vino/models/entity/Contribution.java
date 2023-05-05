@@ -49,7 +49,8 @@ public class Contribution {
     @ManyToOne
     private GrapeType associatedGrapeType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "submitted_by", nullable = false, updatable = false)
     private User submitter;
 
     @Temporal(TemporalType.TIMESTAMP)

@@ -39,10 +39,24 @@ public class ProcessController {
     }
 
     @PostMapping("/{process_id}/progress")
-    public ResponseEntity<String> progressProcess(@PathVariable("process_id") Long processId) {
+    public ResponseEntity<String> progressProcess(
+            @PathVariable("process_id") Long processId,
+            @RequestBody String description
+    ) {
         return ResponseEntity.ok("Processo " +
                 processId + " avanzato con successo verso lo stato " +
-                this.processService.progressState(processId)
+                this.processService.progressState(processId, description)
+        );
+    }
+
+    @PostMapping("/{process_id}/cancel")
+    public ResponseEntity<String> cancelProcess(
+            @PathVariable("process_id") Long processId,
+            @RequestBody String description
+    ) {
+        this.processService.cancelProcess(processId, description);
+        return ResponseEntity.ok("Processo " +
+                processId + " annullato con successo"
         );
     }
 

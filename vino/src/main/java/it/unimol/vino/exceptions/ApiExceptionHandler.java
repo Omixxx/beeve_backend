@@ -75,7 +75,6 @@ public class ApiExceptionHandler {
     }
 
 
-
     @ExceptionHandler(value = {UserAlreadyRegistered.class})
     protected ResponseEntity<Object> handleApiRequestException(UserAlreadyRegistered e) {
         ApiException apiException = new ApiException(
@@ -142,7 +141,7 @@ public class ApiExceptionHandler {
         LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
-    
+
     @ExceptionHandler(value = {GrapeTypeNotFoundException.class})
     protected ResponseEntity<Object> handleApiRequestException(GrapeTypeNotFoundException e) {
         ApiException apiException = new ApiException(
@@ -153,7 +152,7 @@ public class ApiExceptionHandler {
         LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
-    
+
     @ExceptionHandler(value = {ContributionNotFoundException.class})
     protected ResponseEntity<Object> handleApiRequestException(ContributionNotFoundException e) {
         ApiException apiException = new ApiException(
@@ -166,7 +165,6 @@ public class ApiExceptionHandler {
     }
 
 
-
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     protected ResponseEntity<Object> handleApiRequestException(HttpMessageNotReadableException e) {
         ApiException apiException = new ApiException(
@@ -177,6 +175,7 @@ public class ApiExceptionHandler {
         LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(value = {CategoryNotFoundException.class})
     public ResponseEntity<Object> handleApiRequestException(CategoryNotFoundException e) {
         ApiException apiException = new ApiException(
@@ -237,4 +236,13 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = {ProcessCancelledException.class})
+    public ResponseEntity<Object> handleApiRequestException(ProcessCancelledException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
 }

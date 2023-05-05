@@ -38,20 +38,11 @@ public class User implements UserDetails, Serializable {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Process> deletedProcesses;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserProgressesProcess> progressedProcesses;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Process> createdProcesses;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Process> progressedProcesses;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Process> modifiedProcesses;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Contribution> submittedContributions;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserModifyProcess> modifiedProcesses;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserSectorPermission> permissions;

@@ -5,7 +5,6 @@ import it.unimol.vino.exceptions.StateNotFoundException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -21,7 +20,7 @@ public class Process {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "created_by", nullable = false, updatable = false)
+    @JoinColumn(name = "created_by", nullable = false, updatable = false)
     private User creator;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -29,19 +28,21 @@ public class Process {
     private Date creationDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "deleted_by")
-    private User deleter;
+    @JoinColumn(name = "cancelled_by")
+    private User canceller;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "deletion_date")
-    private Date deletionDate;
+    @Column(name = "cancelled_at")
+    private Date cancellationDate;
 
-    @Column(name = "deletion_description")
-    private String deletionDescription;
+    @Column(name = "cancelled_description")
+    private String cancellationDescription;
 
-    @OneToMany
+    @OneToMany(mappedBy = "process")
     private List<UserModifyProcess> modifiers;
 
+    @OneToMany(mappedBy = "process")
+    private List<UserProgressesProcess> enablers;
 
     @OneToMany(
             mappedBy = "process",
@@ -95,26 +96,16 @@ public class Process {
     }
 
     public ProcessHasStates getNextState() {
-        List<ProcessHasStates> sortedStates = this.getStates();
-        ProcessHasStates currentState = this.getCurrentState().orElseThrow(
-                () -> new StateNotFoundException("Il processo non possiede uno stato corrente")
-        );
+        List<ProcessHasStates> sortedStates = this.getStatesOrderedBySequence();
+        ProcessHasStates currentState = this.getCurrentState();
 
         return sortedStates.stream().filter(state -> state.getSequence().equals(currentState.getSequence() + 1))
                 .findFirst().orElseThrow(() -> new StateNotFoundException("Non ci sono stati successivi"));
     }
 
-    public List<ProcessHasStates> getStates() {
+    public List<ProcessHasStates> getStatesOrderedBySequence() {
         return this.states.stream()
                 .sorted(Comparator.comparing(ProcessHasStates::getSequence))
                 .toList();
-    }
-
-    public Optional<ProcessHasStates> getCurrentState() {
-        return this.states
-                .stream()
-                .filter(state -> Objects.nonNull(state.getStartDate()) &&
-                        Objects.isNull(state.getEndDate()))
-                .findFirst();
     }
 }
