@@ -35,7 +35,6 @@ format
 public ResponseEntity<Object> handleApiRequestException(UserNotFoundException e){
         ApiException apiException=new ApiException(
         e.getMessage(),
-        e,
         HttpStatus.NOT_FOUND,
         ZonedDateTime.now()
         );
