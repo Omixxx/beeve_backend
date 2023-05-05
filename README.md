@@ -4,7 +4,7 @@
 
 1.  First create a `.env` file under `/vino`
 2.  Modify the `appplication.yml` file to match your database configuration. (username and password)
-3.  Start an instance of mariadb by running `docker-compose up -d` in the root directory of the project.
+3.  Start an instance of mariadb by running `docker-compose up -d` in the root directory of the project (make sure the `3306` port is avaiable, otherwise edit the docker-compose and change it).
 4.  Install the dependencies by running `mvn clean install` .
 5.  Run the application using `mvn spring-boot:run`
 
