@@ -1,4 +1,4 @@
-package it.unimol.vino.controller;
+/*package it.unimol.vino.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class AuthControllerTest {
-/*
+
     private AuthController authController;
 
     @Mock
