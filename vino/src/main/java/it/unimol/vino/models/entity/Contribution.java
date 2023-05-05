@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
+import java.util.Date;
+
 @Data
 @Getter
 @Setter
@@ -46,5 +48,11 @@ public class Contribution {
     @JoinColumn(name = "grape_type")
     @ManyToOne
     private GrapeType associatedGrapeType;
+
+    @ManyToOne
+    private User submitter;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date submissionDate;
 }
 

@@ -45,10 +45,13 @@ public class User implements UserDetails, Serializable {
     private List<Process> createdProcesses;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<Process> updatedProcesses;
+    private List<Process> progressedProcesses;
 
     @OneToMany(fetch = FetchType.LAZY)
     private List<Process> modifiedProcesses;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Contribution> submittedContributions;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserSectorPermission> permissions;
