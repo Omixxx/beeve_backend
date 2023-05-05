@@ -3,7 +3,9 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.CategoryAlreadyExistingException;
+import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.models.entity.Category;
+import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
@@ -32,22 +34,24 @@ public class CategoryService {
         if(this.isCategoryPresent(request.getName()))
             throw new CategoryAlreadyExistingException("categoria già esistente");
 
+
         var category = Category.builder()
                 .name(request.getName().toUpperCase())
                 .itemList(new ArrayList<>())
                 .build();
 
         this.categoryRepository.save(category);
-         return category;
+        return category;
 
     }
 
     public void deleteCategory(String categoryName)throws CategoryNotFoundException {
-        Optional<Category> category=this.categoryRepository.findByName(categoryName.toUpperCase());
-        if(((Optional<?>) category).isEmpty()){
-            throw new CategoryNotFoundException("categoria non trovata");
-        }
-        this.categoryRepository.delete(category.get());
+
+        Category category = this.categoryRepository.findByName(categoryName).orElseThrow(
+                () -> new CategoryNotFoundException("La categoria con nome: " + categoryName + " non è stata trovata")
+        );
+
+        this.categoryRepository.delete(category);
     }
 
 }

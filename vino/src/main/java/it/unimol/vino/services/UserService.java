@@ -35,10 +35,10 @@ public class UserService {
         updatePermissionsRequest.getPermissions().forEach((sectorName, permissions) -> {
 
             Sector sector = this.sectorRepository.findSectorBySectorName(sectorName).orElseThrow(
-                    () -> new SectorNotFoundException(
-                            "Il settore con il nome " + sectorName + " non appartiene alla lista dei settori: "
-                                    + Arrays.toString(SectorName.values())
-                    )
+                    () -> new SectorNotFoundException("Il settore con il nome "
+                            + sectorName
+                            + " non appartiene alla lista dei settori: "
+                            + Arrays.toString(SectorName.values()))
             );
             user.updatePermission(sector, permissions);
         });

@@ -1,4 +1,4 @@
-/*package it.unimol.vino.controller;
+package it.unimol.vino.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class AuthControllerTest {
-
+/*
     private AuthController authController;
 
     @Mock
@@ -50,7 +50,7 @@ class AuthControllerTest {
 
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("token", responseEntity.getBody().getToken());
+        assertEquals(true, responseEntity.getBody().getToken());
 
         // verify that the service method was called once with the expected argument
         verify(authService, times(1)).register(request);

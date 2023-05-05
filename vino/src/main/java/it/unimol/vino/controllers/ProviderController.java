@@ -24,27 +24,24 @@ public class ProviderController {
     private final ProviderService providerService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Provider>>getAllProviders(){
+    public ResponseEntity<List<Provider>> getAllProviders() {
         return ResponseEntity.ok(this.providerService.getAll());
     }
 
     @GetMapping("/providedBy/{id}")
-    public  ResponseEntity<List<ItemsProvidedByProvider>>getAllProvidedItemsById(@PathVariable Long id){
+    public ResponseEntity<List<ItemsProvidedByProvider>> getAllProvidedItemsById(@PathVariable Long id) {
         return ResponseEntity.ok(this.providerService.getAllProvidedItemsById(id));
     }
 
     @GetMapping("/book")
-    public ResponseEntity<List<ProviderBookResponse>>getProviderBook(){
+    public ResponseEntity<List<ProviderBookResponse>> getProviderBook() {
         return ResponseEntity.ok(this.providerService.getProviderBook());
     }
 
     @PostMapping("/register")
     public ResponseEntity<Long> register(@RequestBody @Valid RegisterProviderRequest registerProviderRequest)
-            throws UserAlreadyRegistered{
+            throws UserAlreadyRegistered {
 
         return ResponseEntity.ok(this.providerService.providerRegister(registerProviderRequest));
     }
-
-
-
 }

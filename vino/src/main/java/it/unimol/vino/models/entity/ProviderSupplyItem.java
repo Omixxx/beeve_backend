@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode
 @IdClass(ProviderSupplyItemId.class)
-public class ProviderSupplyItem implements Serializable{
+public class ProviderSupplyItem implements Serializable {
 
 
     @Column(name = "quantity")

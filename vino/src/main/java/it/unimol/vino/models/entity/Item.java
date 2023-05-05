@@ -14,8 +14,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
-@Entity(name="item")
-@Table(name="item")
+@Entity(name = "item")
+@Table(name = "item")
 
 public class Item {
 
@@ -24,13 +24,13 @@ public class Item {
     private Long id;
 
 
-    @Column(name="capacity")
+    @Column(name = "capacity")
     private Long capacity;
 
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "item" , orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<ProviderSupplyItem> providerSupplyItemList;
 
@@ -39,7 +39,7 @@ public class Item {
     private Category category;
 
 
-    public void addProviderMapping(@NonNull Provider provider, @NonNull Integer quantity , @NonNull Date date){
+    public void addProviderMapping(@NonNull Provider provider, @NonNull Integer quantity, @NonNull Date date) {
 
         ProviderSupplyItem providerSupplyItem = new ProviderSupplyItem(
                 quantity,
@@ -50,7 +50,7 @@ public class Item {
 
         this.providerSupplyItemList.add(providerSupplyItem);
 
-        }
-
     }
+
+}
 
