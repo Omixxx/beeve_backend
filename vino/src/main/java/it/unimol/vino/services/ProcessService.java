@@ -9,6 +9,7 @@ import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
 import it.unimol.vino.utils.Sorter;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class ProcessService {
     private final StateRepository stateRepository;
     private final ItemRepository itemRepository;
 
+    @Transactional
     public Long createNewProcess(NewProcessRequest request) {
         HashMap<State, Integer> stateSequenceMap = new HashMap<>();
         request.getStateIdSequence().forEach((stateId, sequence) -> {
@@ -37,10 +39,10 @@ public class ProcessService {
             Item item = this.itemRepository.findById(itemId).orElseThrow(
                     () -> new ItemNotFoundException("Item con id " + itemId + " non trovato")
             );
-            Integer total_quantity = item.getProviderSupplyItemList().get(0).getQuantity();
-            if(total_quantity < quantity)
-                throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() + " richiesta: " + quantity + " disponibile: " + item.getProviderSupplyItemList().get(0).getQuantity());
-            item.getProviderSupplyItemList().get(0).setQuantity(total_quantity - quantity);
+            Integer totalQuantity = item.getQuantity();
+            if(totalQuantity < quantity)
+                throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() + " richiesta: " + quantity + " disponibile: " + totalQuantity);
+            item.setQuantity(totalQuantity - quantity);
             items.put(item, quantity);
         });
 
