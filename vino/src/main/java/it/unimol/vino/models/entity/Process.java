@@ -53,9 +53,8 @@ public class Process {
     List<ProcessHasStates> states;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private ProcessHasStates currentState;
-
 
     @NonNull
     @Min(value = 0, message = "Wine waste must be greater than 0")
@@ -63,15 +62,14 @@ public class Process {
     private Integer wineWaste;
 
     @NonNull
-    @Min(value = 0, message = "Wine waste must be greater than 0")
+    @Min(value = 0, message = "stalk waste must be greater than 0")
     @Column(nullable = false)
     private Integer stalkWaste;
 
     @NonNull
-    @Min(value = 0, message = "Wine waste must be greater than 0")
+    @Min(value = 0, message = "current waste must be greater than 0")
     @Column(nullable = false)
     private Integer currentWaste;
-
 
     public Process(@NotEmpty Map<State, Integer> stateSequenceMap) {
         this.currentWaste = 0;
