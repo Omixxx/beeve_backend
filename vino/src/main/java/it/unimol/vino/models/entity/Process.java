@@ -55,7 +55,7 @@ public class Process {
     private Integer currentWaste;
 
 
-    public Process(@NotEmpty Map<State, Integer> stateSequenceMap, @NotEmpty Map<Item, Integer> itemList) {
+    public Process(@NotEmpty Map<State, Integer> stateSequenceMap, @NotEmpty Map<Item, Integer> itemQuantityMap) {
         this.currentWaste = 0;
         this.stalkWaste = 0;
         this.wineWaste = 0;
@@ -69,7 +69,7 @@ public class Process {
         if (Objects.isNull(this.item))
             this.item = new ArrayList<>();
 
-        itemList.forEach(this::addItem);
+        itemQuantityMap.forEach(this::addItem);
     }
 
     public void addState(State state, Integer sequence) {
@@ -106,11 +106,11 @@ public class Process {
                 .findFirst();
     }
 
-    public void addItem(Item item ,Integer used_quantity){
+    public void addItem(Item item ,Integer usedQuantity){
         ProcessUseItem processUseItem = ProcessUseItem.builder()
                 .item(item)
                 .process(this)
-                .usedQuantity(used_quantity)
+                .usedQuantity(usedQuantity)
                 .build();
 
         this.item.add(processUseItem);

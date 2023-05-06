@@ -34,7 +34,7 @@ public class ProcessService {
         });
         Sorter.sortMapByValue(stateSequenceMap);
 
-        HashMap<Item, Integer> items = new HashMap<>();
+        HashMap<Item, Integer> itemQuantityMap = new HashMap<>();
         request.getItemIdUsedQuantity().forEach((itemId, quantity) -> {
             Item item = this.itemRepository.findById(itemId).orElseThrow(
                     () -> new ItemNotFoundException("Item con id " + itemId + " non trovato")
@@ -43,12 +43,12 @@ public class ProcessService {
             if(totalQuantity < quantity)
                 throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() + " richiesta: " + quantity + " disponibile: " + totalQuantity);
             item.setQuantity(totalQuantity - quantity);
-            items.put(item, quantity);
+            itemQuantityMap.put(item, quantity);
         });
 
 
 
-        Process process = new Process(stateSequenceMap, items);
+        Process process = new Process(stateSequenceMap, itemQuantityMap);
         return this.processRepository.save(process).getId();
     }
 
