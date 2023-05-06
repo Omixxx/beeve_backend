@@ -30,6 +30,9 @@ public class Item {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "quantity")
+    private Integer quantity;
+
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<ProviderSupplyItem> providerSupplyItemList;

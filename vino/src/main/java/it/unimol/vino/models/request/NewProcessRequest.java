@@ -14,4 +14,8 @@ public class NewProcessRequest {
     @NonNull
     @NotEmpty(message = "Il processo deve necessariamente avere almeno uno stato")
     private HashMap<Long, Integer> stateIdSequence;
+
+    @NonNull
+    @NotEmpty(message = "Il processo deve necessariamente avere almeno un item")
+    private HashMap<Long, Integer> itemIdUsedQuantity;
 }
