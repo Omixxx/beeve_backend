@@ -1,5 +1,6 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.exceptions.StateAlreadyExist;
 import it.unimol.vino.models.entity.State;
 import it.unimol.vino.models.request.NewStateRequest;
 import it.unimol.vino.repository.StateRepository;
@@ -15,12 +16,19 @@ public class StateService {
         this.stateRepository = stateRepository;
     }
 
-    public Long newState(NewStateRequest request) {
+    public State newState(NewStateRequest request) {
         State state = State.builder()
                 .name(request.getStateName())
                 .doesProduceWaste(request.getDoesProduceWaste())
                 .processes(new ArrayList<>())
                 .build();
-        return this.stateRepository.save(state).getId();
+
+        this.stateRepository.findByName(state.getName()).ifPresent(
+                (s) -> {
+                    throw new StateAlreadyExist("Stato con nome " + state.getName() + " già esistente");
+                }
+        );
+
+        return this.stateRepository.save(state);
     }
 }
