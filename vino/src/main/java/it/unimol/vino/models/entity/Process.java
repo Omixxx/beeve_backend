@@ -42,7 +42,7 @@ public class Process {
     private List<UserModifyProcess> modifiers;
 
     @OneToMany(mappedBy = "process")
-    private List<UserProgressesProcess> enablers;
+    private List<UserProgressesProcess> userProgressProcessList;
 
     @OneToMany(
             mappedBy = "process",

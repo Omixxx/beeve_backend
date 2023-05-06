@@ -75,7 +75,7 @@ public class ProcessService {
         this.ensureProcessIsStarted(process);
 
         User user = this.getUser();
-        process.getEnablers().add(UserProgressesProcess.builder()
+        process.getUserProgressProcessList().add(UserProgressesProcess.builder()
                 .user(user)
                 .process(process)
                 .description(description)
