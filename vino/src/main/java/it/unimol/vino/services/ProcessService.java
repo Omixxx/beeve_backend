@@ -8,6 +8,7 @@ import it.unimol.vino.models.request.NewProcessRequest;
 import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
+import it.unimol.vino.repository.ContributionRepository;
 import it.unimol.vino.utils.Sorter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class ProcessService {
     private final ProcessRepository processRepository;
     private final StateRepository stateRepository;
     private final ItemRepository itemRepository;
+    private final ContributionRepository contributionRepository;
 
     @Transactional
     public Long createNewProcess(NewProcessRequest request) {
@@ -41,14 +43,26 @@ public class ProcessService {
             );
             Integer totalQuantity = item.getQuantity();
             if(totalQuantity < quantity)
-                throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() + " richiesta: " + quantity + " disponibile: " + totalQuantity);
+                throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() +
+                        " richiesta: " + quantity + " disponibile: " + totalQuantity);
             item.setQuantity(totalQuantity - quantity);
             itemQuantityMap.put(item, quantity);
         });
 
+        HashMap<Contribution, Double> contributionQuantityMap = new HashMap<>();
+        request.getContributionIdQuantity().forEach((contributionId, quantity) -> {
+            Contribution contribution = this.contributionRepository.findById(contributionId).orElseThrow(
+                    () -> new ContributionNotFoundException("Conferimento con id " + contributionId + " non trovato")
+            );
+            Double totalQuantity = contribution.getQuantity();
+            if(totalQuantity < quantity)
+                throw new QuantityNotAvailableException("Quantità non sufficiente per il conferimento "
+                        + contribution.getId() + " richiesta: " + quantity + " disponibile: " + totalQuantity);
+            contribution.setQuantity(totalQuantity - quantity);
+            contributionQuantityMap.put(contribution, quantity);
+        });
 
-
-        Process process = new Process(stateSequenceMap, itemQuantityMap);
+        Process process = new Process(stateSequenceMap, itemQuantityMap, contributionQuantityMap);
         return this.processRepository.save(process).getId();
     }
 
