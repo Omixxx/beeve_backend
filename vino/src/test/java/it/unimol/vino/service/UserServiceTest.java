@@ -49,18 +49,17 @@ public class UserServiceTest {
 
         testUser = new User();
         testUser.setEmail(testUserEmail);
-    }/*
-non funziona , non capisco cosa passare alla updatepermissionRequest
-    @Test
+    }
+//non funziona , non capisco cosa passare alla updatepermissionRequest
+    /*@Test
     public void testUpdatePermissions() {
         userpermission.setUser(testUser);
         userpermission.setSector(new Sector(SectorName.CONFERIMENTO));
-
+    hashMap.put(SectorName.CONFERIMENTO,userpermission);
         when(userRepository.findByEmail(testUserEmail)).thenReturn(Optional.of(testUser));
 
 
-        UpdatePermissionsRequest updatePermissionsRequest = new UpdatePermissionsRequest();
-        updatePermissionsRequest.setPermissions(userpermission);
+        UpdatePermissionsRequest updatePermissionsRequest = new UpdatePermissionsRequest(hashMap);
         UpdatePermissionResponse response = userService.updatePermissions(updatePermissionsRequest);
 
         assertEquals("Permessi aggiornati con successo!", response.getMessage());
