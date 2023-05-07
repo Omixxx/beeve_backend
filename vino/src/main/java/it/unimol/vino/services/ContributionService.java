@@ -6,6 +6,7 @@ import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.models.entity.Contribution;
 import it.unimol.vino.models.entity.GrapeType;
 import it.unimol.vino.models.entity.Provider;
+import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.repository.ContributionRepository;
 import it.unimol.vino.repository.GrapeTypeRepository;
 import it.unimol.vino.repository.ProviderRepository;
@@ -60,19 +61,29 @@ public class ContributionService {
                 .orElseThrow(() -> new ContributionNotFoundException("Non esiste alcun conferimento con tipo d'uva " + grapeType.getId()));
     }
 
-    public Contribution put(@Valid Contribution contribution) {
-        Long providerId = contribution.getProvider().getId();
-        String grapeTypeId = contribution.getAssociatedGrapeType().getId();
-
-        Provider provider = this.provider.findById(providerId).orElseThrow(
-                () -> new ProviderNotFoundException("IL provider con ID " + providerId + " non è stato trovato")
+    public String put(@Valid RegisterContributionRequest request) {
+        Provider provider = this.provider.findById(request.getProviderId()).orElseThrow(
+                () -> new ProviderNotFoundException("IL provider con ID " + request.getProviderId() + " non è stato trovato")
         );
 
-        GrapeType grapeType = this.grapeType.findById(grapeTypeId).orElseThrow(
-                () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + grapeTypeId + " non è stato trovato")
+        GrapeType grapeType = this.grapeType.findById(request.getGrapeTypeId()).orElseThrow(
+                () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + request.getGrapeTypeId() + " non è stato trovato")
         );
 
-        return this.contribution.save(contribution);
+        var contribution = Contribution.builder()
+                .origin(request.getCountry())
+                .country(request.getCountry())
+                .photoURL(request.getPhotoURL())
+                .description(request.getDescription())
+                .sugarDegree(request.getSugarDegree())
+                .quantity(request.getQuantity())
+                .date(request.getDate())
+                .associatedGrapeType(grapeType)
+                .provider(provider)
+                .build();
+
+        this.contribution.save(contribution);
+        return "Il conferimento è stato registrato con l'id" + contribution.getId();
     }
 
     public Contribution replace(Long id, @Valid Contribution contribution) {
