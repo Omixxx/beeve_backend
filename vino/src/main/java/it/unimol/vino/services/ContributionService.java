@@ -1,11 +1,17 @@
 package it.unimol.vino.services;
 
 import it.unimol.vino.exceptions.ContributionNotFoundException;
+import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
+import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.models.entity.Contribution;
 import it.unimol.vino.models.entity.GrapeType;
+import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.repository.ContributionRepository;
+import it.unimol.vino.repository.GrapeTypeRepository;
+import it.unimol.vino.repository.ProviderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -13,13 +19,12 @@ import java.util.List;
 
 @Service
 @Validated
+@AllArgsConstructor
 public class ContributionService {
 
     private final ContributionRepository contribution;
-
-    public ContributionService(ContributionRepository contribution) {
-        this.contribution = contribution;
-    }
+    private final ProviderRepository provider;
+    private final GrapeTypeRepository grapeType;
 
     public List<Contribution> getAll() {
         return this.contribution.findAll();
@@ -56,6 +61,17 @@ public class ContributionService {
     }
 
     public Contribution put(@Valid Contribution contribution) {
+        Long providerId = contribution.getProvider().getId();
+        String grapeTypeId = contribution.getAssociatedGrapeType().getId();
+
+        Provider provider = this.provider.findById(providerId).orElseThrow(
+                () -> new ProviderNotFoundException("IL provider con ID " + providerId + " non è stato trovato")
+        );
+
+        GrapeType grapeType = this.grapeType.findById(grapeTypeId).orElseThrow(
+                () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + grapeTypeId + " non è stato trovato")
+        );
+
         return this.contribution.save(contribution);
     }
 

@@ -56,4 +56,8 @@ public class Provider implements Serializable {
     @JsonIgnore
     private List<ProviderSupplyItem> providerSupplyItemList;
 
+    @OneToMany(mappedBy = "provider", orphanRemoval = true, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<ProviderSupplyContribution> providerSupplyContributionList;
+
 }
