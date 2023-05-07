@@ -119,9 +119,7 @@ public class ProcessService {
     public List<ProcessDTO> getAllProcesses() {
         List<ProcessDTO> processDTOList = new ArrayList<>();
         this.processRepository.findAll().forEach(process -> {
-            ProcessDTO processDTO = ProcessDTO.getFullProcessDTO(process);
-            Logger.getLogger().info(processDTO.toString());
-            processDTOList.add(processDTO);
+            processDTOList.add(ProcessDTO.getFullProcessDTO(process));
         });
         return processDTOList;
     }

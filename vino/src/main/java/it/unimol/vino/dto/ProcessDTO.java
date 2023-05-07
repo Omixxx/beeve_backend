@@ -3,21 +3,22 @@ package it.unimol.vino.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.*;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Builder(access = AccessLevel.PRIVATE)
 @Getter
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProcessDTO {
 
     private Long id;
 
-    private User creator;
+    private UserDTO creator;
 
     private Date creationDate;
 
@@ -31,9 +32,9 @@ public class ProcessDTO {
 
     private List<UserProgressesProcess> userProgressProcessList;
 
-    List<ProcessHasStates> states;
+    private List<StateDTO> states;
 
-    private ProcessHasStates currentState;
+    private StateDTO currentState;
 
     private Integer wineWaste;
 
@@ -41,19 +42,33 @@ public class ProcessDTO {
 
     private Integer currentWaste;
 
+    public static ProcessDTO getFullProcessDTO(@NotNull Process process) {
+        User user = process.getCreator();
+        ProcessHasStates processHasState = process.getCurrentState();
 
-    public static ProcessDTO getFullProcessDTO(Process process) {
+
         return ProcessDTO.builder()
                 .id(process.getId())
-                .creator(process.getCreator())
-                .creationDate(process.getCreationDate())
-                .canceller(process.getCanceller())
-                .cancellationDate(process.getCancellationDate())
-                .cancellationDescription(process.getCancellationDescription())
-                .modifiers(process.getModifiers())
-                .userProgressProcessList(process.getUserProgressProcessList())
-                .states(process.getStates())
-                .currentState(process.getCurrentState())
+                .creator(UserDTO.builder()
+                        .id(user.getId())
+                        .email(user.getEmail())
+                        .role(user.getRole())
+                        .build()
+                )
+                .states(process.getStates().stream()
+                        .map(ProcessHasStates::getState)
+                        .map(state -> StateDTO.builder()
+                                .id(state.getId())
+                                .name(state.getName())
+                                .doesProduceWaste(state.getDoesProduceWaste())
+                                .build()).toList()
+                )
+                .currentState(Objects.isNull(processHasState) ? null : StateDTO.builder()
+                        .id(processHasState.getState().getId())
+                        .name(processHasState.getState().getName())
+                        .doesProduceWaste(processHasState.getState().getDoesProduceWaste())
+                        .build()
+                )
                 .wineWaste(process.getWineWaste())
                 .stalkWaste(process.getStalkWaste())
                 .currentWaste(process.getCurrentWaste())
