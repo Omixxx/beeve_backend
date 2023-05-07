@@ -32,10 +32,10 @@ public class Process {
     private User canceller;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "cancelled_at")
+    @Column(name = "cancelled_at", updatable = false)
     private Date cancellationDate;
 
-    @Column(name = "cancelled_description")
+    @Column(name = "cancelled_description", updatable = false)
     private String cancellationDescription;
 
     @OneToMany(mappedBy = "process")

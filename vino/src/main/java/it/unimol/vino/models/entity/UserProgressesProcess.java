@@ -5,12 +5,10 @@ import lombok.*;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class UserProgressesProcess {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -19,7 +17,12 @@ public class UserProgressesProcess {
     @ManyToOne
     private Process process;
 
-    @Column(name = "description", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private String description;
 
+    public UserProgressesProcess(User user, Process process, String description) {
+        this.description = description;
+        this.user = user;
+        this.process = process;
+    }
 }

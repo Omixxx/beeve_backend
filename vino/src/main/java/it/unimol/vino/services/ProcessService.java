@@ -7,7 +7,9 @@ import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
 import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
+import it.unimol.vino.repository.UserProgressProcessRepository;
 import it.unimol.vino.repository.UserRepository;
+import it.unimol.vino.utils.Logger;
 import it.unimol.vino.utils.Sorter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class ProcessService {
     private final ProcessRepository processRepository;
     private final StateRepository stateRepository;
     private final UserRepository userRepository;
+    private final UserProgressProcessRepository userProgressProcessRepository;
 
     public Long createNewProcess(NewProcessRequest request) {
         HashMap<State, Integer> stateSequenceMap = new HashMap<>();
@@ -75,16 +78,21 @@ public class ProcessService {
         this.ensureProcessIsStarted(process);
 
         User user = this.getUser();
-        process.getUserProgressProcessList().add(UserProgressesProcess.builder()
-                .user(user)
-                .process(process)
-                .description(description)
-                .build());
+        UserProgressesProcess userProgressesProcess = new UserProgressesProcess(
+                user,
+                process,
+                description
+        );
+
+        process.getUserProgressProcessList().add(userProgressesProcess);
+        user.getProgressedProcesses().add(userProgressesProcess);
 
         process.getCurrentState().setEndDate(new Date());
         ProcessHasStates nextState = process.getNextState();
         nextState.setStartDate(new Date());
         process.setCurrentState(nextState);
+
+        this.userProgressProcessRepository.save(userProgressesProcess);
         return nextState.getState().getName();
     }
 

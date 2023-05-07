@@ -8,12 +8,13 @@ import java.util.Date;
 @Entity
 @Getter
 public class UserModifyProcess {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne
     private User user;
 
-    @Id
     @ManyToOne
     private Process process;
 

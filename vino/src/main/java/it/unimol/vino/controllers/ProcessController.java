@@ -2,6 +2,7 @@ package it.unimol.vino.controllers;
 
 import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
+import it.unimol.vino.models.request.ProgressProcessRequest;
 import it.unimol.vino.services.ProcessService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +42,11 @@ public class ProcessController {
     @PostMapping("/{process_id}/progress")
     public ResponseEntity<String> progressProcess(
             @PathVariable("process_id") Long processId,
-            @RequestBody String description
+            @RequestBody ProgressProcessRequest request
     ) {
         return ResponseEntity.ok("Processo " +
                 processId + " avanzato con successo verso lo stato " +
-                this.processService.progressState(processId, description)
+                this.processService.progressState(processId, request.getDescription())
         );
     }
 
