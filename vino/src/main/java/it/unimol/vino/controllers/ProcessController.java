@@ -1,6 +1,8 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
+import it.unimol.vino.models.request.CancelProgressRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
 import it.unimol.vino.models.request.ProgressProcessRequest;
 import it.unimol.vino.services.ProcessService;
@@ -8,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/process")
@@ -53,12 +57,17 @@ public class ProcessController {
     @PostMapping("/{process_id}/cancel")
     public ResponseEntity<String> cancelProcess(
             @PathVariable("process_id") Long processId,
-            @RequestBody String description
+            @RequestBody CancelProgressRequest request
     ) {
-        this.processService.cancelProcess(processId, description);
+        this.processService.cancelProcess(processId, request.getDescription());
         return ResponseEntity.ok("Processo " +
                 processId + " annullato con successo"
         );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Process>> getAllProcesses() {
+        return ResponseEntity.ok(this.processService.getAllProcesses());
     }
 
 }

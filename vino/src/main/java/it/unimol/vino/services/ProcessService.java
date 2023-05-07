@@ -9,7 +9,6 @@ import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
 import it.unimol.vino.repository.UserProgressProcessRepository;
 import it.unimol.vino.repository.UserRepository;
-import it.unimol.vino.utils.Logger;
 import it.unimol.vino.utils.Sorter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -59,6 +59,10 @@ public class ProcessService {
     public void startProcess(Long processId) {
         Process process = this.getProcess(processId);
 
+        if (Objects.nonNull(process.getCurrentState())) {
+            throw new ProcessAlreadyStartedException("Il processo è già stato avviato");
+        }
+
         this.ensureProcessIsNotCancelled(process);
         this.ensureProcessHasStates(process);
 
@@ -99,8 +103,8 @@ public class ProcessService {
     public void cancelProcess(Long processId, String description) {
         Process process = this.getProcess(processId);
 
-        this.ensureProcessIsNotCancelled(process);
         this.ensureProcessHasStates(process);
+        this.ensureProcessIsNotCancelled(process);
         this.ensureProcessIsStarted(process);
 
         User user = this.getUser();
@@ -110,8 +114,12 @@ public class ProcessService {
         process.setCanceller(user);
         process.setCancellationDate(new Date());
         process.setCancellationDescription(description);
+        processRepository.save(process);
     }
 
+    public List<Process> getAllProcesses() {
+        return this.processRepository.findAll();
+    }
 
     private Process getProcess(Long processId) {
         return this.processRepository.findById(processId).orElseThrow(
@@ -121,7 +129,7 @@ public class ProcessService {
 
     private void ensureProcessIsStarted(Process process) {
         if (Objects.isNull(process.getCurrentState()))
-            throw new ProcessAlreadyStarted("Il processo non è stato avviato");
+            throw new ProcessAlreadyStartedException("Il processo non è stato avviato");
     }
 
     private void ensureProcessHasStates(Process process) {
@@ -131,7 +139,7 @@ public class ProcessService {
 
     private void ensureProcessIsNotCancelled(Process process) {
         if (Objects.isNull(process.getCurrentState()) && Objects.nonNull(process.getCanceller()))
-            throw new ProcessCancelledException("Il processo è già stato cancellato");
+            throw new ProcessCancelledException("Il processo risulta cancellato");
     }
 
     private User getUser() {
@@ -140,5 +148,4 @@ public class ProcessService {
                 () -> new UserNotFoundException("Utente non trovato")
         );
     }
-
 }

@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.ZonedDateTime;
 
 @ControllerAdvice
@@ -98,8 +97,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {PermissionNotFound.class})
-    protected ResponseEntity<Object> handleApiRequestException(PermissionNotFound e) {
+    @ExceptionHandler(value = {PermissionNotFoundException.class})
+    protected ResponseEntity<Object> handleApiRequestException(PermissionNotFoundException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.NOT_FOUND,
@@ -109,8 +108,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {PermissionAlreadyAssigned.class})
-    protected ResponseEntity<Object> handleApiRequestException(PermissionAlreadyAssigned e) {
+    @ExceptionHandler(value = {PermissionAlreadyAssignedException.class})
+    protected ResponseEntity<Object> handleApiRequestException(PermissionAlreadyAssignedException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.CONFLICT,
@@ -120,8 +119,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = {PermissionAlreadyExist.class})
-    protected ResponseEntity<Object> handleApiRequestException(PermissionAlreadyExist e) {
+    @ExceptionHandler(value = {PermissionAlreadyExistException.class})
+    protected ResponseEntity<Object> handleApiRequestException(PermissionAlreadyExistException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.CONFLICT,
@@ -227,8 +226,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {ProcessAlreadyStarted.class})
-    public ResponseEntity<Object> handleApiRequestException(ProcessAlreadyStarted e) {
+    @ExceptionHandler(value = {ProcessAlreadyStartedException.class})
+    public ResponseEntity<Object> handleApiRequestException(ProcessAlreadyStartedException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST,

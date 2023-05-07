@@ -1,14 +1,15 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.dto.StateDTO;
+import it.unimol.vino.models.entity.State;
 import it.unimol.vino.models.request.NewStateRequest;
 import it.unimol.vino.services.StateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/state")
@@ -21,5 +22,10 @@ public class StateController {
         return ResponseEntity.ok("Stato " + this.stateService.newState(request).getName()
                 + " creato con successo"
         );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<StateDTO>> getAllStates() {
+        return ResponseEntity.ok(this.stateService.getAllStates());
     }
 }
