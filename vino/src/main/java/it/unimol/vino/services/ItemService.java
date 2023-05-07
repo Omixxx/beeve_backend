@@ -58,7 +58,7 @@ public class ItemService {
         item.addProviderMapping(provider, request.getQuantity(), request.getDate());
         category.addItem(item);
         this.itemRepository.save(item);
-
+        item.setQuantity(request.getQuantity());
         return "Registrato";
 
     }
