@@ -1,5 +1,6 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.dto.ProcessDTO;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.*;
 import it.unimol.vino.models.entity.Process;
@@ -9,16 +10,14 @@ import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
 import it.unimol.vino.repository.UserProgressProcessRepository;
 import it.unimol.vino.repository.UserRepository;
+import it.unimol.vino.utils.Logger;
 import it.unimol.vino.utils.Sorter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -117,8 +116,14 @@ public class ProcessService {
         processRepository.save(process);
     }
 
-    public List<Process> getAllProcesses() {
-        return this.processRepository.findAll();
+    public List<ProcessDTO> getAllProcesses() {
+        List<ProcessDTO> processDTOList = new ArrayList<>();
+        this.processRepository.findAll().forEach(process -> {
+            ProcessDTO processDTO = ProcessDTO.getFullProcessDTO(process);
+            Logger.getLogger().info(processDTO.toString());
+            processDTOList.add(processDTO);
+        });
+        return processDTOList;
     }
 
     private Process getProcess(Long processId) {
