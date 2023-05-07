@@ -1,11 +1,18 @@
 package it.unimol.vino.services;
 
 import it.unimol.vino.exceptions.ContributionNotFoundException;
+import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
+import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.models.entity.Contribution;
 import it.unimol.vino.models.entity.GrapeType;
+import it.unimol.vino.models.entity.Provider;
+import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.repository.ContributionRepository;
+import it.unimol.vino.repository.GrapeTypeRepository;
+import it.unimol.vino.repository.ProviderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -13,13 +20,12 @@ import java.util.List;
 
 @Service
 @Validated
+@AllArgsConstructor
 public class ContributionService {
 
     private final ContributionRepository contribution;
-
-    public ContributionService(ContributionRepository contribution) {
-        this.contribution = contribution;
-    }
+    private final ProviderRepository provider;
+    private final GrapeTypeRepository grapeType;
 
     public List<Contribution> getAll() {
         return this.contribution.findAll();
@@ -55,8 +61,29 @@ public class ContributionService {
                 .orElseThrow(() -> new ContributionNotFoundException("Non esiste alcun conferimento con tipo d'uva " + grapeType.getId()));
     }
 
-    public Contribution put(@Valid Contribution contribution) {
-        return this.contribution.save(contribution);
+    public String put(@Valid RegisterContributionRequest request) {
+        Provider provider = this.provider.findById(request.getProviderId()).orElseThrow(
+                () -> new ProviderNotFoundException("IL provider con ID " + request.getProviderId() + " non è stato trovato")
+        );
+
+        GrapeType grapeType = this.grapeType.findById(request.getGrapeTypeId()).orElseThrow(
+                () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + request.getGrapeTypeId() + " non è stato trovato")
+        );
+
+        var contribution = Contribution.builder()
+                .origin(request.getCountry())
+                .country(request.getCountry())
+                .photoURL(request.getPhotoURL())
+                .description(request.getDescription())
+                .sugarDegree(request.getSugarDegree())
+                .quantity(request.getQuantity())
+                .date(request.getDate())
+                .associatedGrapeType(grapeType)
+                .provider(provider)
+                .build();
+
+        this.contribution.save(contribution);
+        return "Il conferimento è stato registrato con l'id" + contribution.getId();
     }
 
     public Contribution replace(Long id, @Valid Contribution contribution) {

@@ -3,6 +3,7 @@ package it.unimol.vino.controllers;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.Contribution;
 import it.unimol.vino.models.entity.GrapeType;
+import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.services.ContributionService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -33,8 +34,8 @@ public class ContributionController {
     }
 
     @PostMapping
-    public Contribution put(@RequestBody Contribution contribution) {
-        return this.contributionService.put(contribution);
+    public String put(@RequestBody RegisterContributionRequest request) {
+        return this.contributionService.put(request);
     }
 
     @GetMapping("/{id}")
