@@ -1,4 +1,4 @@
-/*package it.unimol.vino.service;
+package it.unimol.vino.service;
 
 import it.unimol.vino.exceptions.SectorNotFoundException;
 import it.unimol.vino.exceptions.UserNotFoundException;
@@ -37,37 +37,36 @@ public class UserServiceTest {
     private User testUser;
 
     private final String testUserEmail = "test@example.com";
+    private HashMap<SectorName,UserSectorPermission>  hashMap;
+    private UserSectorPermission userpermission;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-
+        hashMap=new HashMap<SectorName,UserSectorPermission>();
+        userpermission=new UserSectorPermission();
         userService = new UserService(userRepository, sectorRepository);
 
-        testUser = new User(1L,"name","surname",testUserEmail,"password",);
-    }
-
+        testUser = new User();
+        testUser.setEmail(testUserEmail);
+    }/*
+non funziona , non capisco cosa passare alla updatepermissionRequest
     @Test
     public void testUpdatePermissions() {
-
+        userpermission.setUser(testUser);
+        userpermission.setSector(new Sector(SectorName.CONFERIMENTO));
 
         when(userRepository.findByEmail(testUserEmail)).thenReturn(Optional.of(testUser));
 
-        UpdatePermissionsRequest updatePermissionsRequest = new UpdatePermissionsRequest();
-        updatePermissionsRequest.setPermissions(true,true,true);
 
+        UpdatePermissionsRequest updatePermissionsRequest = new UpdatePermissionsRequest();
+        updatePermissionsRequest.setPermissions(userpermission);
         UpdatePermissionResponse response = userService.updatePermissions(updatePermissionsRequest);
 
-        verify(userRepository).save(testUser);
-        assertTrue(testUser.getPermissions().stream()
-                .anyMatch(p -> p.getPermissionTypes().containsAll(testPermissionTypes) && p.getSector().equals(testSector)));
-
         assertEquals("Permessi aggiornati con successo!", response.getMessage());
-    }
+    }*/
 
-}*/
-
-//TODO da capire come funzionano i permessi
+}
 
 
 

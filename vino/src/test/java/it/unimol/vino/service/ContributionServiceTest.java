@@ -25,10 +25,24 @@ class ContributionServiceTest {
     private ContributionRepository contributionRepository;
 
     private ContributionService contributionService;
+    private Contribution contribution;
+    private GrapeType grapeType;
 
     @BeforeEach
     void setUp() {
         contributionService = new ContributionService(contributionRepository);
+        contribution= new Contribution();
+        grapeType=new GrapeType();
+        grapeType.setSpecies("nuova");
+        grapeType.setId("uvaNuova");
+        grapeType.setColor("nera");
+        contribution.setQuantity(100);
+        contribution.setDescription("CI È STATA DATA DA GIUSEPPE");
+        contribution.setOrigin("Marche");
+        contribution.setSugarDegree(1000);
+        contribution.setAssociatedGrapeType(grapeType);
+        contribution.setCountry("Spain");
+
     }
 
     @Test
@@ -106,11 +120,9 @@ class ContributionServiceTest {
 
         assertEquals(expectedMessage, actualMessage);
     }
-//TODO casi di test da sistemare
-    /*@Test
+//TODO casi di test che lanciano eccezzioni che non dovrebbero
+  /*  @Test
     void testGetByCountry() {
-        Contribution contribution= new Contribution();
-        contribution.setCountry("Spain");
         List<Contribution> contributions = contributionService.getByCountry("Spain");
         assertNotNull(contributions);
         assertEquals(contributions.size(), 1);
@@ -119,10 +131,10 @@ class ContributionServiceTest {
 
     @Test
     void testGetBySugarDegree() {
-        List<Contribution> contributions = contributionService.getBySugarDegree(11.5);
+        List<Contribution> contributions = contributionService.getBySugarDegree(1000);
         assertNotNull(contributions);
         assertEquals(contributions.size(), 2);
-        assertEquals(contributions.get(0).getQuantity(), 300.0);
+        assertEquals(contributions.get(0).getQuantity(), 100.0);
     }
 
     @Test
