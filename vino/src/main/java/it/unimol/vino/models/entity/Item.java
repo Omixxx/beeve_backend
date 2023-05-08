@@ -30,7 +30,7 @@ public class Item {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "totQuantity")
+    @Column(name = "total_quantity")
     private Integer totQuantity;
 
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = CascadeType.ALL)
