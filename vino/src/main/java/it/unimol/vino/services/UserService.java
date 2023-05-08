@@ -1,6 +1,7 @@
 package it.unimol.vino.services;
 
 
+import it.unimol.vino.dto.PermissionDTO;
 import it.unimol.vino.exceptions.SectorNotFoundException;
 import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Sector;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,12 +29,12 @@ public class UserService {
     private final SectorRepository sectorRepository;
 
     @Transactional
-    public UpdatePermissionResponse updatePermissions(UpdatePermissionsRequest updatePermissionsRequest) {
+    public UpdatePermissionResponse updatePermissions(UpdatePermissionsRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userRepository.findByEmail(email).orElseThrow(
                 () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
         );
-        updatePermissionsRequest.getPermissions().forEach((sectorName, permissions) -> {
+        request.getPermissions().forEach((sectorName, permissions) -> {
 
             Sector sector = this.sectorRepository.findSectorBySectorName(sectorName).orElseThrow(
                     () -> new SectorNotFoundException("Il settore con il nome "
@@ -46,12 +48,23 @@ public class UserService {
         return new UpdatePermissionResponse("Permessi aggiornati con successo!");
     }
 
-    public List<UserSectorPermission> getPermissions() {
+    public List<PermissionDTO> getPermissions() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userRepository.findByEmail(email).orElseThrow(
                 () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
         );
-        return user.getPermissions();
+        List<UserSectorPermission> userSectorPermission = user.getPermissions();
+        List<PermissionDTO> permissions = new ArrayList<>();
+        userSectorPermission.forEach(userSectorPermission1 -> {
+            permissions.add(PermissionDTO.builder()
+                    .sector(userSectorPermission1.getSector())
+                    .canRead(userSectorPermission1.getCanRead())
+                    .canWrite(userSectorPermission1.getCanWrite())
+                    .canDelete(userSectorPermission1.getCanDelete())
+                    .canUpdate(userSectorPermission1.getCanUpdate())
+                    .build());
+        });
+        return permissions;
     }
 
 }

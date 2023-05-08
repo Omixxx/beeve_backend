@@ -1,24 +1,21 @@
 package it.unimol.vino.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class UserSectorPermission implements Serializable {
-
+public class UserSectorPermission {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     private User user;
 
-    @Id
     @ManyToOne(fetch = FetchType.EAGER)
     private Sector sector;
 
@@ -30,6 +27,15 @@ public class UserSectorPermission implements Serializable {
 
     private Boolean canUpdate;
 
+    public UserSectorPermission(User user, Sector sector, Boolean canRead, Boolean canWrite, Boolean canDelete, Boolean canUpdate) {
+        this.user = user;
+        this.sector = sector;
+        this.canRead = canRead;
+        this.canWrite = canWrite;
+        this.canDelete = canDelete;
+        this.canUpdate = canUpdate;
+    }
 
 }
+
 

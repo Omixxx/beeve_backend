@@ -50,7 +50,6 @@ public class ProcessDTO {
         return ProcessDTO.builder()
                 .id(process.getId())
                 .creator(UserDTO.builder()
-                        .id(user.getId())
                         .email(user.getEmail())
                         .role(user.getRole())
                         .build()
