@@ -38,27 +38,40 @@ public class ItemService {
     @Transactional
     public String itemRegister(@Valid RegisterItemRequest request) {
 
+        Category category = this.categoryRepository.findByName(request.getCategoryName()).orElseThrow(
+                () -> new CategoryNotFoundException("La categoria con nome: " + request.getCategoryName() + " non è stata trovata")
+        );
+
+        Item item = this.itemRepository.findByCategoryAndCapacity(category,request.getCapacity()).orElse(null);
+
         Long provider_id = request.getProvider_id();
 
         Provider provider = this.providerRepository.findById(provider_id).orElseThrow(
                 () -> new ProviderNotFoundException("IL provider con ID " + provider_id + " non è stato trovato")
         );
-        Category category = this.categoryRepository.findByName(request.getCategoryName()).orElseThrow(
-                () -> new CategoryNotFoundException("La categoria con nome: " + request.getCategoryName() + " non è stata trovata")
-        );
 
 
-        var item = Item.builder()
-                .capacity(request.getCapacity())
-                .description(request.getDescription())
-                .providerSupplyItemList(new ArrayList<>())
-                .category(category)
-                .build();
+        if(item !=null){
 
-        item.addProviderMapping(provider, request.getQuantity(), request.getDate());
-        category.addItem(item);
-        this.itemRepository.save(item);
-        item.setQuantity(request.getQuantity());
+            item.addProviderMapping(provider, request.getQuantity(), request.getDate());
+            item.addQuantity(request.getQuantity());
+
+        }else{
+           Item  newItem = Item.builder()
+                    .capacity(request.getCapacity())
+                    .description(request.getDescription())
+                    .providerSupplyItemList(new ArrayList<>())
+                    .category(category)
+                    .totQuantity(request.getQuantity())
+                    .build();
+
+            newItem.addProviderMapping(provider, request.getQuantity(), request.getDate());
+            category.addItem(newItem);
+            this.itemRepository.save(newItem);
+        }
+
+
+
         return "Registrato";
 
     }

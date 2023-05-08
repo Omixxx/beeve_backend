@@ -41,11 +41,11 @@ public class ProcessService {
             Item item = this.itemRepository.findById(itemId).orElseThrow(
                     () -> new ItemNotFoundException("Item con id " + itemId + " non trovato")
             );
-            Integer totalQuantity = item.getQuantity();
+            Integer totalQuantity = item.getTotQuantity();
             if(totalQuantity < quantity)
                 throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() +
                         " richiesta: " + quantity + " disponibile: " + totalQuantity);
-            item.setQuantity(totalQuantity - quantity);
+            item.setTotQuantity(totalQuantity - quantity);
             itemQuantityMap.put(item, quantity);
         });
 
