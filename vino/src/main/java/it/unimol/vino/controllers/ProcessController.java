@@ -1,7 +1,6 @@
 package it.unimol.vino.controllers;
 
 import it.unimol.vino.dto.ProcessDTO;
-import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.CancelProgressRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
@@ -36,13 +35,6 @@ public class ProcessController {
         );
     }
 
-    @PostMapping("/{process_id}/start")
-    public ResponseEntity<String> startProcess(@PathVariable("process_id") Long processId) {
-        this.processService.startProcess(processId);
-        return ResponseEntity.ok("Processo " +
-                processId + " avviato con successo"
-        );
-    }
 
     @PostMapping("/{process_id}/progress")
     public ResponseEntity<String> progressProcess(
@@ -60,7 +52,7 @@ public class ProcessController {
             @PathVariable("process_id") Long processId,
             @RequestBody CancelProgressRequest request
     ) {
-        this.processService.cancelProcess(processId, request.getDescription());
+        this.processService.AbortProcess(processId, request.getDescription());
         return ResponseEntity.ok("Processo " +
                 processId + " annullato con successo"
         );

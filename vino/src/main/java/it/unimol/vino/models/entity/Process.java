@@ -81,6 +81,7 @@ public class Process {
             this.states = new ArrayList<>();
 
         states.forEach(state -> this.addState(state, states.indexOf(state)));
+        this.currentState = this.states.get(0);
     }
 
     public void addState(State state, Integer sequence) {

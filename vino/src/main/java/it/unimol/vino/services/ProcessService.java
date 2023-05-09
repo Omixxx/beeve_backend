@@ -53,30 +53,12 @@ public class ProcessService {
         process.addState(state, request.getSequence());
     }
 
-    public void startProcess(Long processId) {
-        Process process = this.getProcess(processId);
-
-        if (Objects.nonNull(process.getCurrentState())) {
-            throw new ProcessAlreadyStartedException("Il processo è già stato avviato");
-        }
-
-        this.ensureProcessIsNotAborted(process);
-        this.ensureProcessHasStates(process);
-
-        ProcessHasStates initialState = process.getStatesOrderedBySequence().get(0);
-        initialState.setStartDate(new Date());
-        process.setCurrentState(initialState);
-        this.processRepository.save(process);
-    }
-
-
     @Transactional
     public String progressState(Long processId, String description) {
         Process process = this.getProcess(processId);
 
         this.ensureProcessHasStates(process);
         this.ensureProcessIsNotAborted(process);
-        this.ensureProcessIsStarted(process);
 
         User user = this.getUser();
         UserProgressesProcess userProgressesProcess = UserProgressesProcess.builder()
@@ -97,12 +79,11 @@ public class ProcessService {
         return nextState.getState().getName();
     }
 
-    public void cancelProcess(Long processId, String description) {
+    public void AbortProcess(Long processId, String description) {
         Process process = this.getProcess(processId);
 
         this.ensureProcessHasStates(process);
         this.ensureProcessIsNotAborted(process);
-        this.ensureProcessIsStarted(process);
 
         User user = this.getUser();
 
@@ -126,11 +107,6 @@ public class ProcessService {
         return this.processRepository.findById(processId).orElseThrow(
                 () -> new ProcessNotFoundException("Processo non trovato")
         );
-    }
-
-    private void ensureProcessIsStarted(@NotNull Process process) {
-        if (Objects.isNull(process.getCurrentState()))
-            throw new ProcessAlreadyStartedException("Il processo non è stato avviato");
     }
 
     private void ensureProcessHasStates(@NotNull Process process) {
