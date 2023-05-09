@@ -3,7 +3,7 @@ package it.unimol.vino.models.request;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
-import java.util.HashMap;
+import java.util.List;
 
 @Data
 @NoArgsConstructor(force = true)
@@ -13,5 +13,5 @@ public class NewProcessRequest {
 
     @NonNull
     @NotEmpty(message = "Il processo deve necessariamente avere almeno uno stato")
-    private HashMap<Long, Integer> stateIdSequence;
+    private List<Long> states;
 }

@@ -2,6 +2,7 @@ package it.unimol.vino.models.entity;
 
 
 import it.unimol.vino.exceptions.StateNotFoundException;
+import it.unimol.vino.utils.Logger;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -71,7 +72,7 @@ public class Process {
     @Column(nullable = false)
     private Integer currentWaste;
 
-    public Process(@NotEmpty Map<State, Integer> stateSequenceMap) {
+    public Process(@NotEmpty List<State> states) {
         this.currentWaste = 0;
         this.stalkWaste = 0;
         this.wineWaste = 0;
@@ -80,8 +81,12 @@ public class Process {
         if (Objects.isNull(this.states))
             this.states = new ArrayList<>();
 
-        this.userProgressProcessList = new ArrayList<>();
-        stateSequenceMap.forEach(this::addState);
+
+        states.forEach(state -> {
+                    Logger.getLogger().error(state.getName());
+                    this.addState(state, states.indexOf(state));
+                }
+        );
     }
 
     public void addState(State state, Integer sequence) {

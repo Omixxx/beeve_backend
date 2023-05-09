@@ -10,8 +10,6 @@ import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
 import it.unimol.vino.repository.UserProgressProcessRepository;
 import it.unimol.vino.repository.UserRepository;
-import it.unimol.vino.utils.Logger;
-import it.unimol.vino.utils.Sorter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -30,16 +28,17 @@ public class ProcessService {
     private final UserProgressProcessRepository userProgressProcessRepository;
 
     public Long createNewProcess(@NotNull NewProcessRequest request) {
-        HashMap<State, Integer> stateSequenceMap = new HashMap<>();
-        request.getStateIdSequence().forEach((stateId, sequence) -> {
+        request.getStates().forEach(System.out::println);
+
+        List<State> alreadyOrderedStateList = new ArrayList<>();
+        request.getStates().forEach((stateId) -> {
             State state = this.stateRepository.findById(stateId).orElseThrow(
                     () -> new StateNotFoundException("Stato con id " + stateId + " non trovato")
             );
-            stateSequenceMap.put(state, sequence);
+            alreadyOrderedStateList.add(state);
         });
-        Sorter.sortMapByValue(stateSequenceMap);
 
-        Process process = new Process(stateSequenceMap);
+        Process process = new Process(alreadyOrderedStateList);
         User user = this.getUser();
         process.setCreator(user);
         return this.processRepository.save(process).getId();
