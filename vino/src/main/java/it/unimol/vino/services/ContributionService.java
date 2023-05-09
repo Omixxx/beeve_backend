@@ -1,14 +1,19 @@
 package it.unimol.vino.services;
 
 import it.unimol.vino.exceptions.ContributionNotFoundException;
+import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Contribution;
 import it.unimol.vino.models.entity.GrapeType;
+import it.unimol.vino.models.entity.User;
 import it.unimol.vino.repository.ContributionRepository;
-import jakarta.persistence.EntityNotFoundException;
+import it.unimol.vino.repository.UserRepository;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.security.Security;
 import java.util.List;
 
 @Service
@@ -16,9 +21,11 @@ import java.util.List;
 public class ContributionService {
 
     private final ContributionRepository contribution;
+    private final UserRepository userRepository;
 
-    public ContributionService(ContributionRepository contribution) {
+    public ContributionService(ContributionRepository contribution, UserRepository userRepository) {
         this.contribution = contribution;
+        this.userRepository = userRepository;
     }
 
     public List<Contribution> getAll() {
@@ -55,7 +62,13 @@ public class ContributionService {
                 .orElseThrow(() -> new ContributionNotFoundException("Non esiste alcun conferimento con tipo d'uva " + grapeType.getId()));
     }
 
-    public Contribution put(@Valid Contribution contribution) {
+    public Contribution put(@NotNull @Valid Contribution contribution) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = this.userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new UserNotFoundException("L'utente con email " + userEmail + " non esiste")
+        );
+
+        contribution.setSubmitter(user);
         return this.contribution.save(contribution);
     }
 
