@@ -22,11 +22,11 @@ public class ProcessDTO {
 
     private Date creationDate;
 
-    private User canceller;
+    private User userWhoAborted;
 
-    private Date cancellationDate;
+    private Date abortDate;
 
-    private String cancellationDescription;
+    private String abortDescription;
 
     private List<UserModifyProcess> modifiers;
 

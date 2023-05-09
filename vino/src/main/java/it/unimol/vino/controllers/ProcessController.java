@@ -55,7 +55,7 @@ public class ProcessController {
         );
     }
 
-    @PostMapping("/{process_id}/cancel")
+    @PostMapping("/{process_id}/abort")
     public ResponseEntity<String> cancelProcess(
             @PathVariable("process_id") Long processId,
             @RequestBody CancelProgressRequest request

@@ -2,7 +2,6 @@ package it.unimol.vino.models.entity;
 
 
 import it.unimol.vino.exceptions.StateNotFoundException;
-import it.unimol.vino.utils.Logger;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -29,15 +28,15 @@ public class Process {
     private Date creationDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cancelled_by")
-    private User canceller;
+    @JoinColumn(name = "aborted_by")
+    private User userWhoAborted;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "cancelled_at")
-    private Date cancellationDate;
+    @Column(name = "abortion_date")
+    private Date abortionDate;
 
-    @Column(name = "cancelled_description")
-    private String cancellationDescription;
+    @Column(name = "abortion_description")
+    private String abortionDescription;
 
     @OneToMany(mappedBy = "process")
     private List<UserModifyProcess> modifiers;
@@ -81,12 +80,7 @@ public class Process {
         if (Objects.isNull(this.states))
             this.states = new ArrayList<>();
 
-
-        states.forEach(state -> {
-                    Logger.getLogger().error(state.getName());
-                    this.addState(state, states.indexOf(state));
-                }
-        );
+        states.forEach(state -> this.addState(state, states.indexOf(state)));
     }
 
     public void addState(State state, Integer sequence) {

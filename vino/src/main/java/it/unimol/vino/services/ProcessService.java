@@ -28,8 +28,6 @@ public class ProcessService {
     private final UserProgressProcessRepository userProgressProcessRepository;
 
     public Long createNewProcess(@NotNull NewProcessRequest request) {
-        request.getStates().forEach(System.out::println);
-
         List<State> alreadyOrderedStateList = new ArrayList<>();
         request.getStates().forEach((stateId) -> {
             State state = this.stateRepository.findById(stateId).orElseThrow(
@@ -62,7 +60,7 @@ public class ProcessService {
             throw new ProcessAlreadyStartedException("Il processo è già stato avviato");
         }
 
-        this.ensureProcessIsNotCancelled(process);
+        this.ensureProcessIsNotAborted(process);
         this.ensureProcessHasStates(process);
 
         ProcessHasStates initialState = process.getStatesOrderedBySequence().get(0);
@@ -77,7 +75,7 @@ public class ProcessService {
         Process process = this.getProcess(processId);
 
         this.ensureProcessHasStates(process);
-        this.ensureProcessIsNotCancelled(process);
+        this.ensureProcessIsNotAborted(process);
         this.ensureProcessIsStarted(process);
 
         User user = this.getUser();
@@ -103,16 +101,16 @@ public class ProcessService {
         Process process = this.getProcess(processId);
 
         this.ensureProcessHasStates(process);
-        this.ensureProcessIsNotCancelled(process);
+        this.ensureProcessIsNotAborted(process);
         this.ensureProcessIsStarted(process);
 
         User user = this.getUser();
 
         process.getCurrentState().setEndDate(new Date());
         process.setCurrentState(null);
-        process.setCanceller(user);
-        process.setCancellationDate(new Date());
-        process.setCancellationDescription(description);
+        process.setUserWhoAborted(user);
+        process.setAbortionDate(new Date());
+        process.setAbortionDescription(description);
         processRepository.save(process);
     }
 
@@ -140,9 +138,9 @@ public class ProcessService {
             throw new ProcessHasNoStatesException("Il processo non ha stati");
     }
 
-    private void ensureProcessIsNotCancelled(@NotNull Process process) {
-        if (Objects.isNull(process.getCurrentState()) && Objects.nonNull(process.getCanceller()))
-            throw new ProcessCancelledException("Il processo risulta cancellato");
+    private void ensureProcessIsNotAborted(@NotNull Process process) {
+        if (Objects.isNull(process.getCurrentState()) && Objects.nonNull(process.getUserWhoAborted()))
+            throw new ProcessAbortedException("Il processo risulta interrotto");
     }
 
     private User getUser() {

@@ -236,8 +236,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {ProcessCancelledException.class})
-    public ResponseEntity<Object> handleApiRequestException(ProcessCancelledException e) {
+    @ExceptionHandler(value = {ProcessAbortedException.class})
+    public ResponseEntity<Object> handleApiRequestException(ProcessAbortedException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST,
