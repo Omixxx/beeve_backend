@@ -80,6 +80,7 @@ public class Process {
         if (Objects.isNull(this.states))
             this.states = new ArrayList<>();
 
+        this.userProgressProcessList = new ArrayList<>();
         stateSequenceMap.forEach(this::addState);
     }
 

@@ -14,6 +14,7 @@ import it.unimol.vino.utils.Logger;
 import it.unimol.vino.utils.Sorter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class ProcessService {
     private final UserRepository userRepository;
     private final UserProgressProcessRepository userProgressProcessRepository;
 
-    public Long createNewProcess(NewProcessRequest request) {
+    public Long createNewProcess(@NotNull NewProcessRequest request) {
         HashMap<State, Integer> stateSequenceMap = new HashMap<>();
         request.getStateIdSequence().forEach((stateId, sequence) -> {
             State state = this.stateRepository.findById(stateId).orElseThrow(
@@ -45,7 +46,7 @@ public class ProcessService {
     }
 
 
-    public void addState(AddStateToProcessRequest request) {
+    public void addState(@NotNull AddStateToProcessRequest request) {
         Process process = this.getProcess(request.getProcessId());
 
         State state = this.stateRepository.findById(request.getStateId()).orElseThrow(
@@ -81,11 +82,11 @@ public class ProcessService {
         this.ensureProcessIsStarted(process);
 
         User user = this.getUser();
-        UserProgressesProcess userProgressesProcess = new UserProgressesProcess(
-                user,
-                process,
-                description
-        );
+        UserProgressesProcess userProgressesProcess = UserProgressesProcess.builder()
+                .user(user)
+                .process(process)
+                .description(description)
+                .build();
 
         process.getUserProgressProcessList().add(userProgressesProcess);
         user.getProgressedProcesses().add(userProgressesProcess);
@@ -130,17 +131,17 @@ public class ProcessService {
         );
     }
 
-    private void ensureProcessIsStarted(Process process) {
+    private void ensureProcessIsStarted(@NotNull Process process) {
         if (Objects.isNull(process.getCurrentState()))
             throw new ProcessAlreadyStartedException("Il processo non è stato avviato");
     }
 
-    private void ensureProcessHasStates(Process process) {
+    private void ensureProcessHasStates(@NotNull Process process) {
         if (process.getStatesOrderedBySequence().isEmpty())
             throw new ProcessHasNoStatesException("Il processo non ha stati");
     }
 
-    private void ensureProcessIsNotCancelled(Process process) {
+    private void ensureProcessIsNotCancelled(@NotNull Process process) {
         if (Objects.isNull(process.getCurrentState()) && Objects.nonNull(process.getCanceller()))
             throw new ProcessCancelledException("Il processo risulta cancellato");
     }
