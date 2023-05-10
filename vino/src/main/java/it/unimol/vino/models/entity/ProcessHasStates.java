@@ -1,8 +1,6 @@
 package it.unimol.vino.models.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -15,10 +13,12 @@ import java.util.Date;
 @AllArgsConstructor
 public class ProcessHasStates {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne
     private Process process;
 
-    @Id
     @ManyToOne
     private State state;
 

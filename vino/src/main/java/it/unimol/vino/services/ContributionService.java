@@ -1,21 +1,30 @@
 package it.unimol.vino.services;
 
 import it.unimol.vino.exceptions.ContributionNotFoundException;
-import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
-import it.unimol.vino.exceptions.ProviderNotFoundException;
+
+import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Contribution;
 import it.unimol.vino.models.entity.GrapeType;
+import it.unimol.vino.models.entity.User;
+import it.unimol.vino.repository.ContributionRepository;
+import it.unimol.vino.repository.UserRepository;
+import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.context.SecurityContextHolder;
+import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
+import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.RegisterContributionRequest;
-import it.unimol.vino.repository.ContributionRepository;
 import it.unimol.vino.repository.GrapeTypeRepository;
 import it.unimol.vino.repository.ProviderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.security.Security;
 import java.util.List;
 
 @Service
@@ -24,6 +33,7 @@ import java.util.List;
 public class ContributionService {
 
     private final ContributionRepository contribution;
+    private final UserRepository userRepository;
     private final ProviderRepository provider;
     private final GrapeTypeRepository grapeType;
 
@@ -62,6 +72,12 @@ public class ContributionService {
     }
 
     public String put(@Valid RegisterContributionRequest request) {
+  
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = this.userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new UserNotFoundException("L'utente con email " + userEmail + " non esiste")
+        );
+  
         Provider provider = this.provider.findById(request.getProviderId()).orElseThrow(
                 () -> new ProviderNotFoundException("IL provider con ID " + request.getProviderId() + " non è stato trovato")
         );
@@ -81,7 +97,8 @@ public class ContributionService {
                 .associatedGrapeType(grapeType)
                 .provider(provider)
                 .build();
-
+  
+        contribution.setSubmitter(user);
         this.contribution.save(contribution);
         return "Il conferimento è stato registrato con l'id" + contribution.getId();
     }

@@ -1,12 +1,17 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.dto.ProcessDTO;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
+import it.unimol.vino.models.request.CancelProgressRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
+import it.unimol.vino.models.request.ProgressProcessRequest;
 import it.unimol.vino.services.ProcessService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/process")
@@ -30,20 +35,32 @@ public class ProcessController {
         );
     }
 
-    @PostMapping("/{process_id}/start")
-    public ResponseEntity<String> startProcess(@PathVariable("process_id") Long processId) {
-        this.processService.startProcess(processId);
+
+    @PostMapping("/{process_id}/progress")
+    public ResponseEntity<String> progressProcess(
+            @PathVariable("process_id") Long processId,
+            @RequestBody ProgressProcessRequest request
+    ) {
         return ResponseEntity.ok("Processo " +
-                processId + " avviato con successo"
+                processId + " avanzato con successo verso lo stato " +
+                this.processService.progressState(processId, request.getDescription())
         );
     }
 
-    @PostMapping("/{process_id}/progress")
-    public ResponseEntity<String> progressProcess(@PathVariable("process_id") Long processId) {
+    @PostMapping("/{process_id}/abort")
+    public ResponseEntity<String> cancelProcess(
+            @PathVariable("process_id") Long processId,
+            @RequestBody CancelProgressRequest request
+    ) {
+        this.processService.AbortProcess(processId, request.getDescription());
         return ResponseEntity.ok("Processo " +
-                processId + " avanzato con successo verso lo stato " +
-                this.processService.progressState(processId)
+                processId + " annullato con successo"
         );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProcessDTO>> getAllProcesses() {
+        return ResponseEntity.ok(this.processService.getAllProcesses());
     }
 
 }

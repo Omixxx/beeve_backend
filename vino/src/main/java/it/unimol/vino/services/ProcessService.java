@@ -1,5 +1,7 @@
 package it.unimol.vino.services;
 
+
+import it.unimol.vino.dto.ProcessDTO;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.*;
 import it.unimol.vino.models.entity.Process;
@@ -8,10 +10,15 @@ import it.unimol.vino.models.request.NewProcessRequest;
 import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
+import it.unimol.vino.repository.UserProgressProcessRepository;
+import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.repository.ContributionRepository;
 import it.unimol.vino.utils.Sorter;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,19 +29,21 @@ public class ProcessService {
 
     private final ProcessRepository processRepository;
     private final StateRepository stateRepository;
+    private final UserRepository userRepository;
+    private final UserProgressProcessRepository userProgressProcessRepository;
     private final ItemRepository itemRepository;
     private final ContributionRepository contributionRepository;
 
     @Transactional
     public Long createNewProcess(NewProcessRequest request) {
+        List<State> alreadyOrderedStateList = new ArrayList<>();
         HashMap<State, Integer> stateSequenceMap = new HashMap<>();
-        request.getStateIdSequence().forEach((stateId, sequence) -> {
+        request.getStates().forEach((stateId) -> {
             State state = this.stateRepository.findById(stateId).orElseThrow(
                     () -> new StateNotFoundException("Stato con id " + stateId + " non trovato")
             );
-            stateSequenceMap.put(state, sequence);
+            alreadyOrderedStateList.add(state);
         });
-        Sorter.sortMapByValue(stateSequenceMap);
 
         HashMap<Item, Integer> itemQuantityMap = new HashMap<>();
         request.getItemIdUsedQuantity().forEach((itemId, quantity) -> {
@@ -62,15 +71,16 @@ public class ProcessService {
             contributionQuantityMap.put(contribution, quantity);
         });
 
-        Process process = new Process(stateSequenceMap, itemQuantityMap, contributionQuantityMap);
+        Process process = new Process(stateSequenceMap, itemQuantityMap, contributionQuantityMap,alreadyOrderedStateList);
+        User user = this.getUser();
+        process.setCreator(user);
+
         return this.processRepository.save(process).getId();
     }
 
 
-    public void addState(AddStateToProcessRequest request) {
-        Process process = this.processRepository.findById(request.getProcessId()).orElseThrow(
-                () -> new ProcessNotFoundException("Processo non trovato")
-        );
+    public void addState(@NotNull AddStateToProcessRequest request) {
+        Process process = this.getProcess(request.getProcessId());
 
         State state = this.stateRepository.findById(request.getStateId()).orElseThrow(
                 () -> new StateNotFoundException("Stato non trovato")
@@ -79,35 +89,76 @@ public class ProcessService {
         process.addState(state, request.getSequence());
     }
 
-    public void startProcess(Long processId) {
-        Process process = this.processRepository.findById(processId).orElseThrow(
-                () -> new ProcessNotFoundException("Processo non trovato")
-        );
+    @Transactional
+    public String progressState(Long processId, String description) {
+        Process process = this.getProcess(processId);
 
-        if (process.getStates().isEmpty())
-            throw new ProcessHasNoStatesException("Il processo non ha stati");
+        this.ensureProcessHasStates(process);
+        this.ensureProcessIsNotAborted(process);
 
-        if (process.getCurrentState().isPresent())
-            throw new ProcessAlreadyStarted("Il processo è gia stato avviato");
+        User user = this.getUser();
+        UserProgressesProcess userProgressesProcess = UserProgressesProcess.builder()
+                .user(user)
+                .process(process)
+                .description(description)
+                .build();
 
-        ProcessHasStates initialState = process.getStates().get(0);
-        initialState.setStartDate(new Date());
-        this.processRepository.save(process);
-    }
+        process.getUserProgressProcessList().add(userProgressesProcess);
+        user.getProgressedProcesses().add(userProgressesProcess);
 
-
-    public String progressState(Long processId) {
-        Process process = this.processRepository.findById(processId).orElseThrow(
-                () -> new ProcessNotFoundException("Processo non trovato")
-        );
-
-        if (process.getCurrentState().isEmpty())
-            throw new ProcessAlreadyStarted("Il processo non è stato avviato, quindi non può progredire");
-
-        process.getCurrentState().get().setEndDate(new Date());
-
+        process.getCurrentState().setEndDate(new Date());
         ProcessHasStates nextState = process.getNextState();
         nextState.setStartDate(new Date());
+        process.setCurrentState(nextState);
+
+        this.userProgressProcessRepository.save(userProgressesProcess);
         return nextState.getState().getName();
+    }
+
+    public void AbortProcess(Long processId, String description) {
+        Process process = this.getProcess(processId);
+
+        this.ensureProcessHasStates(process);
+        this.ensureProcessIsNotAborted(process);
+
+        User user = this.getUser();
+
+        process.getCurrentState().setEndDate(new Date());
+        process.setCurrentState(null);
+        process.setUserWhoAborted(user);
+        process.setAbortionDate(new Date());
+        process.setAbortionDescription(description);
+        processRepository.save(process);
+    }
+
+    public List<ProcessDTO> getAllProcesses() {
+        List<ProcessDTO> processDTOList = new ArrayList<>();
+        this.processRepository.findAll().forEach(process -> {
+            processDTOList.add(ProcessDTO.getFullProcessDTO(process));
+        });
+        return processDTOList;
+    }
+
+    private Process getProcess(Long processId) {
+        return this.processRepository.findById(processId).orElseThrow(
+                () -> new ProcessNotFoundException("Processo non trovato")
+        );
+    }
+
+    private void ensureProcessHasStates(@NotNull Process process) {
+        if (process.getStatesOrderedBySequence().isEmpty())
+            throw new ProcessHasNoStatesException("Il processo non ha stati");
+    }
+
+    private void ensureProcessIsNotAborted(@NotNull Process process) {
+        if (Objects.isNull(process.getCurrentState()) && Objects.nonNull(process.getUserWhoAborted()))
+            throw new ProcessAbortedException("Il processo risulta interrotto");
+    }
+
+    private User getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userRepository.findByEmail(email).orElseThrow(
+                () -> new UserNotFoundException("Utente non trovato")
+        );
     }
 }

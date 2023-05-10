@@ -19,9 +19,30 @@ public class Process {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by", nullable = false, updatable = false)
+    private User creator;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date creationDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "aborted_by")
+    private User userWhoAborted;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "abortion_date")
+    private Date abortionDate;
+
+    @Column(name = "abortion_description")
+    private String abortionDescription;
+
+    @OneToMany(mappedBy = "process")
+    private List<UserModifyProcess> modifiers;
+
+    @OneToMany(mappedBy = "process")
+    private List<UserProgressesProcess> userProgressProcessList;
 
     @OneToMany(
             mappedBy = "process",
@@ -30,6 +51,9 @@ public class Process {
     )
     @NonNull
     List<ProcessHasStates> states;
+
+    @ManyToOne
+    private ProcessHasStates currentState;
 
     @OneToMany(
             mappedBy = "process",
@@ -47,23 +71,25 @@ public class Process {
     @NonNull
     List<ProcessUseContribution> contribution;
 
+
     @NonNull
     @Min(value = 0, message = "Wine waste must be greater than 0")
     @Column(nullable = false)
     private Integer wineWaste;
 
     @NonNull
-    @Min(value = 0, message = "Wine waste must be greater than 0")
+    @Min(value = 0, message = "stalk waste must be greater than 0")
     @Column(nullable = false)
     private Integer stalkWaste;
 
     @NonNull
-    @Min(value = 0, message = "Wine waste must be greater than 0")
+    @Min(value = 0, message = "current waste must be greater than 0")
     @Column(nullable = false)
     private Integer currentWaste;
 
 
-    public Process(@NotEmpty Map<State, Integer> stateSequenceMap,
+
+    public Process(@@NotEmpty List<State> states,
                    @NotEmpty Map<Item, Integer> itemQuantityMap,
                    @NotEmpty Map<Contribution, Double> contributionQuantityMap
     ) {
@@ -75,7 +101,9 @@ public class Process {
         if (Objects.isNull(this.states))
             this.states = new ArrayList<>();
 
-        stateSequenceMap.forEach(this::addState);
+
+        states.forEach(state -> this.addState(state, states.indexOf(state)));
+        this.currentState = this.states.get(0);
 
         if (Objects.isNull(this.item))
             this.item = new ArrayList<>();
@@ -99,28 +127,19 @@ public class Process {
     }
 
     public ProcessHasStates getNextState() {
-        List<ProcessHasStates> sortedStates = this.getStates();
-        ProcessHasStates currentState = this.getCurrentState().orElseThrow(
-                () -> new StateNotFoundException("Il processo non possiede uno stato corrente")
-        );
+        List<ProcessHasStates> sortedStates = this.getStatesOrderedBySequence();
+        ProcessHasStates currentState = this.getCurrentState();
 
         return sortedStates.stream().filter(state -> state.getSequence().equals(currentState.getSequence() + 1))
                 .findFirst().orElseThrow(() -> new StateNotFoundException("Non ci sono stati successivi"));
     }
 
-    public List<ProcessHasStates> getStates() {
+    public List<ProcessHasStates> getStatesOrderedBySequence() {
         return this.states.stream()
                 .sorted(Comparator.comparing(ProcessHasStates::getSequence))
                 .toList();
     }
 
-    public Optional<ProcessHasStates> getCurrentState() {
-        return this.states
-                .stream()
-                .filter(state -> Objects.nonNull(state.getStartDate()) &&
-                        Objects.isNull(state.getEndDate()))
-                .findFirst();
-    }
 
     public void addItem(Item item ,Integer usedQuantity){
         ProcessUseItem processUseItem = ProcessUseItem.builder()

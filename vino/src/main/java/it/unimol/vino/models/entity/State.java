@@ -3,6 +3,7 @@ package it.unimol.vino.models.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import lombok.extern.apachecommons.CommonsLog;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class State {
 
     @NonNull
     @NotBlank(message = "Il nome dello stato non può essere vuoto")
+    @Column(unique = true)
     private String name;
 
     @NonNull
@@ -27,5 +29,4 @@ public class State {
 
     @OneToMany(mappedBy = "state", cascade = CascadeType.ALL)
     private List<ProcessHasStates> processes;
-
 }
