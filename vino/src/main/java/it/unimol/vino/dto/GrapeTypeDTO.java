@@ -15,7 +15,7 @@ import lombok.NonNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GrapeTypeDTO {
 
-    private String id;
+    private String type;
 
     private String color;
 
@@ -23,7 +23,7 @@ public class GrapeTypeDTO {
 
     public static GrapeTypeDTO getFullGrapeTypeDTO(@NotNull GrapeType grapeType){
         return GrapeTypeDTO.builder()
-                .id(grapeType.getId())
+                .type(grapeType.getType())
                 .color(grapeType.getColor())
                 .species(grapeType.getSpecies())
                 .build();
@@ -31,7 +31,7 @@ public class GrapeTypeDTO {
 
     public static GrapeTypeDTO getOnlyIDGrapeType(@NotNull GrapeType grapeType){
         return GrapeTypeDTO.builder()
-                .id(grapeType.getId())
+                .type(grapeType.getType())
                 .build();
     }
 }
