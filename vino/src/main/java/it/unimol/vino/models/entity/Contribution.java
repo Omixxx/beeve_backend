@@ -23,7 +23,7 @@ public class Contribution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Il contributo deve avere un' origine")
+    @NotBlank(message = "Il conferimento deve avere un' origine")
     @Column(name = "origin")
     private String origin;
 
@@ -38,11 +38,11 @@ public class Contribution {
     @Column(name = "description")
     private String description;
 
-    @Positive(message = "Il contributo deve avere un grado zuccherino positivo")
+    @Positive(message = "Il conferimento deve avere un grado zuccherino positivo")
     @Column(name = "sugar_degree")
     private double sugarDegree;
 
-    @Positive(message = "Il contributo deve avere una quantità positiva")
+    @Positive(message = "Il comferimento deve avere una quantità positiva")
     @Column(name = "quantity")
     private double quantity;
 

@@ -1,5 +1,8 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.dto.ContributionDTO;
+import it.unimol.vino.dto.GrapeTypeDTO;
+import it.unimol.vino.dto.ProviderDTO;
 import it.unimol.vino.exceptions.ContributionNotFoundException;
 import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
@@ -10,13 +13,13 @@ import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.repository.ContributionRepository;
 import it.unimol.vino.repository.GrapeTypeRepository;
 import it.unimol.vino.repository.ProviderRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Validated
@@ -27,13 +30,35 @@ public class ContributionService {
     private final ProviderRepository provider;
     private final GrapeTypeRepository grapeType;
 
-    public List<Contribution> getAll() {
-        return this.contribution.findAll();
+    public List<ContributionDTO> getAll() {
+        return this.contribution.findAll().stream().map(
+                contribution -> ContributionDTO.builder()
+                        .id(contribution.getId())
+                        .quantity(contribution.getQuantity())
+                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(contribution.getAssociatedGrapeType()))
+                        .provider(ProviderDTO.getName(contribution.getProvider()))
+                        .build()
+        ).collect(Collectors.toList());
     }
 
-    public Contribution get(Long id) {
-        return this.contribution.findById(id)
+
+    public ContributionDTO get(Long id) {
+        ContributionDTO contribution = this.contribution.findById(id)
+                .map(specificContribution -> ContributionDTO.builder()
+                        .id(specificContribution.getId())
+                        .origin(specificContribution.getOrigin())
+                        .country(specificContribution.getCountry())
+                        .description(specificContribution.getDescription())
+                        .quantity(specificContribution.getQuantity())
+                        .sugarDegree(specificContribution.getSugarDegree())
+                        .photoURL(specificContribution.getPhotoURL())
+                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(specificContribution.getAssociatedGrapeType()))
+                        .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
+                        .build())
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
+
+        return contribution;
+
     }
 
     public List<Contribution> getByOrigin(String origin) {
