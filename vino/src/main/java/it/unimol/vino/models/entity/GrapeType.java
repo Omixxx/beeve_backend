@@ -21,7 +21,7 @@ public class GrapeType {
     @Id
     @NotBlank(message = "Il nome non può essere vuoto")
     @Column(name = "grape_type")
-    private String id;
+    private String type;
 
     @NotBlank(message = "Il tipo d'uva deve avere un colore")
     @Column(name = "color")

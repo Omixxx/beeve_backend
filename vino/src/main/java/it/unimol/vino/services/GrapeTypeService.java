@@ -23,61 +23,12 @@ public class GrapeTypeService {
         return this.grapeType.findAll();
     }
 
-    public GrapeType get(String id) {
-        return this.grapeType.findById(id)
-                .orElseThrow(() -> new GrapeTypeNotFoundException("Non esiste alcun tipo d'uva con nome " + id));
+    public GrapeType get(String type) {
+        return this.grapeType.findById(type)
+                .orElseThrow(() -> new EntityNotFoundException("Non esiste alcun tipo d'uva " + type));
     }
-
-    public List<GrapeType> findByColor(String color) {
-        return this.grapeType.findByColor(color)
-                .orElseThrow(() -> new GrapeTypeNotFoundException("Non esiste alcun tipo d'uva con colore " + color));
-    }
-
-    public List<GrapeType> findBySpecies(String species) {
-        return this.grapeType.findBySpecies(species)
-                .orElseThrow(() -> new GrapeTypeNotFoundException("Il tipo d'uva con specie " + species + " non esiste"));
-    }
-
-
     public GrapeType put(@Valid GrapeType grapeType) {
         return this.grapeType.save(grapeType);
-    }
-
-    public GrapeType replace(String id, @Valid GrapeType grapeType) {
-
-        if (!this.grapeType.existsById(id)) {
-            throw new GrapeTypeNotFoundException("Il tipo d'uva con nome " + id + " non esiste");
-        }
-
-        grapeType.setId(id);
-
-        return this.grapeType.save(grapeType);
-    }
-
-    public void updateColor(String id, String grapeColor) {
-
-        GrapeType grapeType = this.grapeType.findById(id).orElseThrow(() -> new GrapeTypeNotFoundException("Il tipo d'uva con nome " + id + " non esiste"));
-        grapeType.setColor(grapeColor);
-
-    }
-
-    public void updateSpecies(String id, String species) {
-
-        GrapeType grapeType = this.grapeType.findById(id).orElseThrow(() -> new GrapeTypeNotFoundException("Il tipo d'uva con nome " + id + " non esiste"));
-        grapeType.setSpecies(species);
-    }
-
-
-    public void deleteAllByColor(String color) {
-        this.grapeType.deleteAllByColor(color);
-    }
-
-    public void deleteAllBySpecies(String species) {
-        this.grapeType.deleteAllBySpecies(species);
-    }
-
-    public void delete() {
-        this.grapeType.deleteAll();
     }
 
 }
