@@ -51,7 +51,7 @@ public class ProcessService {
                     () -> new ItemNotFoundException("Item con id " + itemId + " non trovato")
             );
             Integer totalQuantity = item.getTotQuantity();
-            if(totalQuantity < quantity)
+            if (totalQuantity < quantity)
                 throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() +
                         " richiesta: " + quantity + " disponibile: " + totalQuantity);
             item.setTotQuantity(totalQuantity - quantity);
@@ -64,14 +64,14 @@ public class ProcessService {
                     () -> new ContributionNotFoundException("Conferimento con id " + contributionId + " non trovato")
             );
             Double totalQuantity = contribution.getQuantity();
-            if(totalQuantity < quantity)
+            if (totalQuantity < quantity)
                 throw new QuantityNotAvailableException("Quantità non sufficiente per il conferimento "
                         + contribution.getId() + " richiesta: " + quantity + " disponibile: " + totalQuantity);
             contribution.setQuantity(totalQuantity - quantity);
             contributionQuantityMap.put(contribution, quantity);
         });
 
-        Process process = new Process(stateSequenceMap, itemQuantityMap, contributionQuantityMap,alreadyOrderedStateList);
+        Process process = new Process(alreadyOrderedStateList,itemQuantityMap, contributionQuantityMap);
         User user = this.getUser();
         process.setCreator(user);
 

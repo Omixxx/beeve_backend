@@ -89,7 +89,7 @@ public class Process {
 
 
 
-    public Process(@@NotEmpty List<State> states,
+    public Process(@NotEmpty List<State> states,
                    @NotEmpty Map<Item, Integer> itemQuantityMap,
                    @NotEmpty Map<Contribution, Double> contributionQuantityMap
     ) {
