@@ -7,6 +7,7 @@ import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.entity.Item;
 
 
+import it.unimol.vino.models.request.DecreaseTotalQuantityOfItemRequest;
 import it.unimol.vino.models.request.RegisterItemRequest;
 
 import it.unimol.vino.services.ItemService;
@@ -40,10 +41,16 @@ public class ItemController {
 
         return ResponseEntity.ok(this.itemService.itemRegister(registerItemRequest));
     }
+    @PostMapping("/decreaseTotalQuantityOfItem")
+    public ResponseEntity<String> decreseTotalQuantityOfItem(@RequestBody @Valid DecreaseTotalQuantityOfItemRequest request){
+        return ResponseEntity.ok(this.itemService.decreaseTotalQuantityOfItem(request));
+    }
 
     @DeleteMapping("/delete/{id}")
+    //non funziona, il campo ID non esiste più, adattare in base alla nuova chiave composita.
     public ResponseEntity<String> delete(@PathVariable Long id)throws ItemNotFoundException {
         return ResponseEntity.ok(this.itemService.deleteItem(id));
     }
+
 
 }

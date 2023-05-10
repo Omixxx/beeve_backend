@@ -5,13 +5,12 @@ import it.unimol.vino.models.response.ItemsProvidedByProvider;
 import it.unimol.vino.models.response.ProviderBookResponse;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
@@ -37,6 +36,7 @@ public class Provider implements Serializable {
     private Long id;
 
     @Column(name = "name")
+    @UniqueElements
     private String name;
 
     @Column(name = "phone_number")

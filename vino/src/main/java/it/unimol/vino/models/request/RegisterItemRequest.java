@@ -32,7 +32,7 @@ public class RegisterItemRequest {
     @NonNull()
     private String categoryName;
 
+    @NonNull()
+    private String name;
 
-    public RegisterItemRequest(Long providerId, Long capacity, String description, ProviderSupplyItem providerSupplyItem) {
-    }
 }
