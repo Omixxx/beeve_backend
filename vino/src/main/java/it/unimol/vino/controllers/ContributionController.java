@@ -1,5 +1,6 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.dto.ContributionDTO;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.Contribution;
 import it.unimol.vino.models.entity.GrapeType;
@@ -24,7 +25,7 @@ public class ContributionController {
     }
 
     @GetMapping
-    public List<Contribution> getAll() {
+    public List<ContributionDTO> getAll() {
         return this.contributionService.getAll();
     }
 
@@ -39,7 +40,7 @@ public class ContributionController {
     }
 
     @GetMapping("/{id}")
-    public Contribution get(@PathVariable Long id) {
+    public ContributionDTO get(@PathVariable Long id) {
         return this.contributionService.get(id);
     }
 
@@ -103,7 +104,7 @@ public class ContributionController {
     public void updateQuantity(@PathVariable Long id, @Valid @RequestParam double quantity) {
         this.contributionService.updateQuantity(id, quantity);
     }
-
+/*
     @GetMapping(params = "origin")
     public List<Contribution> getByOrigin(@Valid @RequestParam String origin) {
         return this.contributionService.getByOrigin(origin);
@@ -129,5 +130,5 @@ public class ContributionController {
     public List<Contribution> getByAssociatedGrapeType(@Valid @RequestParam GrapeType grapeType) {
         return this.contributionService.getByAssociatedGrapeType(grapeType);
     }
-
+*/
 }
