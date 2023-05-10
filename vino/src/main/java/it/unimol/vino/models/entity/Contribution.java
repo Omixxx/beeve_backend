@@ -1,5 +1,6 @@
 package it.unimol.vino.models.entity;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -11,7 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor (force = true)
 @Builder
 @Entity(name = "contribution")
 @Table(name = "contribution")
@@ -45,6 +46,10 @@ public class Contribution {
     @Column(name = "quantity")
     private double quantity;
 
+    @NonNull
+    @Column(name = "date")
+    private Date date;
+
     @JoinColumn(name = "grape_type")
     @ManyToOne
     private GrapeType associatedGrapeType;
@@ -55,5 +60,10 @@ public class Contribution {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date submissionDate;
+
+    @JoinColumn(name = "provider_id")
+    @ManyToOne
+    private Provider provider;
+
 }
 

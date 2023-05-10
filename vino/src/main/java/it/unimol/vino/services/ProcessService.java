@@ -1,15 +1,20 @@
 package it.unimol.vino.services;
 
+
 import it.unimol.vino.dto.ProcessDTO;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.*;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
+import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
 import it.unimol.vino.repository.UserProgressProcessRepository;
 import it.unimol.vino.repository.UserRepository;
+import it.unimol.vino.repository.ContributionRepository;
+import it.unimol.vino.utils.Sorter;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +31,13 @@ public class ProcessService {
     private final StateRepository stateRepository;
     private final UserRepository userRepository;
     private final UserProgressProcessRepository userProgressProcessRepository;
+    private final ItemRepository itemRepository;
+    private final ContributionRepository contributionRepository;
 
-    public Long createNewProcess(@NotNull NewProcessRequest request) {
+    @Transactional
+    public Long createNewProcess(NewProcessRequest request) {
         List<State> alreadyOrderedStateList = new ArrayList<>();
+        HashMap<State, Integer> stateSequenceMap = new HashMap<>();
         request.getStates().forEach((stateId) -> {
             State state = this.stateRepository.findById(stateId).orElseThrow(
                     () -> new StateNotFoundException("Stato con id " + stateId + " non trovato")
@@ -36,9 +45,36 @@ public class ProcessService {
             alreadyOrderedStateList.add(state);
         });
 
-        Process process = new Process(alreadyOrderedStateList);
+        HashMap<Item, Integer> itemQuantityMap = new HashMap<>();
+        request.getItemIdUsedQuantity().forEach((itemId, quantity) -> {
+            Item item = this.itemRepository.findById(itemId).orElseThrow(
+                    () -> new ItemNotFoundException("Item con id " + itemId + " non trovato")
+            );
+            Integer totalQuantity = item.getTotQuantity();
+            if(totalQuantity < quantity)
+                throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() +
+                        " richiesta: " + quantity + " disponibile: " + totalQuantity);
+            item.setTotQuantity(totalQuantity - quantity);
+            itemQuantityMap.put(item, quantity);
+        });
+
+        HashMap<Contribution, Double> contributionQuantityMap = new HashMap<>();
+        request.getContributionIdQuantity().forEach((contributionId, quantity) -> {
+            Contribution contribution = this.contributionRepository.findById(contributionId).orElseThrow(
+                    () -> new ContributionNotFoundException("Conferimento con id " + contributionId + " non trovato")
+            );
+            Double totalQuantity = contribution.getQuantity();
+            if(totalQuantity < quantity)
+                throw new QuantityNotAvailableException("Quantità non sufficiente per il conferimento "
+                        + contribution.getId() + " richiesta: " + quantity + " disponibile: " + totalQuantity);
+            contribution.setQuantity(totalQuantity - quantity);
+            contributionQuantityMap.put(contribution, quantity);
+        });
+
+        Process process = new Process(stateSequenceMap, itemQuantityMap, contributionQuantityMap,alreadyOrderedStateList);
         User user = this.getUser();
         process.setCreator(user);
+
         return this.processRepository.save(process).getId();
     }
 

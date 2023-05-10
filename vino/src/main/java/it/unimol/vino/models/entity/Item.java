@@ -30,6 +30,9 @@ public class Item {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "total_quantity")
+    private Integer totQuantity;
+
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<ProviderSupplyItem> providerSupplyItemList;
@@ -41,15 +44,19 @@ public class Item {
 
     public void addProviderMapping(@NonNull Provider provider, @NonNull Integer quantity, @NonNull Date date) {
 
-        ProviderSupplyItem providerSupplyItem = new ProviderSupplyItem(
-                quantity,
-                date,
-                provider,
-                this);
+        ProviderSupplyItem providerSupplyItem =ProviderSupplyItem.builder()
+                .quantity(quantity)
+                .date(date)
+                .provider(provider)
+                .item(this)
+                .build();
 
 
         this.providerSupplyItemList.add(providerSupplyItem);
 
+    }
+    public void addQuantity(Integer quantity){
+        this.totQuantity+=quantity;
     }
 
 }
