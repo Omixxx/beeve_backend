@@ -9,15 +9,11 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
 
 import it.unimol.vino.models.entity.GrapeType;
 import it.unimol.vino.services.GrapeTypeService;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 
-import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @AllArgsConstructor
@@ -28,13 +24,13 @@ public class GrapeTypeController {
     private final GrapeTypeService grapeTypeService;
 
     @GetMapping
-    public List<GrapeType> getAll() {
-        return this.grapeTypeService.getAll();
+    public ResponseEntity<List<GrapeType>> getAll() {
+        return ResponseEntity.ok(this.grapeTypeService.getAll());
     }
 
     @PostMapping
-    public GrapeType put(@RequestBody GrapeType grapeType) {
-        return this.grapeTypeService.put(grapeType);
+    public ResponseEntity<GrapeType> put(@RequestBody GrapeType grapeType) {
+        return ResponseEntity.ok(this.grapeTypeService.put(grapeType));
     }
 
     @GetMapping("/{name}")
