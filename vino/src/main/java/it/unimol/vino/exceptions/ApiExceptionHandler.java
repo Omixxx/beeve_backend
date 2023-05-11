@@ -75,7 +75,6 @@ public class ApiExceptionHandler {
     }
 
 
-
     @ExceptionHandler(value = {UserAlreadyRegistered.class})
     protected ResponseEntity<Object> handleApiRequestException(UserAlreadyRegistered e) {
         ApiException apiException = new ApiException(
@@ -98,8 +97,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {PermissionNotFound.class})
-    protected ResponseEntity<Object> handleApiRequestException(PermissionNotFound e) {
+    @ExceptionHandler(value = {PermissionNotFoundException.class})
+    protected ResponseEntity<Object> handleApiRequestException(PermissionNotFoundException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.NOT_FOUND,
@@ -109,8 +108,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {PermissionAlreadyAssigned.class})
-    protected ResponseEntity<Object> handleApiRequestException(PermissionAlreadyAssigned e) {
+    @ExceptionHandler(value = {PermissionAlreadyAssignedException.class})
+    protected ResponseEntity<Object> handleApiRequestException(PermissionAlreadyAssignedException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.CONFLICT,
@@ -120,8 +119,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = {PermissionAlreadyExist.class})
-    protected ResponseEntity<Object> handleApiRequestException(PermissionAlreadyExist e) {
+    @ExceptionHandler(value = {PermissionAlreadyExistException.class})
+    protected ResponseEntity<Object> handleApiRequestException(PermissionAlreadyExistException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.CONFLICT,
@@ -142,7 +141,7 @@ public class ApiExceptionHandler {
         LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
-    
+
     @ExceptionHandler(value = {GrapeTypeNotFoundException.class})
     protected ResponseEntity<Object> handleApiRequestException(GrapeTypeNotFoundException e) {
         ApiException apiException = new ApiException(
@@ -153,7 +152,7 @@ public class ApiExceptionHandler {
         LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
-    
+
     @ExceptionHandler(value = {ContributionNotFoundException.class})
     protected ResponseEntity<Object> handleApiRequestException(ContributionNotFoundException e) {
         ApiException apiException = new ApiException(
@@ -166,7 +165,6 @@ public class ApiExceptionHandler {
     }
 
 
-
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     protected ResponseEntity<Object> handleApiRequestException(HttpMessageNotReadableException e) {
         ApiException apiException = new ApiException(
@@ -177,6 +175,7 @@ public class ApiExceptionHandler {
         LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(value = {CategoryNotFoundException.class})
     public ResponseEntity<Object> handleApiRequestException(CategoryNotFoundException e) {
         ApiException apiException = new ApiException(
@@ -227,14 +226,35 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {ProcessAlreadyStarted.class})
-    public ResponseEntity<Object> handleApiRequestException(ProcessAlreadyStarted e) {
+    @ExceptionHandler(value = {ProcessAlreadyStartedException.class})
+    public ResponseEntity<Object> handleApiRequestException(ProcessAlreadyStartedException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {ProcessAbortedException.class})
+    public ResponseEntity<Object> handleApiRequestException(ProcessAbortedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(value = {StateAlreadyExist.class})
+    public ResponseEntity<Object> handleApiRequestException(StateAlreadyExist e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.CONFLICT,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = {QuantityNotAvailableException.class})
@@ -246,5 +266,4 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
-
 }

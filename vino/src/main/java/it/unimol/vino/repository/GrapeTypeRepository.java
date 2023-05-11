@@ -10,19 +10,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface GrapeTypeRepository extends JpaRepository<GrapeType, Long> {
-
-
-    boolean existsById(String name);
-
-    Optional<GrapeType> findById(String id);
-
-    Optional<List<GrapeType>> findByColor(String color);
-
-    Optional<List<GrapeType>> findBySpecies(String species);
-
-    void deleteAllByColor(String color);
-
-    void deleteAllBySpecies(String species);
+public interface GrapeTypeRepository extends JpaRepository<GrapeType, String> {
 
 }

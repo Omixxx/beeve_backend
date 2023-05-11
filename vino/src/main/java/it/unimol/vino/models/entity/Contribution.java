@@ -1,15 +1,18 @@
 package it.unimol.vino.models.entity;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
+import java.util.Date;
+
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor (force = true)
 @Builder
 @Entity(name = "contribution")
 @Table(name = "contribution")
@@ -20,7 +23,7 @@ public class Contribution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Il contributo deve avere un' origine")
+    @NotBlank(message = "Il conferimento deve avere un' origine")
     @Column(name = "origin")
     private String origin;
 
@@ -35,16 +38,32 @@ public class Contribution {
     @Column(name = "description")
     private String description;
 
-    @Positive(message = "Il contributo deve avere un grado zuccherino positivo")
+    @Positive(message = "Il conferimento deve avere un grado zuccherino positivo")
     @Column(name = "sugar_degree")
     private double sugarDegree;
 
-    @Positive(message = "Il contributo deve avere una quantità positiva")
+    @Positive(message = "Il comferimento deve avere una quantità positiva")
     @Column(name = "quantity")
     private double quantity;
+
+    @NonNull
+    @Column(name = "date")
+    private Date date;
 
     @JoinColumn(name = "grape_type")
     @ManyToOne
     private GrapeType associatedGrapeType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "submitted_by", nullable = false, updatable = false)
+    private User submitter;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date submissionDate;
+
+    @JoinColumn(name = "provider_id")
+    @ManyToOne
+    private Provider provider;
+
 }
 
