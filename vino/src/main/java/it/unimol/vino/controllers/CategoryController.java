@@ -24,15 +24,6 @@ public class CategoryController {
         return ResponseEntity.ok(this.service.getAllCategory());
 
     }
-    @GetMapping("/is_present")
-    public ResponseEntity<Boolean>isCategoryPresent(@Valid @RequestParam String categoryName)  {
-        return ResponseEntity.ok( this.service.isCategoryPresent(categoryName));
-    }
-    @DeleteMapping
-    public ResponseEntity<String> deleteCategory(@RequestParam String categoryName) throws CategoryNotFoundException {
-        this.service.deleteCategory(categoryName);
-        return ResponseEntity.ok("success");
-    }
 
     @PostMapping
     public ResponseEntity<Category> postCategory(@Valid @RequestBody CategoryRequest category)throws CategoryExistingException {
