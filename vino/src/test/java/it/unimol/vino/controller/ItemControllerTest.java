@@ -59,7 +59,7 @@ public class ItemControllerTest {
         mockMvc.perform(delete("/api/v1/item/delete/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Item deleted successfully"));
-    }/*
+    }
 
     @Test
     public void testGetItems() throws Exception {
@@ -81,7 +81,7 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[1].id").value(2));
 
-    }
+    }/*
 
     @Test
     public void testRegisterItem() throws Exception {

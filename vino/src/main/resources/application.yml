@@ -5,6 +5,9 @@ spring:
     username: vino
     password: vino
     driver-class-name: org.mariadb.jdbc.Driver
+    jackson:
+      serialization:
+        fail-on-empty-beans: false
   jpa:
     hibernate:
       # Se lo schema cambia, mantiene tutti i dati, e imposta quelli nuovi sul default. Se usiamo create

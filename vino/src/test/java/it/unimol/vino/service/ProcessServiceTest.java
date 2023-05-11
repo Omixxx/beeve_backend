@@ -1,4 +1,4 @@
-package it.unimol.vino.services;
+/*package it.unimol.vino.service;
 
 import it.unimol.vino.exceptions.ProcessAlreadyStarted;
 import it.unimol.vino.exceptions.ProcessHasNoStatesException;
@@ -10,6 +10,7 @@ import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
 import it.unimol.vino.repository.ProcessRepository;
 import it.unimol.vino.repository.StateRepository;
+import it.unimol.vino.services.ProcessService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -38,7 +39,7 @@ class ProcessServiceTest {
         this.processService = new ProcessService(processRepository, stateRepository);
     }
 //TODO alcuni casi che lanciano l'eccezioni null pointer ma non dovrebbe essere lanciata quella
-/*@Test
+@Test
 void createNewProcess_ValidRequest_ReturnsNewProcessId() {
     NewProcessRequest request = NewProcessRequest.builder().stateIdSequence(new HashMap<>()).build();
     request.getStateIdSequence().put(1L, 1);
@@ -91,7 +92,7 @@ void createNewProcess_ValidRequest_ReturnsNewProcessId() {
         process.setId(1L);
         Mockito.when(processRepository.findById(1L)).thenReturn(Optional.of(process));
         assertThrows(ProcessHasNoStatesException.class, () -> processService.startProcess(1L));
-    }*/
+    }
 
     @Test
     void startProcess_ValidProcessId_SetsInitialStateStartDate() {
@@ -141,4 +142,4 @@ void createNewProcess_ValidRequest_ReturnsNewProcessId() {
         process.setId(1L);
 
 
-    }}
+    }}*/

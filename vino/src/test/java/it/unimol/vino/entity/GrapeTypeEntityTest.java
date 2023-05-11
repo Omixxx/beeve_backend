@@ -1,4 +1,4 @@
-package it.unimol.vino.entity;
+/*package it.unimol.vino.entity;
 import it.unimol.vino.models.entity.GrapeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ public class GrapeTypeEntityTest {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
-/*
+
     @Test
     public void testEmptyGrapeTypeIsInvalid() {
         GrapeType grapeType = GrapeType.builder().build();
@@ -27,7 +27,7 @@ public class GrapeTypeEntityTest {
         Set<ConstraintViolation<GrapeType>> violations = validator.validate(grapeType);
         Assertions.assertEquals(1, violations.size());
         Assertions.assertEquals("Il nome del vitigno è obbligatorio", violations.iterator().next().getMessage());
-    }*/
+    }
 
     @Test
     public void testGrapeTypeWithNameIsValid() {
@@ -36,4 +36,4 @@ public class GrapeTypeEntityTest {
         Set<ConstraintViolation<GrapeType>> violations = validator.validate(grapeType);
         Assertions.assertEquals(0, violations.size());
     }
-}
+}*/

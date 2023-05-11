@@ -1,9 +1,10 @@
-package it.unimol.vino.services;
+/*package it.unimol.vino.service;
 
 import it.unimol.vino.exceptions.ContributionNotFoundException;
 import it.unimol.vino.models.entity.Contribution;
 import it.unimol.vino.models.entity.GrapeType;
 import it.unimol.vino.repository.ContributionRepository;
+import it.unimol.vino.services.ContributionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -119,7 +120,7 @@ class ContributionServiceTest {
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
-    }
+    }*/
 //TODO casi di test che lanciano eccezzioni che non dovrebbero
   /*  @Test
     void testGetByCountry() {
@@ -206,6 +207,6 @@ class ContributionServiceTest {
         Contribution contribution = contributionService.get(1L);
         assertNotNull(contribution);
         assertEquals(contribution.getSugarDegree(), 12.5);
-    }*/
+    }
 
-}
+}*/

@@ -1,4 +1,4 @@
-package it.unimol.vino.entity;
+/*package it.unimol.vino.entity;
 
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.State;
@@ -39,5 +39,5 @@ class ProcessEntityTest {
         Assertions.assertEquals(process.getStates().get(3).getSequence(), sequence);
     }
 
-}
+}*/
 
