@@ -5,14 +5,14 @@ import it.unimol.vino.exceptions.StateNotFoundException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 import java.util.*;
 
 @Data
 @NoArgsConstructor(force = true)
+@Builder
+@AllArgsConstructor
 @Entity
 public class Process {
     @Id
@@ -88,7 +88,6 @@ public class Process {
     private Integer currentWaste;
 
 
-
     public Process(@NotEmpty List<State> states,
                    @NotEmpty Map<Item, Integer> itemQuantityMap,
                    @NotEmpty Map<Contribution, Double> contributionQuantityMap
@@ -141,7 +140,7 @@ public class Process {
     }
 
 
-    public void addItem(Item item ,Integer usedQuantity){
+    public void addItem(Item item, Integer usedQuantity) {
         ProcessUseItem processUseItem = ProcessUseItem.builder()
                 .item(item)
                 .process(this)
@@ -151,7 +150,7 @@ public class Process {
         this.item.add(processUseItem);
     }
 
-    public void addContribution(Contribution contribution, Double quantity){
+    public void addContribution(Contribution contribution, Double quantity) {
         ProcessUseContribution processUseContribution = ProcessUseContribution.builder()
                 .contribution(contribution)
                 .process(this)
