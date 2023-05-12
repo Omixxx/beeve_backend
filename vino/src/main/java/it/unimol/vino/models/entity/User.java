@@ -78,14 +78,14 @@ public class User implements UserDetails, Serializable {
     }
 
     public void addPermission(@NonNull Sector sector) {
-        UserSectorPermission userSectorPermission = new UserSectorPermission(
-                this,
-                sector,
-                true,
-                false,
-                false,
-                false
-        );
+        UserSectorPermission userSectorPermission = UserSectorPermission.builder()
+                .user(this)
+                .sector(sector)
+                .canRead(true)
+                .canWrite(this.role.equals(Role.ADMIN))
+                .canDelete(this.role.equals(Role.ADMIN))
+                .canUpdate(this.role.equals(Role.ADMIN))
+                .build();
         this.permissions.add(userSectorPermission);
     }
 
