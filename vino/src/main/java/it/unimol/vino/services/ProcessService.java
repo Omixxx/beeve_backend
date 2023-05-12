@@ -9,6 +9,7 @@ import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
 import it.unimol.vino.models.request.ProgressProcessRequest;
 import it.unimol.vino.repository.*;
+import it.unimol.vino.utils.DuplicatesChecker;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,14 @@ public class ProcessService {
     @Transactional
     public Long createNewProcess(NewProcessRequest request) {
         List<State> alreadyOrderedStateList = new ArrayList<>();
+        if (DuplicatesChecker.hasDuplicates(request.getStates()))
+            throw new DuplicateStateException("Stati duplicati non ammessi");
+
         request.getStates().forEach((stateId) -> {
             State state = this.stateRepository.findById(stateId).orElseThrow(
                     () -> new StateNotFoundException("Stato con id " + stateId + " non trovato")
             );
+
             alreadyOrderedStateList.add(state);
         });
 
