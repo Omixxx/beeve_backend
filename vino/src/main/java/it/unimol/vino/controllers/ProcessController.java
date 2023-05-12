@@ -42,7 +42,7 @@ public class ProcessController {
             @RequestBody ProgressProcessRequest request
     ) {
         return ResponseEntity.ok(
-                this.processService.progressState(processId, request.getDescription())
+                this.processService.progressState(processId, request)
         );
     }
 

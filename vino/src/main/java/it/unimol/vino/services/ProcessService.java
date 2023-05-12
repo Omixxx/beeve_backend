@@ -3,17 +3,12 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.dto.ProcessDTO;
 import it.unimol.vino.exceptions.*;
-import it.unimol.vino.models.entity.*;
 import it.unimol.vino.models.entity.Process;
+import it.unimol.vino.models.entity.*;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
-import it.unimol.vino.repository.ItemRepository;
-import it.unimol.vino.repository.ProcessRepository;
-import it.unimol.vino.repository.StateRepository;
-import it.unimol.vino.repository.UserProgressProcessRepository;
-import it.unimol.vino.repository.UserRepository;
-import it.unimol.vino.repository.ContributionRepository;
-
+import it.unimol.vino.models.request.ProgressProcessRequest;
+import it.unimol.vino.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +32,6 @@ public class ProcessService {
     @Transactional
     public Long createNewProcess(NewProcessRequest request) {
         List<State> alreadyOrderedStateList = new ArrayList<>();
-        HashMap<State, Integer> stateSequenceMap = new HashMap<>();
         request.getStates().forEach((stateId) -> {
             State state = this.stateRepository.findById(stateId).orElseThrow(
                     () -> new StateNotFoundException("Stato con id " + stateId + " non trovato")
@@ -90,7 +84,7 @@ public class ProcessService {
     }
 
     @Transactional
-    public String progressState(Long processId, String description) {
+    public String progressState(Long processId, ProgressProcessRequest request) {
         Process process = this.getProcess(processId);
 
         this.ensureProcessHasStates(process);
@@ -101,13 +95,18 @@ public class ProcessService {
         UserProgressesProcess userProgressesProcess = UserProgressesProcess.builder()
                 .user(user)
                 .process(process)
-                .description(description)
+                .description(request.getDescription())
                 .build();
 
         process.getUserProgressProcessList().add(userProgressesProcess);
         user.getProgressedProcesses().add(userProgressesProcess);
         this.userProgressProcessRepository.save(userProgressesProcess);
 
+        if (!process.getCurrentState().getState().getDoesProduceWaste() && request.getWaste() > 0)
+            throw new WasteNotAllowedException("Lo stato " + process.getCurrentState().getState().getName() +
+                    " non produce rifiuti");
+
+        process.setCurrentWaste(request.getWaste() + process.getCurrentWaste());
         process.getCurrentState().setEndDate(new Date());
         Optional<ProcessHasStates> nextState = process.getNextState();
 
@@ -172,7 +171,7 @@ public class ProcessService {
 
     private void ensureProcessIsNotCompleted(@NonNull Process process) {
         if (Objects.isNull(process.getCurrentState()))
-            throw new ProcessIsCompletedException("Il processo risulta completato");
+            throw new ProcessIsCompletedException("Il processo risulta già completato");
     }
 
 }
