@@ -102,6 +102,7 @@ public class Process {
 
         states.forEach(state -> this.addState(state, states.indexOf(state)));
         this.currentState = this.states.get(0);
+        this.currentState.setStartDate(new Date());
 
         if (Objects.isNull(this.item))
             this.item = new ArrayList<>();
