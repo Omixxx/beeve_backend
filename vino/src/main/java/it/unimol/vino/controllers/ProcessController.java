@@ -41,8 +41,7 @@ public class ProcessController {
             @PathVariable("process_id") Long processId,
             @RequestBody ProgressProcessRequest request
     ) {
-        return ResponseEntity.ok("Processo " +
-                processId + " avanzato con successo verso lo stato " +
+        return ResponseEntity.ok(
                 this.processService.progressState(processId, request.getDescription())
         );
     }
@@ -52,7 +51,7 @@ public class ProcessController {
             @PathVariable("process_id") Long processId,
             @RequestBody CancelProgressRequest request
     ) {
-        this.processService.AbortProcess(processId, request.getDescription());
+        this.processService.abortProcess(processId, request.getDescription());
         return ResponseEntity.ok("Processo " +
                 processId + " annullato con successo"
         );

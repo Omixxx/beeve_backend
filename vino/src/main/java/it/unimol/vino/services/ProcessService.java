@@ -13,9 +13,9 @@ import it.unimol.vino.repository.StateRepository;
 import it.unimol.vino.repository.UserProgressProcessRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.repository.ContributionRepository;
-import it.unimol.vino.utils.Sorter;
 
 import jakarta.transaction.Transactional;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -71,7 +71,7 @@ public class ProcessService {
             contributionQuantityMap.put(contribution, quantity);
         });
 
-        Process process = new Process(alreadyOrderedStateList,itemQuantityMap, contributionQuantityMap);
+        Process process = new Process(alreadyOrderedStateList, itemQuantityMap, contributionQuantityMap);
         User user = this.getUser();
         process.setCreator(user);
 
@@ -94,6 +94,7 @@ public class ProcessService {
         Process process = this.getProcess(processId);
 
         this.ensureProcessHasStates(process);
+        this.ensureProcessIsNotCompleted(process);
         this.ensureProcessIsNotAborted(process);
 
         User user = this.getUser();
@@ -105,17 +106,24 @@ public class ProcessService {
 
         process.getUserProgressProcessList().add(userProgressesProcess);
         user.getProgressedProcesses().add(userProgressesProcess);
+        this.userProgressProcessRepository.save(userProgressesProcess);
 
         process.getCurrentState().setEndDate(new Date());
-        ProcessHasStates nextState = process.getNextState();
-        nextState.setStartDate(new Date());
-        process.setCurrentState(nextState);
+        Optional<ProcessHasStates> nextState = process.getNextState();
 
-        this.userProgressProcessRepository.save(userProgressesProcess);
-        return nextState.getState().getName();
+        if (nextState.isEmpty()) {
+            process.setCurrentState(null);
+            return "Processo terminato con successo";
+        }
+
+        nextState.get().setStartDate(new Date());
+        process.setCurrentState(nextState.get());
+
+        return "Processo avanzato con successo verso lo stato "
+                + nextState.get().getState().getName();
     }
 
-    public void AbortProcess(Long processId, String description) {
+    public void abortProcess(Long processId, String description) {
         Process process = this.getProcess(processId);
 
         this.ensureProcessHasStates(process);
@@ -161,4 +169,10 @@ public class ProcessService {
                 () -> new UserNotFoundException("Utente non trovato")
         );
     }
+
+    private void ensureProcessIsNotCompleted(@NonNull Process process) {
+        if (Objects.isNull(process.getCurrentState()))
+            throw new ProcessIsCompletedException("Il processo risulta completato");
+    }
+
 }
