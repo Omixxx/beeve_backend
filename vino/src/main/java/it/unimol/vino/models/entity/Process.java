@@ -1,7 +1,6 @@
 package it.unimol.vino.models.entity;
 
 
-import it.unimol.vino.exceptions.StateNotFoundException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -103,6 +102,7 @@ public class Process {
 
         states.forEach(state -> this.addState(state, states.indexOf(state)));
         this.currentState = this.states.get(0);
+        this.currentState.setStartDate(new Date());
 
         if (Objects.isNull(this.item))
             this.item = new ArrayList<>();
@@ -125,12 +125,12 @@ public class Process {
         this.states.add(processHasStates);
     }
 
-    public ProcessHasStates getNextState() {
+    public Optional<ProcessHasStates> getNextState() {
         List<ProcessHasStates> sortedStates = this.getStatesOrderedBySequence();
         ProcessHasStates currentState = this.getCurrentState();
 
         return sortedStates.stream().filter(state -> state.getSequence().equals(currentState.getSequence() + 1))
-                .findFirst().orElseThrow(() -> new StateNotFoundException("Non ci sono stati successivi"));
+                .findFirst();
     }
 
     public List<ProcessHasStates> getStatesOrderedBySequence() {

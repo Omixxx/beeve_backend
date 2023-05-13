@@ -266,4 +266,34 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = {ProcessIsCompletedException.class})
+    public ResponseEntity<Object> handleApiRequestException(ProcessIsCompletedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {WasteNotAllowedException.class})
+    public ResponseEntity<Object> handleApiRequestException(WasteNotAllowedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {DuplicateStateException.class})
+    public ResponseEntity<Object> handleApiRequestException(DuplicateStateException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.CONFLICT,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
+    }
 }
