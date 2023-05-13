@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item,Long> {
 
     Optional<Item> findByCategoryAndCapacityAndName(Category category, Long capacity,String name);
+
+    List<Item> findAllByCategory(Category category);
+
 }

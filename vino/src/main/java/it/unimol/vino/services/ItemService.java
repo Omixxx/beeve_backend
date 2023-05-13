@@ -7,6 +7,7 @@ import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.models.entity.Item;
 import it.unimol.vino.models.entity.Provider;
 
+import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.models.request.DecreaseTotalQuantityOfItemRequest;
 import it.unimol.vino.models.request.RegisterItemRequest;
 import it.unimol.vino.repository.CategoryRepository;
@@ -28,13 +29,9 @@ public class ItemService {
     private final CategoryRepository categoryRepository;
 
 
-    // l'id non esiste più ,adattare in base alla chiave composita.
-    public Item getItem(Long id) {
-        return this.itemRepository.findById(id).orElse(null);
-    }
-
-    public List<Item> getItems() {
-        return this.itemRepository.findAll();
+    public List<Item> getItems(CategoryRequest request) {
+        Category category = findCategory(request.getName());
+        return this.itemRepository.findAllByCategory(category);
     }
 
     @Transactional

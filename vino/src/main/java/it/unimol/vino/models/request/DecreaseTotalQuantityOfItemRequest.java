@@ -1,6 +1,6 @@
 package it.unimol.vino.models.request;
 
-import jakarta.validation.constraints.Negative;
+
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NonNull;
@@ -12,6 +12,7 @@ public class DecreaseTotalQuantityOfItemRequest {
     private Long capacity;
 
     @NonNull()
+    @Positive
     private Integer quantity;
 
     @NonNull()

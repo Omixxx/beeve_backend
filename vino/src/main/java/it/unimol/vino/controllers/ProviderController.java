@@ -1,6 +1,8 @@
 package it.unimol.vino.controllers;
 
 
+import it.unimol.vino.dto.ProviderDTO;
+import it.unimol.vino.dto.ProviderFull;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.entity.Provider;
 
@@ -23,20 +25,24 @@ public class ProviderController {
 
     private final ProviderService providerService;
 
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<Provider>> getAllProviders() {
+        //via
         return ResponseEntity.ok(this.providerService.getAll());
     }
 
-    @GetMapping("/providedBy/{id}")
-    public ResponseEntity<List<ItemsProvidedByProvider>> getAllProvidedItemsById(@PathVariable Long id) {
-        return ResponseEntity.ok(this.providerService.getAllProvidedItemsById(id));
+    @GetMapping("/{name}")
+    public ResponseEntity<ProviderDTO> getProviderByName(@PathVariable String name){
+        return ResponseEntity.ok(this.providerService.getProviderByName(name));
     }
 
+
     @GetMapping("/book")
-    public ResponseEntity<List<ProviderBookResponse>> getProviderBook() {
+    public ResponseEntity<List<ProviderDTO>> getProviderBook() {
         return ResponseEntity.ok(this.providerService.getProviderBook());
     }
+
+
 
     @PostMapping("/register")
     public ResponseEntity<Long> register(@RequestBody @Valid RegisterProviderRequest registerProviderRequest)
@@ -44,4 +50,15 @@ public class ProviderController {
 
         return ResponseEntity.ok(this.providerService.providerRegister(registerProviderRequest));
     }
+
+    /*
+    @GetMapping("/full")
+    public ResponseEntity<List<ProviderFull>> getFullProvider() {
+        return ResponseEntity.ok(this.providerService.getFullProvides());
+    }
+     @GetMapping("/providedBy/{id}")
+    public ResponseEntity<List<ItemsProvidedByProvider>> getAllProvidedItemsById(@PathVariable Long id) {
+        return ResponseEntity.ok(this.providerService.getAllProvidedItemsById(id));
+    }
+     */
 }

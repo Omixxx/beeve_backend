@@ -35,8 +35,7 @@ public class Provider implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    @UniqueElements
+    @Column(name = "name",unique = true)
     private String name;
 
     @Column(name = "phone_number")
@@ -46,11 +45,14 @@ public class Provider implements Serializable {
     @Column(unique = true)
     private String email;
 
+    /*
     @Column(name = "address")
     private String address;
 
     @Column(name = "website_url")
     private String website_url;
+    
+     */
 
     @OneToMany(mappedBy = "provider", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnore

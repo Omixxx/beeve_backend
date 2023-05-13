@@ -17,7 +17,6 @@ public class RegisterItemRequest {
     @Positive
     private Long capacity;
 
-    @NonNull()
     private String description;
 
     @NonNull()
@@ -27,6 +26,7 @@ public class RegisterItemRequest {
     private Date date;
 
     @NonNull()
+    @Positive
     private Integer quantity;
 
     @NonNull()

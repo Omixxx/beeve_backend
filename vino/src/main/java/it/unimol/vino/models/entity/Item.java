@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Entity(name = "item")
 @Table(name = "item")
 @IdClass(ItemID.class)
-public class Item {
+public class Item implements Serializable {
 
     @Id
     @Column(name = "name")
