@@ -26,4 +26,7 @@ public class RegisterRequest {
     @NonNull()
     @NotBlank(message = "password must be not blank")
     private String password;
+
+    @NonNull()
+    private Boolean isAdmin;
 }
