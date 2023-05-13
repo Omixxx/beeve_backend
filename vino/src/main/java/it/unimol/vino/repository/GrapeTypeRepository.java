@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GrapeTypeRepository extends JpaRepository<GrapeType, String> {
+    Optional<GrapeType> findByType(String name);
 
 }
