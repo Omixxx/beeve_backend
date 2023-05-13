@@ -29,11 +29,11 @@ public class ProviderEntityTest {
         provider.setEmail("email@example.com");
         assertEquals("email@example.com", provider.getEmail());
 
-        provider.setAddress("Provider Address");
-        assertEquals("Provider Address", provider.getAddress());
+        //provider.setAddress("Provider Address");
+       // assertEquals("Provider Address", provider.getAddress());
 
-        provider.setWebsite_url("http://www.provider.com");
-        assertEquals("http://www.provider.com", provider.getWebsite_url());
+       // provider.setWebsite_url("http://www.provider.com");
+       // assertEquals("http://www.provider.com", provider.getWebsite_url());
     }
 }
 

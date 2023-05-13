@@ -1,5 +1,7 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.dto.ItemDTO;
+import it.unimol.vino.dto.mappers.ItemDTOMapper;
 import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.ItemNotFoundException;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
@@ -27,11 +29,12 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ProviderRepository providerRepository;
     private final CategoryRepository categoryRepository;
+    private final ItemDTOMapper itemDTOMapper;
 
 
-    public List<Item> getItems(CategoryRequest request) {
+    public List<ItemDTO> getItems(CategoryRequest request) {
         Category category = findCategory(request.getName());
-        return this.itemRepository.findAllByCategory(category);
+        return this.itemRepository.findAllByCategory(category).stream().map(itemDTOMapper).toList();
     }
 
     @Transactional

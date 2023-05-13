@@ -1,6 +1,7 @@
 package it.unimol.vino.controllers;
 
 
+import it.unimol.vino.dto.ItemDTO;
 import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.ItemNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
@@ -31,9 +32,10 @@ public class ItemController {
 
 
     @GetMapping("/{categoryName}")
-    public ResponseEntity<List<Item>> getItem(@PathVariable CategoryRequest category){
-        return  ResponseEntity.ok(this.itemService.getItems(category));
+    public ResponseEntity<List<ItemDTO>> getItem(@Valid@PathVariable CategoryRequest categoryName){
+        return  ResponseEntity.ok(this.itemService.getItems(categoryName));
     }
+
     @PostMapping("/")
     public ResponseEntity<String> register(@RequestBody @Valid RegisterItemRequest registerItemRequest)
             throws UserAlreadyRegistered, CategoryNotFoundException {
