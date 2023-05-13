@@ -1,47 +1,50 @@
 package it.unimol.vino.controller;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.unimol.vino.controllers.ContributionController;
+import it.unimol.vino.utils.AuthToken;
 import it.unimol.vino.models.request.RegisterContributionRequest;
-import it.unimol.vino.repository.ContributionRepository;
-import it.unimol.vino.services.ContributionService;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mock;
+import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.Date;
 import org.junit.Test;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
+@RunWith(SpringRunner.class)
+@AutoConfigureMockMvc
 public class ContributionControllerTest {
-    @MockBean
-    private ContributionRepository contributionRepository;
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Mock
-    private ContributionService contributionService;
-    @Autowired
-    private ContributionController contributionController;
+
+    private AuthToken tokenClass;
+
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        contributionController = new ContributionController(contributionService);
+        tokenClass= new AuthToken();
+
+
     }
+    /*@PostMapping("/register")
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest registerRequest)
+            throws PasswordNotValidException, UserAlreadyRegistered {
+        return ResponseEntity.ok(this.authService.register(registerRequest));
+    }
+*/
+
 
     @Test
     public void putContributionTest() throws Exception {
@@ -56,10 +59,13 @@ public class ContributionControllerTest {
         contribution.setDate(new Date());
         contribution.setGrapeTypeId("...");
         contribution.setProviderId(123L);
+        objectMapper=new ObjectMapper();
+        tokenClass =new AuthToken();
 
-        mockMvc.perform(post("http://localhost:8080/api/v1/contribution")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/contribution")
+                        .header("Authorization", "Bearer " +tokenClass.generateToken() )
                         .contentType("application/json")
-                        .content(objectMapper.))
+                        .content(objectMapper.writeValueAsString(contribution)))
                 .andExpect(status().isOk());
     }
 }
