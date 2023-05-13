@@ -40,5 +40,5 @@ public class ContributionDTO {
     private GrapeTypeDTO associatedGrapeType;
 
 
-    private ProviderDTO1 provider;
+    private ProviderDTO provider;
 }

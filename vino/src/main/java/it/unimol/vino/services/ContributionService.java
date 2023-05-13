@@ -3,6 +3,7 @@ package it.unimol.vino.services;
 import it.unimol.vino.dto.ContributionDTO;
 import it.unimol.vino.dto.GrapeTypeDTO;
 import it.unimol.vino.dto.UserDTO;
+import it.unimol.vino.dto.mappers.ProviderDTOMapper;
 import it.unimol.vino.exceptions.ContributionNotFoundException;
 
 import it.unimol.vino.exceptions.UserNotFoundException;
@@ -37,13 +38,15 @@ public class ContributionService {
     private final ProviderRepository provider;
     private final GrapeTypeRepository grapeType;
 
+    private final  ProviderDTOMapper providerDTOMapper;
+
     public List<ContributionDTO> getAll() {
         return this.contribution.findAll().stream().map(
                 contribution -> ContributionDTO.builder()
                         .id(contribution.getId())
                         .quantity(contribution.getQuantity())
                         .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(contribution.getAssociatedGrapeType()))
-                        .provider(ProviderDTO1.getName(contribution.getProvider()))
+                        .provider(providerDTOMapper.apply(contribution.getProvider()))
                         .build()
         ).collect(Collectors.toList());
     }
@@ -60,7 +63,7 @@ public class ContributionService {
                         .sugarDegree(specificContribution.getSugarDegree())
                         .photoURL(specificContribution.getPhotoURL())
                         .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(specificContribution.getAssociatedGrapeType()))
-                        .provider(ProviderDTO1.getNameNumberEmail(specificContribution.getProvider()))
+                        .provider(providerDTOMapper.apply(specificContribution.getProvider()))
                         .build())
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
 
