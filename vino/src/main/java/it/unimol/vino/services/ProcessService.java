@@ -2,6 +2,7 @@ package it.unimol.vino.services;
 
 
 import it.unimol.vino.dto.ProcessDTO;
+import it.unimol.vino.dto.StateDTO;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.*;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -144,11 +146,15 @@ public class ProcessService {
     }
 
     public List<ProcessDTO> getAllProcesses() {
-        List<ProcessDTO> processDTOList = new ArrayList<>();
-        this.processRepository.findAll().forEach(process -> {
-            processDTOList.add(ProcessDTO.getFullProcessDTO(process));
-        });
-        return processDTOList;
+        return this.processRepository.findAll().stream()
+                .filter(process -> Objects.nonNull(process.getCurrentState()))
+                .map(process -> ProcessDTO.builder()
+                        .id(process.getId())
+                        .currentState(StateDTO.builder()
+                                .name(process.getCurrentState().getState().getName())
+                                .build())
+                        .build()
+                ).toList();
     }
 
     private Process getProcess(Long processId) {
