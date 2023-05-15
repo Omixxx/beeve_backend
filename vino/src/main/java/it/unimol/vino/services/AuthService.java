@@ -49,6 +49,7 @@ public class AuthService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
+                .age(request.getAge())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .permissions(new ArrayList<>())
                 .role(request.getIsAdmin() ? Role.ADMIN : Role.USER)

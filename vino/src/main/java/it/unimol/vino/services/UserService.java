@@ -2,6 +2,7 @@ package it.unimol.vino.services;
 
 
 import it.unimol.vino.dto.PermissionDTO;
+import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.exceptions.SectorNotFoundException;
 import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Sector;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,5 +68,26 @@ public class UserService {
         });
         return permissions;
     }
+
+    public List<PermissionDTO> getAllPermissions() {
+        List<PermissionDTO> permissions = new ArrayList<>();
+        this.userRepository.findAll().forEach(
+                user -> user.getPermissions().forEach(
+                        userSectorPermission -> permissions.add(PermissionDTO.builder()
+                                .user(UserDTO.builder()
+                                        .email(user.getEmail())
+                                        .firstName(user.getFirstName())
+                                        .lastName(user.getLastName())
+                                        .build())
+                                .sector(userSectorPermission.getSector())
+                                .canRead(userSectorPermission.getCanRead())
+                                .canWrite(userSectorPermission.getCanWrite())
+                                .canDelete(userSectorPermission.getCanDelete())
+                                .canUpdate(userSectorPermission.getCanUpdate())
+                                .build())));
+
+        return permissions;
+    }
+
 
 }

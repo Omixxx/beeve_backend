@@ -25,8 +25,13 @@ public class UserController {
         return ResponseEntity.ok(this.userService.updatePermissions(updatePermissionsRequest));
     }
 
-    @GetMapping("/permissions")
+    @GetMapping("/user_permissions")
     public ResponseEntity<List<PermissionDTO>> getPermissions() {
         return ResponseEntity.ok(this.userService.getPermissions());
+    }
+
+    @GetMapping("/users_permissions")
+    public ResponseEntity<List<PermissionDTO>> getUsersPermissions() {
+        return ResponseEntity.ok(this.userService.getAllPermissions());
     }
 }
