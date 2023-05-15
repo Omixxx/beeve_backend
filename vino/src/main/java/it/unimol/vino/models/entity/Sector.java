@@ -1,11 +1,9 @@
 package it.unimol.vino.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unimol.vino.models.enums.SectorName;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
