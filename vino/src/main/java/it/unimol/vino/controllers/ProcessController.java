@@ -1,6 +1,7 @@
 package it.unimol.vino.controllers;
 
 import it.unimol.vino.dto.ProcessDTO;
+import it.unimol.vino.dto.StateDTO;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.CancelProgressRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
@@ -60,6 +61,16 @@ public class ProcessController {
     @GetMapping
     public ResponseEntity<List<ProcessDTO>> getAllProcesses() {
         return ResponseEntity.ok(this.processService.getAllProcesses());
+    }
+
+    @GetMapping("{process_id}")
+    public ResponseEntity<ProcessDTO> getProcess(@PathVariable("process_id") Long processId) {
+        return ResponseEntity.ok(this.processService.getProcess(processId));
+    }
+
+    @GetMapping("{process_id}/states")
+    public ResponseEntity<List<StateDTO>> getStates(@PathVariable("process_id") Long processId) {
+        return ResponseEntity.ok(this.processService.getProcessStates(processId));
     }
 
 }

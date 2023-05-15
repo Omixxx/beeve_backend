@@ -42,6 +42,8 @@ public class ProcessDTO {
 
     private Integer currentWaste;
 
+    private List<ContributionDTO> contributions;
+
     public static ProcessDTO getFullProcessDTO(@NotNull Process process) {
         User user = process.getCreator();
         ProcessHasStates processHasState = process.getCurrentState();

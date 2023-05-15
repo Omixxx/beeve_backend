@@ -1,7 +1,10 @@
 package it.unimol.vino.services;
 
 
+import it.unimol.vino.dto.ContributionDTO;
+import it.unimol.vino.dto.GrapeTypeDTO;
 import it.unimol.vino.dto.ProcessDTO;
+import it.unimol.vino.dto.StateDTO;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.*;
@@ -79,7 +82,7 @@ public class ProcessService {
 
 
     public void addState(@NotNull AddStateToProcessRequest request) {
-        Process process = this.getProcess(request.getProcessId());
+        Process process = this.getProcessFromDb(request.getProcessId());
 
         State state = this.stateRepository.findById(request.getStateId()).orElseThrow(
                 () -> new StateNotFoundException("Stato non trovato")
@@ -90,7 +93,7 @@ public class ProcessService {
 
     @Transactional
     public String progressState(Long processId, ProgressProcessRequest request) {
-        Process process = this.getProcess(processId);
+        Process process = this.getProcessFromDb(processId);
 
         this.ensureProcessHasStates(process);
         this.ensureProcessIsNotCompleted(process);
@@ -128,7 +131,7 @@ public class ProcessService {
     }
 
     public void abortProcess(Long processId, String description) {
-        Process process = this.getProcess(processId);
+        Process process = this.getProcessFromDb(processId);
 
         this.ensureProcessHasStates(process);
         this.ensureProcessIsNotAborted(process);
@@ -144,14 +147,34 @@ public class ProcessService {
     }
 
     public List<ProcessDTO> getAllProcesses() {
-        List<ProcessDTO> processDTOList = new ArrayList<>();
-        this.processRepository.findAll().forEach(process -> {
-            processDTOList.add(ProcessDTO.getFullProcessDTO(process));
-        });
-        return processDTOList;
+        return this.processRepository.findAll().stream()
+                .filter(process -> Objects.nonNull(process.getCurrentState()))
+                .map(process -> ProcessDTO.builder()
+                        .id(process.getId())
+                        .currentState(StateDTO.builder()
+                                .name(process.getCurrentState().getState().getName())
+                                .build())
+                        .build()
+                ).toList();
     }
 
-    private Process getProcess(Long processId) {
+    public ProcessDTO getProcess(Long processId) {
+        Process process = this.getProcessFromDb(processId);
+        return ProcessDTO.builder()
+                .currentState(StateDTO.builder()
+                        .id(process.getCurrentState().getState().getId())
+                        .name(process.getCurrentState().getState().getName())
+                        .build())
+                .contributions(process.getContribution().stream().map(processUseContribution -> ContributionDTO.builder()
+                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(processUseContribution.getContribution().getAssociatedGrapeType()))
+                        .quantity(processUseContribution.getQuantity())
+                        .build()).toList())
+                .currentWaste(process.getCurrentWaste())
+                .stalkWaste(process.getStalkWaste())
+                .build();
+    }
+
+    private Process getProcessFromDb(Long processId) {
         return this.processRepository.findById(processId).orElseThrow(
                 () -> new ProcessNotFoundException("Processo non trovato")
         );
@@ -179,4 +202,11 @@ public class ProcessService {
             throw new ProcessIsCompletedException("Il processo risulta già completato");
     }
 
+    public List<StateDTO> getProcessStates(Long processId) {
+        return this.getProcessFromDb(processId).getStates().stream().map(processHasStates -> StateDTO.builder()
+                .id(processHasStates.getState().getId())
+                .name(processHasStates.getState().getName())
+                .doesProduceWaste(processHasStates.getState().getDoesProduceWaste())
+                .build()).toList();
+    }
 }
