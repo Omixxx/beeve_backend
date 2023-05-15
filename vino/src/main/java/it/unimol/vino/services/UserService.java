@@ -1,7 +1,9 @@
 package it.unimol.vino.services;
 
 
-import it.unimol.vino.dto.PermissionDTO;
+import it.unimol.vino.dto.SectorDTO;
+import it.unimol.vino.dto.SectorPermissionDTO;
+import it.unimol.vino.dto.UserPermissionDTO;
 import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.exceptions.SectorNotFoundException;
 import it.unimol.vino.exceptions.UserNotFoundException;
@@ -20,8 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,43 +52,49 @@ public class UserService {
         return new UpdatePermissionResponse("Permessi aggiornati con successo!");
     }
 
-    public List<PermissionDTO> getPermissions() {
+    public List<UserPermissionDTO> getPermissions() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userRepository.findByEmail(email).orElseThrow(
                 () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
         );
         List<UserSectorPermission> userSectorPermission = user.getPermissions();
-        List<PermissionDTO> permissions = new ArrayList<>();
+        List<UserPermissionDTO> permissions = new ArrayList<>();
         userSectorPermission.forEach(userSectorPermission1 -> {
-            permissions.add(PermissionDTO.builder()
-                    .sector(userSectorPermission1.getSector())
-                    .canRead(userSectorPermission1.getCanRead())
-                    .canWrite(userSectorPermission1.getCanWrite())
-                    .canDelete(userSectorPermission1.getCanDelete())
-                    .canUpdate(userSectorPermission1.getCanUpdate())
-                    .build());
+            permissions.add(UserPermissionDTO.builder()
+                    .permissions(Collections.singletonList(SectorPermissionDTO.builder()
+                            .sector(SectorDTO.builder()
+                                    .sectorName(userSectorPermission1.getSector().getSectorName())
+                                    .build())
+                            .canRead(userSectorPermission1.getCanRead())
+                            .canWrite(userSectorPermission1.getCanWrite())
+                            .canDelete(userSectorPermission1.getCanDelete())
+                            .canUpdate(userSectorPermission1.getCanUpdate())
+                            .build())
+                    ).build());
         });
         return permissions;
     }
 
-    public List<PermissionDTO> getAllPermissions() {
-        List<PermissionDTO> permissions = new ArrayList<>();
-        this.userRepository.findAll().forEach(
-                user -> user.getPermissions().forEach(
-                        userSectorPermission -> permissions.add(PermissionDTO.builder()
-                                .user(UserDTO.builder()
-                                        .email(user.getEmail())
-                                        .firstName(user.getFirstName())
-                                        .lastName(user.getLastName())
-                                        .build())
-                                .sector(userSectorPermission.getSector())
-                                .canRead(userSectorPermission.getCanRead())
-                                .canWrite(userSectorPermission.getCanWrite())
-                                .canDelete(userSectorPermission.getCanDelete())
-                                .canUpdate(userSectorPermission.getCanUpdate())
-                                .build())));
-
-        return permissions;
+    public List<UserPermissionDTO> getAllPermissions() {
+        return this.userRepository.findAll().stream().map(
+                user -> UserPermissionDTO.builder()
+                        .user(UserDTO.builder()
+                                .email(user.getEmail())
+                                .firstName(user.getFirstName())
+                                .lastName(user.getLastName())
+                                .build())
+                        .permissions(user.getPermissions().stream().map(
+                                userSectorPermission -> SectorPermissionDTO.builder()
+                                        .sector(SectorDTO.builder()
+                                                .sectorName(userSectorPermission.getSector().getSectorName())
+                                                .build())
+                                        .canRead(userSectorPermission.getCanRead())
+                                        .canWrite(userSectorPermission.getCanWrite())
+                                        .canDelete(userSectorPermission.getCanDelete())
+                                        .canUpdate(userSectorPermission.getCanUpdate())
+                                        .build()
+                        ).toList())
+                        .build()).toList();
     }
 
 

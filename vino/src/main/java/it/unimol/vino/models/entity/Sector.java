@@ -13,11 +13,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Sector implements Serializable {
+public class Sector {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @Column(unique = true)
@@ -25,7 +24,6 @@ public class Sector implements Serializable {
     private SectorName sectorName;
 
     @OneToMany(mappedBy = "sector", orphanRemoval = true, cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<UserSectorPermission> users;
 
     public Sector(SectorName sectorName) {
