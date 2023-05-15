@@ -20,3 +20,8 @@ services:
     ports:
       - 3306:3306
     restart: always
+    volumes:
+      - vino-db-volume:/var/lib/mysql
+
+volumes:
+  vino-db-volume:
