@@ -202,4 +202,11 @@ public class ProcessService {
             throw new ProcessIsCompletedException("Il processo risulta già completato");
     }
 
+    public List<StateDTO> getProcessStates(Long processId) {
+        return this.getProcessFromDb(processId).getStates().stream().map(processHasStates -> StateDTO.builder()
+                .id(processHasStates.getState().getId())
+                .name(processHasStates.getState().getName())
+                .doesProduceWaste(processHasStates.getState().getDoesProduceWaste())
+                .build()).toList();
+    }
 }
