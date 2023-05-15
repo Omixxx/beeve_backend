@@ -1,6 +1,8 @@
 package it.unimol.vino.services;
 
 
+import it.unimol.vino.dto.ContributionDTO;
+import it.unimol.vino.dto.GrapeTypeDTO;
 import it.unimol.vino.dto.ProcessDTO;
 import it.unimol.vino.dto.StateDTO;
 import it.unimol.vino.exceptions.*;
@@ -19,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,7 +82,7 @@ public class ProcessService {
 
 
     public void addState(@NotNull AddStateToProcessRequest request) {
-        Process process = this.getProcess(request.getProcessId());
+        Process process = this.getProcessFromDb(request.getProcessId());
 
         State state = this.stateRepository.findById(request.getStateId()).orElseThrow(
                 () -> new StateNotFoundException("Stato non trovato")
@@ -92,7 +93,7 @@ public class ProcessService {
 
     @Transactional
     public String progressState(Long processId, ProgressProcessRequest request) {
-        Process process = this.getProcess(processId);
+        Process process = this.getProcessFromDb(processId);
 
         this.ensureProcessHasStates(process);
         this.ensureProcessIsNotCompleted(process);
@@ -130,7 +131,7 @@ public class ProcessService {
     }
 
     public void abortProcess(Long processId, String description) {
-        Process process = this.getProcess(processId);
+        Process process = this.getProcessFromDb(processId);
 
         this.ensureProcessHasStates(process);
         this.ensureProcessIsNotAborted(process);
@@ -157,7 +158,23 @@ public class ProcessService {
                 ).toList();
     }
 
-    private Process getProcess(Long processId) {
+    public ProcessDTO getProcess(Long processId) {
+        Process process = this.getProcessFromDb(processId);
+        return ProcessDTO.builder()
+                .currentState(StateDTO.builder()
+                        .id(process.getCurrentState().getState().getId())
+                        .name(process.getCurrentState().getState().getName())
+                        .build())
+                .contributions(process.getContribution().stream().map(processUseContribution -> ContributionDTO.builder()
+                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(processUseContribution.getContribution().getAssociatedGrapeType()))
+                        .quantity(processUseContribution.getQuantity())
+                        .build()).toList())
+                .currentWaste(process.getCurrentWaste())
+                .stalkWaste(process.getStalkWaste())
+                .build();
+    }
+
+    private Process getProcessFromDb(Long processId) {
         return this.processRepository.findById(processId).orElseThrow(
                 () -> new ProcessNotFoundException("Processo non trovato")
         );

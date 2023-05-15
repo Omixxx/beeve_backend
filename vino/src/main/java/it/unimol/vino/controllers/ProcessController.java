@@ -62,4 +62,9 @@ public class ProcessController {
         return ResponseEntity.ok(this.processService.getAllProcesses());
     }
 
+    @GetMapping("{process_id}")
+    public ResponseEntity<ProcessDTO> getProcess(@PathVariable("process_id") Long processId) {
+        return ResponseEntity.ok(this.processService.getProcess(processId));
+    }
+
 }
