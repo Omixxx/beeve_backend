@@ -6,7 +6,7 @@
 2.  For the *JWT_SECRET* in the `.env` file you just created be careful to use a hexadecimal (at minumum 256 bits) key. For that matter i invite you to generate it. Here is what i use https://www.allkeysgenerator.com/
 3.  Modify the `application.yml` by filling the `username` and `password` fields, remembering to use the same credentials that you set in the `.env` file
 4.  Always in the `application.yml`, under the field `url` replace `localhost` with `vino-db` which is the database container name.
-5.  Start the application by running `docker-compose up -d` 
+5.  Start the application by running `docker-compose up -d --build` 
 
 The project will be running on `localhost:8080` unless you change the port in the `application.properties` file.
 
