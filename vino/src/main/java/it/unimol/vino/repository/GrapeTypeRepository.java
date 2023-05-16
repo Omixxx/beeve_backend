@@ -1,5 +1,6 @@
 package it.unimol.vino.repository;
 
+import it.unimol.vino.dto.GrapeTypeDTO;
 import it.unimol.vino.models.entity.GrapeType;
 
 import java.util.List;
@@ -10,7 +11,8 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface GrapeTypeRepository extends JpaRepository<GrapeType, String> {
-    Optional<GrapeType> findByType(String name);
+public interface GrapeTypeRepository extends JpaRepository<GrapeType, Long> {
+    Optional<GrapeType> findBySpecies(String name);
+    Optional<GrapeType> findBySpeciesAndColor(String species, String color);
 
 }

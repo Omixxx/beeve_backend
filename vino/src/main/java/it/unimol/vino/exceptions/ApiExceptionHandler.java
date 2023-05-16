@@ -296,4 +296,14 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(value = {DuplicateGrapeTypeException.class})
+    public ResponseEntity<Object> handleApiRequestException(DuplicateGrapeTypeException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.CONFLICT,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
+    }
 }
