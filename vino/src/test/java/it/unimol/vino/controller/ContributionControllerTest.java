@@ -12,10 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.Date;
 import org.junit.Test;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,7 +37,7 @@ public class ContributionControllerTest {
 
     @Mock
     private ContributionService contributionService;
-    @Autowired
+
     private ContributionController contributionController;
 
     @BeforeEach
@@ -56,11 +59,11 @@ public class ContributionControllerTest {
         contribution.setDate(new Date());
         contribution.setGrapeTypeId("...");
         contribution.setProviderId(123L);
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/contribution")
+                .content(objectMapper.writeValueAsBytes(contribution))
+                        .contentType(MediaType.APPLICATION_JSON)
 
-        mockMvc.perform(post("http://localhost:8080/api/v1/contribution")
-                        .contentType("application/json")
-                        .content(objectMapper.))
-                .andExpect(status().isOk());
+        );
     }
 }
 
