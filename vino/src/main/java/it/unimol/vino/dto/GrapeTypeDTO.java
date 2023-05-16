@@ -21,10 +21,4 @@ public class GrapeTypeDTO {
                 .color(grapeType.getColor())
                 .build();
     }
-
-    public static GrapeTypeDTO getSpeciesGrapeType(@NotNull GrapeType grapeType){
-        return GrapeTypeDTO.builder()
-                .species(grapeType.getSpecies())
-                .build();
-    }
 }

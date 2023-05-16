@@ -51,6 +51,12 @@ public class ContributionService {
 
 
     public ContributionDTO get(Long id) {
+        GrapeTypeDTO speciesGrapeType = GrapeTypeDTO.builder()
+                .species(this.contribution.findById(id)
+                        .map(Contribution::getAssociatedGrapeType)
+                        .map(GrapeType::getSpecies)
+                        .orElseThrow(() -> new GrapeTypeNotFoundException("Il tipo d'uva non esiste")))
+                .build();
         ContributionDTO contribution = this.contribution.findById(id)
                 .map(specificContribution -> ContributionDTO.builder()
                         .id(specificContribution.getId())
@@ -60,7 +66,7 @@ public class ContributionService {
                         .quantity(specificContribution.getQuantity())
                         .sugarDegree(specificContribution.getSugarDegree())
                         .photoURL(specificContribution.getPhotoURL())
-                        .associatedGrapeType(GrapeTypeDTO.getSpeciesGrapeType(specificContribution.getAssociatedGrapeType()))
+                        .associatedGrapeType(speciesGrapeType)
                         .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
                         .build())
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
