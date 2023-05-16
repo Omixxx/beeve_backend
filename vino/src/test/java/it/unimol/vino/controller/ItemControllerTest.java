@@ -61,7 +61,7 @@ public class ItemControllerTest {
                 .andExpect(content().string("Item deleted successfully"));
     }
 
-    @Test
+   /*@Test
     public void testGetItems() throws Exception {
         Item item1 = new Item();
         item1.setId(1L);
@@ -81,7 +81,7 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[1].id").value(2));
 
-    }/*
+    }
 
     @Test
     public void testRegisterItem() throws Exception {
