@@ -11,9 +11,11 @@ import it.unimol.vino.models.entity.Provider;
 
 import it.unimol.vino.models.request.RegisterProviderRequest;
 
+import it.unimol.vino.models.request.UpdateProviderRequest;
 import it.unimol.vino.models.response.ItemsProvidedByProvider;
 import it.unimol.vino.models.response.ProviderBookResponse;
 import it.unimol.vino.repository.ProviderRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,17 +53,23 @@ public class ProviderService {
         return this.providerRepository.save(provider).getId();
 
     }
+    @Transactional
+    public String updateProvider(UpdateProviderRequest request) {
 
-
-    public List<ItemsProvidedByProvider> getAllProvidedItemsById(Long id) {
-        //da eliminare
-
-        this.providerRepository.findById(id).orElseThrow(
-                () -> new ProviderNotFoundException("IL provider con ID " + id + " non è stato trovato")
+        Provider provider = this.providerRepository.findByName(request.getOldName()).orElseThrow(
+                ()-> new ProviderNotFoundException("Provider non trovato")
         );
 
-        return this.providerRepository.findProvidedItemsById(id);
+        provider.setEmail(request.getEmail());
+        provider.setName(request.getNewName());
+        provider.setPhone_number(request.getPhone_number());
+        this.providerRepository.save(provider);
+
+
+        return "Aggiornato";
     }
+
+
 
     public List<ProviderDTO> getProviderBook() {
 
@@ -73,13 +81,7 @@ public class ProviderService {
 
     }
 
-    public List<ProviderFull> getFullProvides(){
 
-       return this.providerRepository.findAll().stream()
-                .map(providerFullDTOMapper)
-                .toList();
-
-    }
 
     public ProviderDTO getProviderByName(String name) {
 
@@ -89,4 +91,27 @@ public class ProviderService {
 
        return providerDTOMapper.apply(provider);
     }
+
+    /*
+    public List<ItemsProvidedByProvider> getAllProvidedItemsById(Long id) {
+        //da eliminare
+
+        this.providerRepository.findById(id).orElseThrow(
+                () -> new ProviderNotFoundException("IL provider con ID " + id + " non è stato trovato")
+        );
+
+        return this.providerRepository.findProvidedItemsById(id);
+    }
+
+    public List<ProviderFull> getFullProvides(){
+
+        return this.providerRepository.findAll().stream()
+                .map(providerFullDTOMapper)
+                .toList();
+
+    }
+
+     */
+
+
 }

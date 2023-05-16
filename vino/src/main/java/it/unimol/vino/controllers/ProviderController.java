@@ -8,6 +8,7 @@ import it.unimol.vino.models.entity.Provider;
 
 import it.unimol.vino.models.request.RegisterProviderRequest;
 
+import it.unimol.vino.models.request.UpdateProviderRequest;
 import it.unimol.vino.models.response.ItemsProvidedByProvider;
 import it.unimol.vino.models.response.ProviderBookResponse;
 import it.unimol.vino.services.ProviderService;
@@ -49,6 +50,11 @@ public class ProviderController {
             throws UserAlreadyRegistered {
 
         return ResponseEntity.ok(this.providerService.providerRegister(registerProviderRequest));
+    }
+
+    @PostMapping("/updateProvider")
+    public ResponseEntity<String> updateProvider(@RequestBody@Valid UpdateProviderRequest request){
+        return ResponseEntity.ok(this.providerService.updateProvider(request));
     }
 
     /*
