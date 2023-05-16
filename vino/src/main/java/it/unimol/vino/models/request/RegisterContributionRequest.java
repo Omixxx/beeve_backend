@@ -31,7 +31,7 @@ public class RegisterContributionRequest {
     private Date date;
 
     @NonNull
-    private String grapeTypeId;
+    private Long grapeTypeId;
 
     @NonNull
     private Long providerId;

@@ -1,5 +1,6 @@
 package it.unimol.vino.exceptions;
 
+import jakarta.persistence.PersistenceException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.ZonedDateTime;
 
 @ControllerAdvice
@@ -289,6 +291,16 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(value = {DuplicateStateException.class})
     public ResponseEntity<Object> handleApiRequestException(DuplicateStateException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.CONFLICT,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = {DuplicateGrapeTypeException.class})
+    public ResponseEntity<Object> handleApiRequestException(DuplicateGrapeTypeException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.CONFLICT,
