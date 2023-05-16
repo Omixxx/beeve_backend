@@ -10,7 +10,6 @@ import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
 import it.unimol.vino.models.request.RegisterContributionRequest;
 import jakarta.transaction.Transactional;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,13 +21,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
 import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.validation.constraints.Null;
+
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -60,13 +60,6 @@ public class ContributionControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
-    /*@PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest registerRequest)
-            throws PasswordNotValidException, UserAlreadyRegistered {
-        return ResponseEntity.ok(this.authService.register(registerRequest));
-    }
-*/
-
 
     @Test
     @Transactional
@@ -75,7 +68,7 @@ public class ContributionControllerTest {
         provider.setEmail("a.a@c");
         providerRepository.save(provider);
         RegisterContributionRequest contribution = new RegisterContributionRequest();
-        GrapeType grapeType=GrapeType.builder().type("Salvatore").species("Nera").color("nera").build();
+        GrapeType grapeType = GrapeType.builder().type("Salvatore").species("Nera").color("nera").build();
         when(grapeTypeRepository.findById("Salvatore")).thenReturn(Optional.of(grapeType));
         contribution.setOrigin("Italia");
         contribution.setCountry("Campania");
@@ -85,11 +78,11 @@ public class ContributionControllerTest {
         contribution.setDate(new Date());
         contribution.setGrapeTypeId("Salvatore");
         contribution.setProviderId(provider.getId());
-        objectMapper=new ObjectMapper();
-        tokenClass =new AuthToken(userRepository);
+        objectMapper = new ObjectMapper();
+        tokenClass = new AuthToken(userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/contribution")
-                        .header("Authorization", "Bearer " +tokenClass.generateToken() )
+                        .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(contribution)))
                 .andExpect(status().isOk());

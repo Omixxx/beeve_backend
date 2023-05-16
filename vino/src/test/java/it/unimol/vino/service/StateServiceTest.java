@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +29,7 @@ public class StateServiceTest {
     @Test
     public void testNewState() {
 
-        NewStateRequest newStateRequest = new NewStateRequest("Test State",true);
+        NewStateRequest newStateRequest = new NewStateRequest("Test State", true);
         State state = State.builder()
                 .id(1L)
                 .name(newStateRequest.getStateName())

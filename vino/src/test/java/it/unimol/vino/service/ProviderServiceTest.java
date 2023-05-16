@@ -1,4 +1,5 @@
 package it.unimol.vino.service;
+
 import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.entity.Provider;
@@ -116,6 +117,7 @@ class ProviderServiceTest {
         verify(providerRepository).findById(id);
         verify(providerRepository, never()).findProvidedItemsById(id);
     }
+
     @Test
     void testGetProviderBook() {
 

@@ -11,8 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import java.util.ArrayList;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,7 +33,6 @@ class AuthServiceTest {
 
     @Test
     void testRegisterWithInvalidPassword() {
-        // given
         RegisterRequest request = RegisterRequest.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -59,7 +60,8 @@ class AuthServiceTest {
                 .permissions(new ArrayList<>())
                 .role(Role.USER)
                 .build();
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));}
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+    }
 
 
 }

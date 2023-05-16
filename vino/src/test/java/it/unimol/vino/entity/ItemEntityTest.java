@@ -1,4 +1,5 @@
 package it.unimol.vino.entity;
+
 import it.unimol.vino.models.entity.Item;
 import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.entity.ProviderSupplyItem;
