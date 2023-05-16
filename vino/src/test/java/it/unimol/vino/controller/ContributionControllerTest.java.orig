@@ -4,37 +4,51 @@ package it.unimol.vino.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unimol.vino.utils.AuthToken;
 import it.unimol.vino.models.request.RegisterContributionRequest;
-import it.unimol.vino.repository.ContributionRepository;
-import it.unimol.vino.services.ContributionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+<<<<<<< HEAD
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+=======
 import org.springframework.test.context.junit4.SpringRunner;
+>>>>>>> 3ac1c3f6c40d5998628ff865b64500be6a7f1324
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.Date;
 import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+<<<<<<< HEAD
+import static org.hamcrest.Matchers.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+=======
+>>>>>>> 3ac1c3f6c40d5998628ff865b64500be6a7f1324
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 public class ContributionControllerTest {
-    @MockBean
-    private ContributionRepository contributionRepository;
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
 
+<<<<<<< HEAD
+    @Mock
+    private ContributionService contributionService;
+
+    private ContributionController contributionController;
+=======
 
     private AuthToken tokenClass;
 
+>>>>>>> 3ac1c3f6c40d5998628ff865b64500be6a7f1324
 
     @BeforeEach
     void setUp() {
@@ -64,6 +78,13 @@ public class ContributionControllerTest {
         contribution.setDate(new Date());
         contribution.setGrapeTypeId("...");
         contribution.setProviderId(123L);
+<<<<<<< HEAD
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/contribution")
+                .content(objectMapper.writeValueAsBytes(contribution))
+                        .contentType(MediaType.APPLICATION_JSON)
+
+        );
+=======
         objectMapper=new ObjectMapper();
         tokenClass =new AuthToken();
 
@@ -72,6 +93,7 @@ public class ContributionControllerTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(contribution)))
                 .andExpect(status().isOk());
+>>>>>>> 3ac1c3f6c40d5998628ff865b64500be6a7f1324
     }
 }
 
