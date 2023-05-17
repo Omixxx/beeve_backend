@@ -41,7 +41,7 @@ public class ProviderService {
     public Long providerRegister(@Valid RegisterProviderRequest request) {
 
         if (this.providerRepository.findByName(request.getName()).isPresent()) {
-            throw new UserAlreadyRegistered("Provider already in use");
+            throw new UserAlreadyRegistered("Fornitore con nome:"+request.getName()+"già presente");
         }
 
         Provider provider = Provider.builder()
@@ -91,27 +91,4 @@ public class ProviderService {
 
        return providerDTOMapper.apply(provider);
     }
-
-    /*
-    public List<ItemsProvidedByProvider> getAllProvidedItemsById(Long id) {
-        //da eliminare
-
-        this.providerRepository.findById(id).orElseThrow(
-                () -> new ProviderNotFoundException("IL provider con ID " + id + " non è stato trovato")
-        );
-
-        return this.providerRepository.findProvidedItemsById(id);
-    }
-
-    public List<ProviderFull> getFullProvides(){
-
-        return this.providerRepository.findAll().stream()
-                .map(providerFullDTOMapper)
-                .toList();
-
-    }
-
-     */
-
-
 }
