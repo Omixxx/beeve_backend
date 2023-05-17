@@ -98,7 +98,7 @@ public class ContributionService {
         );
 
         var contribution = Contribution.builder()
-                .origin(request.getCountry())
+                .origin(request.getOrigin())
                 .country(request.getCountry())
                 .photoURL(request.getPhotoURL())
                 .description(request.getDescription())
