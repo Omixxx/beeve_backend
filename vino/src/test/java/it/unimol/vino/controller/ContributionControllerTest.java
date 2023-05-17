@@ -137,12 +137,12 @@ public class ContributionControllerTest {
     }
     @Test
     public void testGetUser() throws Exception {
-        Long contributionid =contributionSave();
+        putContributionTest();
         tokenClass = new AuthToken(userRepository);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/contribution/user/{id}",contributionid)
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/contribution/user/{id}",1L)
                 .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(2L));
+                .andExpect(jsonPath("$.id").value(1L));
     }
 
     public long grapeTypeId() {
@@ -156,38 +156,6 @@ public class ContributionControllerTest {
         Provider provider=Provider.builder().id(1L).email("a.a@c").build();
         if(providerRepository.findById(1L).isEmpty())
             providerRepository.save(provider);
-        return 1L;
-    }
-    public Long contributionSave(){
-        List<UserSectorPermission> list = new ArrayList<UserSectorPermission>();
-        UserSectorPermission userSectorPermission = new UserSectorPermission();
-        Optional<GrapeType> optionalGrapeType = grapeTypeRepository.findById(grapeTypeId());
-        GrapeType grapeType = optionalGrapeType.orElseThrow();
-        Optional<Provider> optionalprovider= providerRepository.findById(providerId());
-        Provider providerid = optionalprovider.orElseThrow();
-        User user = new User();
-        user.setId(2L);
-        user.setRole(Role.ADMIN);
-        user.setFirstName("C");
-        user.setLastName("N");
-        user.setEmail("a@K.com");
-        user.setPassword("Abcd9876");
-        userSectorPermission.setUser(user);
-        list.add(userSectorPermission);
-        user.setPermissions(list);
-        userRepository.save(user);
-        Contribution contribution=new Contribution();
-        contribution.setOrigin("Italia");
-        contribution.setCountry("Campania");
-        contribution.setDescription("Frizzante");
-        contribution.setSugarDegree(5.5);
-        contribution.setQuantity(10.0);
-        contribution.setDate(new Date());
-        contribution.setSubmitter(user);
-        contribution.setAssociatedGrapeType(grapeType);
-        contribution.setProvider(providerid);
-        contribution.setSubmissionDate(new Date());
-        contributionRepository.save(contribution);
         return 1L;
     }
 }
