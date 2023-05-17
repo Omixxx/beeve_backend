@@ -45,7 +45,7 @@ public class ContributionService {
                 contribution -> ContributionDTO.builder()
                         .id(contribution.getId())
                         .quantity(contribution.getQuantity())
-                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(contribution.getAssociatedGrapeType()))
+                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
                         .provider(providerDTOMapper.apply(contribution.getProvider()))
                         .build()
         ).collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class ContributionService {
                         .quantity(specificContribution.getQuantity())
                         .sugarDegree(specificContribution.getSugarDegree())
                         .photoURL(specificContribution.getPhotoURL())
-                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(specificContribution.getAssociatedGrapeType()))
+                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(specificContribution.getAssociatedGrapeType()))
                         .provider(providerDTOMapper.apply(specificContribution.getProvider()))
                         .build())
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
