@@ -13,7 +13,6 @@ import it.unimol.vino.models.entity.User;
 import it.unimol.vino.repository.ContributionRepository;
 import it.unimol.vino.repository.UserRepository;
 import jakarta.validation.Valid;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
@@ -21,13 +20,11 @@ import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.repository.GrapeTypeRepository;
 import it.unimol.vino.repository.ProviderRepository;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.security.Security;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +43,7 @@ public class ContributionService {
                 contribution -> ContributionDTO.builder()
                         .id(contribution.getId())
                         .quantity(contribution.getQuantity())
-                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(contribution.getAssociatedGrapeType()))
+                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
                         .provider(ProviderDTO.getName(contribution.getProvider()))
                         .build()
         ).collect(Collectors.toList());
@@ -54,6 +51,12 @@ public class ContributionService {
 
 
     public ContributionDTO get(Long id) {
+        GrapeTypeDTO speciesGrapeType = GrapeTypeDTO.builder()
+                .species(this.contribution.findById(id)
+                        .map(Contribution::getAssociatedGrapeType)
+                        .map(GrapeType::getSpecies)
+                        .orElseThrow(() -> new GrapeTypeNotFoundException("Il tipo d'uva non esiste")))
+                .build();
         ContributionDTO contribution = this.contribution.findById(id)
                 .map(specificContribution -> ContributionDTO.builder()
                         .id(specificContribution.getId())
@@ -63,7 +66,7 @@ public class ContributionService {
                         .quantity(specificContribution.getQuantity())
                         .sugarDegree(specificContribution.getSugarDegree())
                         .photoURL(specificContribution.getPhotoURL())
-                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(specificContribution.getAssociatedGrapeType()))
+                        .associatedGrapeType(speciesGrapeType)
                         .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
                         .build())
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
