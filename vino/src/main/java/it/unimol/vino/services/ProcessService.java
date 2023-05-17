@@ -11,6 +11,7 @@ import it.unimol.vino.models.entity.*;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
 import it.unimol.vino.models.request.ProgressProcessRequest;
+import it.unimol.vino.models.response.CompletedStateResponse;
 import it.unimol.vino.repository.*;
 import it.unimol.vino.utils.DuplicatesChecker;
 import jakarta.transaction.Transactional;
@@ -103,6 +104,9 @@ public class ProcessService {
         UserProgressesProcess userProgressesProcess = UserProgressesProcess.builder()
                 .user(user)
                 .process(process)
+                .completedState(process.getCurrentState().getState())
+                .waste(request.getWaste())
+                .date(new Date())
                 .description(request.getDescription())
                 .build();
 
@@ -113,6 +117,7 @@ public class ProcessService {
         if (!process.getCurrentState().getState().getDoesProduceWaste() && request.getWaste() > 0)
             throw new WasteNotAllowedException("Lo stato " + process.getCurrentState().getState().getName() +
                     " non produce rifiuti");
+
 
         process.setCurrentWaste(request.getWaste() + process.getCurrentWaste());
         process.getCurrentState().setEndDate(new Date());
@@ -208,5 +213,24 @@ public class ProcessService {
                 .name(processHasStates.getState().getName())
                 .doesProduceWaste(processHasStates.getState().getDoesProduceWaste())
                 .build()).toList();
+    }
+
+    public CompletedStateResponse getCompletedState(Long processId, Long stateId) {
+
+        this.processRepository.findById(processId).orElseThrow(
+                () -> new ProcessNotFoundException("Processo non trovato")
+        );
+
+        UserProgressesProcess completedProcess = this.getUser().getProgressedProcesses().stream()
+                .filter(userProgressesProcess -> userProgressesProcess.getProcess().getId().equals(processId))
+                .filter(userProgressesProcess -> userProgressesProcess.getCompletedState().getId().equals(stateId))
+                .findFirst().orElseThrow(
+                        () -> new ProcessDidNotProgressException("il processo " + processId + " non ha mai completato lo stato " + stateId)
+                );
+
+        return CompletedStateResponse.builder()
+                .waste(completedProcess.getWaste())
+                .description(completedProcess.getDescription())
+                .build();
     }
 }
