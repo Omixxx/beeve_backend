@@ -5,25 +5,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
 @Entity(name = "item")
 @Table(name = "item")
-
-public class Item {
+@IdClass(ItemID.class)
+public class Item implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "name")
+    private String name;
 
-
+    @Id
     @Column(name = "capacity")
     private Long capacity;
 
@@ -33,10 +32,13 @@ public class Item {
     @Column(name = "total_quantity")
     private Integer totQuantity;
 
+
+
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<ProviderSupplyItem> providerSupplyItemList;
 
+    @Id
     @ManyToOne
     @JsonIgnore
     private Category category;
@@ -57,6 +59,10 @@ public class Item {
     }
     public void addQuantity(Integer quantity){
         this.totQuantity+=quantity;
+    }
+
+    public void decreaseQuantity(Integer quantity){
+        this.totQuantity-=quantity;
     }
 
 }

@@ -1,6 +1,7 @@
 package it.unimol.vino.models.entity;
 
-;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Category {
     private String name;
 
     @OneToMany
+    @JsonIgnore
     private List<Item> itemList;
 
     public void addItem(Item item) {

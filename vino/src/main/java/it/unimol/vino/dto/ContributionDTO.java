@@ -1,15 +1,9 @@
 package it.unimol.vino.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import it.unimol.vino.models.entity.GrapeType;
-import it.unimol.vino.models.entity.Provider;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 
 
 import java.util.Date;
