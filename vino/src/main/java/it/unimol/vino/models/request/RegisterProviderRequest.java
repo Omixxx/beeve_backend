@@ -25,6 +25,7 @@ public class RegisterProviderRequest {
     @NotBlank(message = "email must be not blank")
     private String email;
 
+    /*
     @NonNull()
     @NotBlank(message = "address must be not blank")
     private String address;
@@ -32,6 +33,8 @@ public class RegisterProviderRequest {
     @NonNull()
     @NotBlank(message = "website url must be not blank")
     private String website_url;
+
+     */
 
 
 }

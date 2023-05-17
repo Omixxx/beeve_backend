@@ -1,7 +1,10 @@
 package it.unimol.vino.models.entity;
 
+<<<<<<< HEAD
+=======
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+>>>>>>> develop
 import jakarta.persistence.*;
 import lombok.*;
 

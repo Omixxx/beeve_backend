@@ -2,8 +2,8 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.dto.ContributionDTO;
 import it.unimol.vino.dto.GrapeTypeDTO;
-import it.unimol.vino.dto.ProviderDTO;
 import it.unimol.vino.dto.UserDTO;
+import it.unimol.vino.dto.mappers.ProviderDTOMapper;
 import it.unimol.vino.exceptions.ContributionNotFoundException;
 
 import it.unimol.vino.exceptions.UserNotFoundException;
@@ -38,25 +38,21 @@ public class ContributionService {
     private final ProviderRepository provider;
     private final GrapeTypeRepository grapeType;
 
+    private final  ProviderDTOMapper providerDTOMapper;
+
     public List<ContributionDTO> getAll() {
         return this.contribution.findAll().stream().map(
                 contribution -> ContributionDTO.builder()
                         .id(contribution.getId())
                         .quantity(contribution.getQuantity())
                         .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
-                        .provider(ProviderDTO.getName(contribution.getProvider()))
+                        .provider(providerDTOMapper.apply(contribution.getProvider()))
                         .build()
         ).collect(Collectors.toList());
     }
 
 
     public ContributionDTO get(Long id) {
-        GrapeTypeDTO speciesGrapeType = GrapeTypeDTO.builder()
-                .species(this.contribution.findById(id)
-                        .map(Contribution::getAssociatedGrapeType)
-                        .map(GrapeType::getSpecies)
-                        .orElseThrow(() -> new GrapeTypeNotFoundException("Il tipo d'uva non esiste")))
-                .build();
         ContributionDTO contribution = this.contribution.findById(id)
                 .map(specificContribution -> ContributionDTO.builder()
                         .id(specificContribution.getId())
@@ -66,8 +62,8 @@ public class ContributionService {
                         .quantity(specificContribution.getQuantity())
                         .sugarDegree(specificContribution.getSugarDegree())
                         .photoURL(specificContribution.getPhotoURL())
-                        .associatedGrapeType(speciesGrapeType)
-                        .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
+                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(specificContribution.getAssociatedGrapeType()))
+                        .provider(providerDTOMapper.apply(specificContribution.getProvider()))
                         .build())
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
 
@@ -102,7 +98,7 @@ public class ContributionService {
         );
 
         var contribution = Contribution.builder()
-                .origin(request.getCountry())
+                .origin(request.getOrigin())
                 .country(request.getCountry())
                 .photoURL(request.getPhotoURL())
                 .description(request.getDescription())

@@ -1,6 +1,4 @@
 package it.unimol.vino.controllers;
-import it.unimol.vino.exceptions.CategoryNotFoundException;
-import it.unimol.vino.exceptions.CategoryExistingException;
 import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.services.CategoryService;
@@ -26,7 +24,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Category> postCategory(@Valid @RequestBody CategoryRequest category)throws CategoryExistingException {
+    public ResponseEntity<Category> postCategory(@Valid @RequestBody CategoryRequest category){
         return ResponseEntity.ok(this.service.postCategory(category));
 
     }
