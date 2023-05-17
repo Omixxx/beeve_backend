@@ -8,7 +8,7 @@ import lombok.Setter;
 import org.springframework.lang.NonNull;
 @Setter
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class CategoryRequest {
 
