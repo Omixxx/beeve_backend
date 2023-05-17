@@ -75,7 +75,7 @@ public class ContributionControllerTest {
         contribution.setQuantity(10.0);
         contribution.setDate(new Date());
         contribution.setGrapeTypeId(grapeTypeId());
-        contribution.setProviderId(ProviderId());
+        contribution.setProviderId(providerId());
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(userRepository);
 
@@ -94,7 +94,7 @@ public class ContributionControllerTest {
         contribution.setQuantity(10.0);
         contribution.setDate(new Date());
         contribution.setGrapeTypeId(grapeTypeId());
-        contribution.setProviderId(ProviderId());
+        contribution.setProviderId(providerId());
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(userRepository);
 
@@ -126,7 +126,7 @@ public class ContributionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.origin").value("Campania"))// TODO mi setta campania ma mi aspetto italia se facendo la put metto italia come origin
+                .andExpect(jsonPath("$.origin").value("Italia"))
                 .andExpect(jsonPath("$.country").value("Campania"))
                 .andExpect(jsonPath("$.description").value("Frizzante"))
                 .andExpect(jsonPath("$.sugarDegree").value(5.5))
@@ -135,6 +135,16 @@ public class ContributionControllerTest {
                 .andExpect(jsonPath("$.provider.email").value("a.a@c"));
 
     }
+    @Test
+    public void testGetUser() throws Exception {
+        Long contributionid =contributionSave();
+        tokenClass = new AuthToken(userRepository);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/contribution/user/{id}",contributionid)
+                .header("Authorization", "Bearer " + tokenClass.generateToken()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(2L));
+    }
+
     public long grapeTypeId() {
         GrapeType grapeType = GrapeType.builder().id(1L).species("Roberto").color("nera").build();
         if (grapeTypeRepository.findById(1L).isEmpty()) {
@@ -142,19 +152,21 @@ public class ContributionControllerTest {
         }
         return 1L;
     }
-    public long ProviderId() {
+    public long providerId() {
         Provider provider=Provider.builder().id(1L).email("a.a@c").build();
         if(providerRepository.findById(1L).isEmpty())
             providerRepository.save(provider);
         return 1L;
     }
-    public void ContributionSave(){
+    public Long contributionSave(){
         List<UserSectorPermission> list = new ArrayList<UserSectorPermission>();
         UserSectorPermission userSectorPermission = new UserSectorPermission();
-        Optional<GrapeType> optionalGrapeType = grapeTypeRepository.findById(grapeTypeId())
-
+        Optional<GrapeType> optionalGrapeType = grapeTypeRepository.findById(grapeTypeId());
+        GrapeType grapeType = optionalGrapeType.orElseThrow();
+        Optional<Provider> optionalprovider= providerRepository.findById(providerId());
+        Provider providerid = optionalprovider.orElseThrow();
         User user = new User();
-        user.setId(1L);
+        user.setId(2L);
         user.setRole(Role.ADMIN);
         user.setFirstName("C");
         user.setLastName("N");
@@ -173,9 +185,10 @@ public class ContributionControllerTest {
         contribution.setDate(new Date());
         contribution.setSubmitter(user);
         contribution.setAssociatedGrapeType(grapeType);
-        contribution.setProvider();
+        contribution.setProvider(providerid);
         contribution.setSubmissionDate(new Date());
         contributionRepository.save(contribution);
+        return 1L;
     }
 }
 
