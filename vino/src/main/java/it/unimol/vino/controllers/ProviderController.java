@@ -28,7 +28,6 @@ public class ProviderController {
 
     @GetMapping()
     public ResponseEntity<List<Provider>> getAllProviders() {
-        //via
         return ResponseEntity.ok(this.providerService.getAll());
     }
 
@@ -57,14 +56,5 @@ public class ProviderController {
         return ResponseEntity.ok(this.providerService.updateProvider(request));
     }
 
-    /*
-    @GetMapping("/full")
-    public ResponseEntity<List<ProviderFull>> getFullProvider() {
-        return ResponseEntity.ok(this.providerService.getFullProvides());
-    }
-     @GetMapping("/providedBy/{id}")
-    public ResponseEntity<List<ItemsProvidedByProvider>> getAllProvidedItemsById(@PathVariable Long id) {
-        return ResponseEntity.ok(this.providerService.getAllProvidedItemsById(id));
-    }
-     */
+
 }

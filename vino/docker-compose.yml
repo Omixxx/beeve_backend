@@ -1,6 +1,16 @@
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "vino-backend"
+    depends_on:
+      - vino-db
+    ports:
+      - "8080:8080"
+
   vino-db:
-    container_name: "vino"
+    container_name: "vino-db"
     environment:
       - MARIADB_DATABASE=${MARIADB_DATABASE}
       - MARIADB_USER=${MARIADB_USER}
@@ -10,3 +20,8 @@ services:
     ports:
       - 3307:3306
     restart: always
+    volumes:
+      - vino-db-volume:/var/lib/mysql
+
+volumes:
+  vino-db-volume:

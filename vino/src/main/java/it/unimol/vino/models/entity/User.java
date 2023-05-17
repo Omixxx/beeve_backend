@@ -2,6 +2,8 @@ package it.unimol.vino.models.entity;
 
 import it.unimol.vino.models.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,6 +36,10 @@ public class User implements UserDetails, Serializable {
     @Column(unique = true)
     private String email;
     private String password;
+
+    @Min(value = 18, message = "l'operaio deve essere maggiorenne")
+    @Max(value = 70, message = "l'operaio non puo avere piu di 70 anni")
+    private Integer age;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -78,14 +84,14 @@ public class User implements UserDetails, Serializable {
     }
 
     public void addPermission(@NonNull Sector sector) {
-        UserSectorPermission userSectorPermission = new UserSectorPermission(
-                this,
-                sector,
-                true,
-                false,
-                false,
-                false
-        );
+        UserSectorPermission userSectorPermission = UserSectorPermission.builder()
+                .user(this)
+                .sector(sector)
+                .canRead(true)
+                .canWrite(this.role.equals(Role.ADMIN))
+                .canDelete(this.role.equals(Role.ADMIN))
+                .canUpdate(this.role.equals(Role.ADMIN))
+                .build();
         this.permissions.add(userSectorPermission);
     }
 
