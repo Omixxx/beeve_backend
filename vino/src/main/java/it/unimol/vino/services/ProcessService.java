@@ -149,8 +149,7 @@ public class ProcessService {
     }
 
     public List<ProcessDTO> getAllProcesses() {
-        return this.processRepository.findAll().stream()
-                .filter(process -> Objects.nonNull(process.getCurrentState()))
+        return this.processRepository.findByCurrentStateNotNull().stream()
                 .map(process -> ProcessDTO.builder()
                         .id(process.getId())
                         .currentState(
@@ -160,7 +159,8 @@ public class ProcessService {
                                                 .name(process.getCurrentState().getState().getName())
                                                 .build())
                                         .build())
-                        .build())
+                        .build()
+                )
                 .toList();
     }
 
@@ -233,16 +233,20 @@ public class ProcessService {
 
     public CompletedStateResponse getCompletedState(Long processId, Long stateId) {
 
-        this.processRepository.findById(processId).orElseThrow(
-                () -> new ProcessNotFoundException("Processo non trovato")
+        Process process = this.getProcessFromDb(processId);
+        State state = this.stateRepository.findById(stateId).orElseThrow(
+                () -> new StateNotFoundException("Stato non trovato")
         );
 
-        UserProgressesProcess completedProcess = this.getUser().getProgressedProcesses().stream()
-                .filter(userProgressesProcess -> userProgressesProcess.getProcess().getId().equals(processId))
-                .filter(userProgressesProcess -> userProgressesProcess.getCompletedState().getId().equals(stateId))
-                .findFirst().orElseThrow(
-                        () -> new ProcessDidNotProgressException("il processo " + processId + " non ha mai completato lo stato " + stateId)
-                );
+        List<UserProgressesProcess> userProgressesProcesses =
+                this.userProgressProcessRepository.findByProcessAndCompletedState(process, state);
+
+        if (userProgressesProcesses.isEmpty())
+            throw new ProcessDidNotProgressException("Stato completato non trovato");
+
+        if (userProgressesProcesses.size() > 1)
+            throw new InternalServerErrorException("Errore interno, contattare l'amministratore");
+        UserProgressesProcess completedProcess = userProgressesProcesses.get(0);
 
         return CompletedStateResponse.builder()
                 .waste(completedProcess.getWaste())
