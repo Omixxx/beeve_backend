@@ -1,5 +1,6 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.dto.GrapeTypeDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +25,7 @@ public class GrapeTypeController {
     private final GrapeTypeService grapeTypeService;
 
     @GetMapping
-    public ResponseEntity<List<GrapeType>> getAll() {
+    public ResponseEntity<List<GrapeTypeDTO>> getAll() {
         return ResponseEntity.ok(this.grapeTypeService.getAll());
     }
 
@@ -34,7 +35,7 @@ public class GrapeTypeController {
     }
 
     @GetMapping("/{name}")
-    public ResponseEntity<GrapeType> get(@PathVariable String name) {
-        return ResponseEntity.ok(this.grapeTypeService.get(name));
+    public ResponseEntity<GrapeType> get(@PathVariable String species) {
+        return ResponseEntity.ok(this.grapeTypeService.get(species));
     }
 }

@@ -30,7 +30,7 @@ public class CategoryService {
     public List<Category> getAllCategory(){
      return this.categoryRepository.findAll();}
 
-    public Category postCategory(CategoryRequest request) throws CategoryAlreadyExistingException {
+    public Category postCategory(CategoryRequest request) {
         if(this.isCategoryPresent(request.getName()))
             throw new CategoryAlreadyExistingException("categoria già esistente");
 

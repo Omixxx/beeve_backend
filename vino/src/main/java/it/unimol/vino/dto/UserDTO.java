@@ -1,7 +1,6 @@
 package it.unimol.vino.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.entity.UserModifyProcess;
 import it.unimol.vino.models.entity.UserProgressesProcess;
 import it.unimol.vino.models.entity.UserSectorPermission;
