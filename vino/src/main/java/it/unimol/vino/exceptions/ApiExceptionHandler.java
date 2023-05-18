@@ -317,16 +317,6 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(value = {ProcessDidNotProgressException.class})
-    public ResponseEntity<Object> handleApiRequestException(ProcessDidNotProgressException e) {
-        ApiException apiException = new ApiException(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST,
-                ZonedDateTime.now()
-        );
-        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(value = {DuplicateGrapeTypeException.class})
     public ResponseEntity<Object> handleApiRequestException(DuplicateGrapeTypeException e) {
         ApiException apiException = new ApiException(
