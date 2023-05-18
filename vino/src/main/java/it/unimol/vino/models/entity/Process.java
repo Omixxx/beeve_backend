@@ -159,4 +159,8 @@ public class Process {
 
         this.contribution.add(processUseContribution);
     }
+
+//    public Integer getGrapeUsedQuantity() {
+//        this.contribution.stream().mapMultiToDouble((processUseContribution, doubleConsumer) -> )
+//    }
 }
