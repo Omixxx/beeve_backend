@@ -28,4 +28,5 @@ public class StateController {
     public ResponseEntity<List<StateDTO>> getAllStates() {
         return ResponseEntity.ok(this.stateService.getAllStates());
     }
+
 }

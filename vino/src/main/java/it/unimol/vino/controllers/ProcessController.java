@@ -6,6 +6,7 @@ import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.CancelProgressRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
 import it.unimol.vino.models.request.ProgressProcessRequest;
+import it.unimol.vino.models.response.CompletedStateResponse;
 import it.unimol.vino.services.ProcessService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -72,5 +73,14 @@ public class ProcessController {
     public ResponseEntity<List<StateDTO>> getStates(@PathVariable("process_id") Long processId) {
         return ResponseEntity.ok(this.processService.getProcessStates(processId));
     }
+
+    @GetMapping("{process_id}/state/{state_id}")
+    public ResponseEntity<CompletedStateResponse> getState(
+            @PathVariable("process_id") Long processId,
+            @PathVariable("state_id") Long stateId
+    ) {
+        return ResponseEntity.ok(this.processService.getCompletedState(processId, stateId));
+    }
+
 
 }

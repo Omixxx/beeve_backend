@@ -98,4 +98,15 @@ public class UserService {
     }
 
 
+    public UserDTO getUserInfo() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userRepository.findByEmail(email).map(
+                user -> UserDTO.builder()
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .build()
+        ).orElseThrow(
+                () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
+        );
+    }
 }
