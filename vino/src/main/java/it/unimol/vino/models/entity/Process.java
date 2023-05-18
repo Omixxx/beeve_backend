@@ -163,4 +163,12 @@ public class Process {
 //    public Integer getGrapeUsedQuantity() {
 //        this.contribution.stream().mapMultiToDouble((processUseContribution, doubleConsumer) -> )
 //    }
+
+    public User getCurrentStateChanger() {
+        List<User> users = this.userProgressProcessList.stream()
+                .filter(userProgressesProcess -> userProgressesProcess.getProcess().getId().equals(this.id))
+                .map(UserProgressesProcess::getUser)
+                .toList();
+        return users.stream().findFirst().orElse(this.creator);
+    }
 }

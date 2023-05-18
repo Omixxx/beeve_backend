@@ -1,10 +1,7 @@
 package it.unimol.vino.services;
 
 
-import it.unimol.vino.dto.ContributionDTO;
-import it.unimol.vino.dto.GrapeTypeDTO;
-import it.unimol.vino.dto.ProcessDTO;
-import it.unimol.vino.dto.StateDTO;
+import it.unimol.vino.dto.*;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.*;
@@ -17,6 +14,7 @@ import it.unimol.vino.utils.DuplicatesChecker;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -156,26 +154,45 @@ public class ProcessService {
                 .filter(process -> Objects.nonNull(process.getCurrentState()))
                 .map(process -> ProcessDTO.builder()
                         .id(process.getId())
-                        .currentState(StateDTO.builder()
-                                .name(process.getCurrentState().getState().getName())
-                                .build())
-                        .build()
-                ).toList();
+                        .currentState(
+                                CurrentStateDTO.builder()
+                                        .user(null)
+                                        .state(StateDTO.builder()
+                                                .name(process.getCurrentState().getState().getName())
+                                                .build())
+                                        .build())
+                        .build())
+                .toList();
     }
 
     public ProcessDTO getProcess(Long processId) {
+
         Process process = this.getProcessFromDb(processId);
         return ProcessDTO.builder()
-                .currentState(StateDTO.builder()
-                        .id(process.getCurrentState().getState().getId())
-                        .name(process.getCurrentState().getState().getName())
-                        .build())
-                .contributions(process.getContribution().stream().map(processUseContribution -> ContributionDTO.builder()
-                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(processUseContribution.getContribution().getAssociatedGrapeType()))
-                        .quantity(processUseContribution.getQuantity())
-                        .build()).toList())
+                .currentState(
+                        CurrentStateDTO.builder()
+                                .user(
+                                        UserDTO.builder()
+                                                .firstName(process.getCurrentStateChanger().getFirstName())
+                                                .build())
+                                .state(
+                                        StateDTO.builder()
+                                                .id(process.getCurrentState().getState().getId())
+                                                .name(process.getCurrentState().getState().getName())
+                                                .build())
+                                .build()
+                )
+                .contributions(
+                        process.getContribution()
+                                .stream()
+                                .map(processUseContribution -> ContributionDTO.builder()
+                                        .id(processUseContribution.getContribution().getId())
+                                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(processUseContribution.getContribution().getAssociatedGrapeType()))
+                                        .quantity(processUseContribution.getQuantity())
+                                        .build())
+                                .toList()
+                )
                 .currentWaste(process.getCurrentWaste())
-                .stalkWaste(process.getStalkWaste())
                 .build();
     }
 
