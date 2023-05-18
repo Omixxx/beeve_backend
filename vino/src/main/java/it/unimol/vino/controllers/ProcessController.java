@@ -82,5 +82,9 @@ public class ProcessController {
         return ResponseEntity.ok(this.processService.getCompletedState(processId, stateId));
     }
 
+    @GetMapping("{process_id}/grape/used_quantity")
+    public ResponseEntity<Double> getGrapeUsedQuantity(@PathVariable("process_id") Long processId) {
+        return ResponseEntity.ok(this.processService.getGrapeUsedInProcess(processId));
+    }
 
 }

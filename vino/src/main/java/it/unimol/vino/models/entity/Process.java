@@ -160,11 +160,7 @@ public class Process {
         this.contribution.add(processUseContribution);
     }
 
-//    public Integer getGrapeUsedQuantity() {
-//        this.contribution.stream().mapMultiToDouble((processUseContribution, doubleConsumer) -> )
-//    }
-
-    public User getCurrentStateChanger() {
+    public User getUserWhoProgressedToTheCurrentState() {
         List<User> users = this.userProgressProcessList.stream()
                 .filter(userProgressesProcess -> userProgressesProcess.getProcess().getId().equals(this.id))
                 .map(UserProgressesProcess::getUser)

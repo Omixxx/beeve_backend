@@ -14,7 +14,6 @@ import it.unimol.vino.utils.DuplicatesChecker;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -173,7 +172,7 @@ public class ProcessService {
                         CurrentStateDTO.builder()
                                 .user(
                                         UserDTO.builder()
-                                                .firstName(process.getCurrentStateChanger().getFirstName())
+                                                .firstName(process.getUserWhoProgressedToTheCurrentState().getFirstName())
                                                 .build())
                                 .state(
                                         StateDTO.builder()
@@ -249,5 +248,11 @@ public class ProcessService {
                 .waste(completedProcess.getWaste())
                 .description(completedProcess.getDescription())
                 .build();
+    }
+
+    public Double getGrapeUsedInProcess(Long processId) {
+        return this.processRepository.findById(processId).orElseThrow(
+                () -> new ProcessNotFoundException("Processo non trovato")
+        ).getContribution().stream().mapToDouble(ProcessUseContribution::getQuantity).sum();
     }
 }
