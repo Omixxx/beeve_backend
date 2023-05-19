@@ -9,15 +9,10 @@ import lombok.NonNull;
 public class DecreaseTotalQuantityOfItemRequest {
     @NonNull()
     @Positive
-    private Long capacity;
+    private Long id;
 
     @NonNull()
     @Positive
     private Integer quantity;
 
-    @NonNull()
-    private String categoryName;
-
-    @NonNull()
-    private String name;
 }

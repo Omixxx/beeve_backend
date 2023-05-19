@@ -64,8 +64,9 @@ public class ItemService {
                     .build();
 
             newItem.addProviderMapping(provider, request.getQuantity(), request.getDate());
-            category.addItem(newItem);
             this.itemRepository.save(newItem);
+            category.addItem(newItem);
+
         }
 
 
@@ -87,8 +88,10 @@ public class ItemService {
     @Transactional
     public String decreaseTotalQuantityOfItem(@Valid DecreaseTotalQuantityOfItemRequest request) {
 
-        Category category = findCategory(request.getCategoryName());
-        Item item = findItem(category, request.getCapacity(), request.getName());
+
+        Item item = this.itemRepository.findById(request.getId()).orElseThrow(
+                () -> new ItemNotFoundException("L'item con ID " + request.getId() + " non è stato trovato")
+        );
 
         item.decreaseQuantity(request.getQuantity());
 

@@ -13,12 +13,8 @@ import java.util.Date;
 @Data
 @Builder
 @Table
+@IdClass(ProviderSupplyItemId.class)
 public class ProviderSupplyItem implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-
 
     @Column(name = "quantity")
     private Integer quantity;
@@ -26,11 +22,11 @@ public class ProviderSupplyItem implements Serializable {
     @Column(name = "date")
     private Date date;
 
-
+    @Id
     @ManyToOne(fetch = FetchType.EAGER)
     private Provider provider;
 
-
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     private Item item;
 
