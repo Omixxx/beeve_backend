@@ -168,29 +168,29 @@ public class ProcessService {
 
         Process process = this.getProcessFromDb(processId);
         return ProcessDTO.builder()
-                .currentState(
-                        CurrentStateDTO.builder()
-                                .user(
-                                        UserDTO.builder()
-                                                .firstName(process.getUserWhoProgressedToTheCurrentState().getFirstName())
-                                                .build())
-                                .state(
-                                        StateDTO.builder()
-                                                .id(process.getCurrentState().getState().getId())
-                                                .name(process.getCurrentState().getState().getName())
-                                                .build())
-                                .build()
-                )
-                .contributions(
-                        process.getContribution()
-                                .stream()
-                                .map(processUseContribution -> ContributionDTO.builder()
-                                        .id(processUseContribution.getContribution().getId())
-                                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(processUseContribution.getContribution().getAssociatedGrapeType()))
-                                        .quantity(processUseContribution.getQuantity())
+                .currentState(CurrentStateDTO.builder()
+                        .user(UserDTO.builder()
+                                .firstName(process.getUserWhoProgressedToTheCurrentState().getFirstName())
+                                .build())
+                        .state(
+                                StateDTO.builder()
+                                        .id(process.getCurrentState().getState().getId())
+                                        .name(process.getCurrentState().getState().getName())
                                         .build())
-                                .toList()
+                        .build()
                 )
+                .contributions(process.getContribution().stream().map(processUseContribution -> ContributionDTO.builder()
+                                .id(processUseContribution.getContribution().getId())
+                                .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(processUseContribution.getContribution().getAssociatedGrapeType()))
+                                .quantity(processUseContribution.getQuantity())
+                                .build())
+                        .toList()
+                )
+                .items(process.getItem().stream().map(processUseItem -> ItemDTO.builder()
+                        .name(processUseItem.getItem().getName())
+                        .totQuantity(processUseItem.getUsedQuantity())
+                        .description(processUseItem.getItem().getDescription())
+                        .build()).toList())
                 .currentWaste(process.getCurrentWaste())
                 .build();
     }

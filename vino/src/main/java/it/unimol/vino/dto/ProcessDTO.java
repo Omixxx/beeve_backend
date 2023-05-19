@@ -33,6 +33,8 @@ public class ProcessDTO {
 
     private List<StateDTO> states;
 
+    private List<ItemDTO> items;
+
     private CurrentStateDTO currentState;
 
     private Integer wineWaste;

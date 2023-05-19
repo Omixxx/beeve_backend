@@ -1,12 +1,13 @@
 package it.unimol.vino.dto;
 
-public record ItemDTO (String name,
-                       Long capacity,
+import lombok.Builder;
 
-                       String description,
+@Builder
+public record ItemDTO(String name,
+                      Long capacity,
 
-                       Integer totQuantity
-                       )
+                      String description,
 
-{
+                      Integer totQuantity
+) {
 }
