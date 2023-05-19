@@ -99,6 +99,7 @@ public class ContributionService {
                 () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + request.getGrapeTypeId() + " non è stato trovato")
         );
 
+
         try {
             var contribution = Contribution.builder()
                     .origin(request.getCountry())
@@ -116,8 +117,9 @@ public class ContributionService {
             this.contribution.save(contribution);
             return "Il conferimento è stato registrato con l'id" + contribution.getId();
         } catch (IOException e) {
-            return "Errore durante la conversione dell'immagine";
+            throw new ContributionNotFoundException("Errore durante il salvataggio del conferimento");
         }
+
 
     }
 

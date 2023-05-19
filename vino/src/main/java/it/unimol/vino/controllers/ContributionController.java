@@ -30,7 +30,7 @@ public class ContributionController {
 
     @PostMapping
     public ResponseEntity<String> put(@ModelAttribute RegisterContributionRequest request) {
-        return ResponseEntity.ok(this.contributionService.put(request));
+        return ResponseEntity.ok(this.contributionService.put(request).orElseThrow());
     }
 
     @GetMapping("/{id}")
