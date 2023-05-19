@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/category")
 public class CategoryController {

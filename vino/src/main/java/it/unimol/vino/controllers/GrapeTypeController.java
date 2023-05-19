@@ -16,6 +16,7 @@ import it.unimol.vino.services.GrapeTypeService;
 
 
 
+@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/v1/grape-type")
