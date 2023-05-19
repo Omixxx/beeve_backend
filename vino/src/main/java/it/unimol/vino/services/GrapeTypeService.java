@@ -34,12 +34,12 @@ public class GrapeTypeService {
         return this.grapeType.findBySpecies(type)
                 .orElseThrow(() -> new EntityNotFoundException("Non esiste alcun tipo d'uva " + type));
     }
-    public GrapeType put(@Valid GrapeType grapeType) {
+
+    public GrapeTypeDTO put(@Valid GrapeType grapeType) {
         this.grapeType.findBySpeciesAndColor(grapeType.getSpecies(), grapeType.getColor())
                 .ifPresent(existingGrapeType -> {
                     throw new DuplicateGrapeTypeException("Esiste già un tipo d'uva " + grapeType.getSpecies() + " di colore " + grapeType.getColor());
                 });
-        return this.grapeType.save(grapeType);
+        return GrapeTypeDTO.getFullGrapeTypeDTO(this.grapeType.save(grapeType));
     }
-
 }

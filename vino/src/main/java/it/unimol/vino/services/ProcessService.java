@@ -242,7 +242,8 @@ public class ProcessService {
                 this.userProgressProcessRepository.findByProcessAndCompletedState(process, state);
 
         if (userProgressesProcesses.isEmpty())
-            throw new ProcessDidNotProgressException("Stato completato non trovato");
+            throw new ProcessDidNotProgressException("il processo "
+                    + processId + " non ha mai completato lo stato " + stateId);
 
         if (userProgressesProcesses.size() > 1)
             throw new InternalServerErrorException("Errore interno, contattare l'amministratore");
