@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/process")
 @RequiredArgsConstructor
@@ -24,8 +24,7 @@ public class ProcessController {
     @PostMapping
     public ResponseEntity<String> newProcess(@RequestBody @Valid NewProcessRequest request) {
         return ResponseEntity.ok("Processo con Id " +
-                this.processService.createNewProcess(request) + " creato con successo"
-        );
+                this.processService.createNewProcess(request) + " creato con successo");
     }
 
     @PutMapping("/addState")
@@ -33,30 +32,24 @@ public class ProcessController {
         this.processService.addState(request);
         return ResponseEntity.ok("Stato " +
                 request.getStateId() + " aggiunto al processo " +
-                request.getProcessId() + " con successo"
-        );
+                request.getProcessId() + " con successo");
     }
-
 
     @PostMapping("/{process_id}/progress")
     public ResponseEntity<String> progressProcess(
             @PathVariable("process_id") Long processId,
-            @RequestBody ProgressProcessRequest request
-    ) {
+            @RequestBody ProgressProcessRequest request) {
         return ResponseEntity.ok(
-                this.processService.progressState(processId, request)
-        );
+                this.processService.progressState(processId, request));
     }
 
     @PostMapping("/{process_id}/abort")
     public ResponseEntity<String> cancelProcess(
             @PathVariable("process_id") Long processId,
-            @RequestBody CancelProgressRequest request
-    ) {
+            @RequestBody CancelProgressRequest request) {
         this.processService.abortProcess(processId, request.getDescription());
         return ResponseEntity.ok("Processo " +
-                processId + " annullato con successo"
-        );
+                processId + " annullato con successo");
     }
 
     @GetMapping

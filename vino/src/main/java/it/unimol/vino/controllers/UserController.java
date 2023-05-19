@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
@@ -20,9 +20,7 @@ public class UserController {
 
     @PostMapping("/update_permissions")
     public ResponseEntity<UpdatePermissionResponse> updatePermissions(
-            @Valid @RequestBody
-            UpdatePermissionsRequest updatePermissionsRequest
-    ) {
+            @Valid @RequestBody UpdatePermissionsRequest updatePermissionsRequest) {
         return ResponseEntity.ok(this.userService.updatePermissions(updatePermissionsRequest));
     }
 

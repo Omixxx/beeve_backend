@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/state")
 @RequiredArgsConstructor
@@ -21,8 +21,7 @@ public class StateController {
     @PostMapping
     public ResponseEntity<String> newState(@RequestBody @Valid NewStateRequest request) {
         return ResponseEntity.ok("Stato " + this.stateService.newState(request).getName()
-                + " creato con successo"
-        );
+                + " creato con successo");
     }
 
     @GetMapping

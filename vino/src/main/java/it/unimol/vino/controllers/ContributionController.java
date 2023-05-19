@@ -6,9 +6,6 @@ import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.services.ContributionService;
 
-
-
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -16,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/contribution")

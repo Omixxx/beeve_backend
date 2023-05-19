@@ -10,13 +10,10 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import it.unimol.vino.models.entity.GrapeType;
 import it.unimol.vino.services.GrapeTypeService;
 
-
-
-@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
+@CrossOrigin
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/v1/grape-type")
