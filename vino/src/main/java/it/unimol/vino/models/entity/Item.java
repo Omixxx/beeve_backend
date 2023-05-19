@@ -5,24 +5,28 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@Entity(name = "item")
-@Table(name = "item")
-@IdClass(ItemID.class)
-public class Item implements Serializable {
+@Entity
+@Table(name = "item", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"name", "capacity", "category_name"})
+})
+public class Item{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "name")
     private String name;
 
-    @Id
     @Column(name = "capacity")
     private Long capacity;
 
@@ -38,7 +42,6 @@ public class Item implements Serializable {
     @JsonIgnore
     private List<ProviderSupplyItem> providerSupplyItemList;
 
-    @Id
     @ManyToOne
     @JsonIgnore
     private Category category;

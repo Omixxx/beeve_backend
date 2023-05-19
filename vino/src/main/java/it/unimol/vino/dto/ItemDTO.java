@@ -3,11 +3,13 @@ package it.unimol.vino.dto;
 import lombok.Builder;
 
 @Builder
-public record ItemDTO(String name,
-                      Long capacity,
+public record ItemDTO (
+        Long id,
+        String name,
+        Long capacity,
+        String description,
+        Integer totQuantity
+)
 
-                      String description,
-
-                      Integer totQuantity
-) {
+{
 }
