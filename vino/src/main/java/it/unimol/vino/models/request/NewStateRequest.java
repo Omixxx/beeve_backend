@@ -1,12 +1,11 @@
 package it.unimol.vino.models.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
 
 @AllArgsConstructor
 @Getter
+@NoArgsConstructor(force = true)
 public class NewStateRequest {
 
     @NonNull
