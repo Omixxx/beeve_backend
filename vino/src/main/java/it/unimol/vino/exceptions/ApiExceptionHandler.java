@@ -164,6 +164,17 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {ImageNotLoadedException.class})
+    protected ResponseEntity<Object> handleApiRequestException(ImageNotLoadedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     protected ResponseEntity<Object> handleApiRequestException(HttpMessageNotReadableException e) {

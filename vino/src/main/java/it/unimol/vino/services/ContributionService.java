@@ -5,6 +5,7 @@ import it.unimol.vino.dto.GrapeTypeDTO;
 import it.unimol.vino.dto.ProviderDTO;
 import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.exceptions.ContributionNotFoundException;
+import it.unimol.vino.exceptions.ImageNotLoadedException;
 
 import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Contribution;
@@ -13,7 +14,6 @@ import it.unimol.vino.models.entity.User;
 import it.unimol.vino.repository.ContributionRepository;
 import it.unimol.vino.repository.UserRepository;
 import jakarta.validation.Valid;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
@@ -21,14 +21,12 @@ import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.repository.GrapeTypeRepository;
 import it.unimol.vino.repository.ProviderRepository;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.io.IOException;
-import java.security.Security;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +53,7 @@ public class ContributionService {
 
 
     public ContributionDTO get(Long id) {
-        ContributionDTO contribution = this.contribution.findById(id)
+        return this.contribution.findById(id)
                 .map(specificContribution -> ContributionDTO.builder()
                         .id(specificContribution.getId())
                         .origin(specificContribution.getOrigin())
@@ -68,8 +66,7 @@ public class ContributionService {
                         .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
                         .build())
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
-
-        return contribution;
+        
 
     }
 
@@ -117,7 +114,7 @@ public class ContributionService {
             this.contribution.save(contribution);
             return "Il conferimento è stato registrato con l'id" + contribution.getId();
         } catch (IOException e) {
-            throw new ContributionNotFoundException("Errore durante il salvataggio del conferimento");
+            throw new ImageNotLoadedException("Si è verificato un errore durante il caricamento dell'immagine");
         }
 
 
