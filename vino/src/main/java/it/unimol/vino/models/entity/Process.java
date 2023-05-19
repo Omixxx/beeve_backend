@@ -159,4 +159,12 @@ public class Process {
 
         this.contribution.add(processUseContribution);
     }
+
+    public User getUserWhoProgressedToTheCurrentState() {
+        List<User> users = this.userProgressProcessList.stream()
+                .filter(userProgressesProcess -> userProgressesProcess.getProcess().getId().equals(this.id))
+                .map(UserProgressesProcess::getUser)
+                .toList();
+        return users.stream().findFirst().orElse(this.creator);
+    }
 }

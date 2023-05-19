@@ -28,11 +28,11 @@ public class GrapeTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<GrapeType> put(@RequestBody GrapeType grapeType) {
+    public ResponseEntity<GrapeTypeDTO> put(@RequestBody GrapeType grapeType) {
         return ResponseEntity.ok(this.grapeTypeService.put(grapeType));
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/{species}")
     public ResponseEntity<GrapeType> get(@PathVariable String species) {
         return ResponseEntity.ok(this.grapeTypeService.get(species));
     }

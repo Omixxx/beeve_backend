@@ -1,5 +1,6 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.dto.UserPermissionDTO;
 import it.unimol.vino.models.request.UpdatePermissionsRequest;
 import it.unimol.vino.models.response.UpdatePermissionResponse;
@@ -32,5 +33,10 @@ public class UserController {
     @GetMapping("/users_permissions")
     public ResponseEntity<List<UserPermissionDTO>> getUsersPermissions() {
         return ResponseEntity.ok(this.userService.getAllPermissions());
+    }
+
+    @GetMapping
+    public ResponseEntity<UserDTO> getUserInfo() {
+        return ResponseEntity.ok(this.userService.getUserInfo());
     }
 }
