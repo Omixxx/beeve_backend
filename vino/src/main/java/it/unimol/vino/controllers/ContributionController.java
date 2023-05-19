@@ -29,7 +29,7 @@ public class ContributionController {
     }
 
     @PostMapping
-    public ResponseEntity<String> put(@RequestBody RegisterContributionRequest request) {
+    public ResponseEntity<String> put(@ModelAttribute RegisterContributionRequest request) {
         return ResponseEntity.ok(this.contributionService.put(request));
     }
 
