@@ -31,9 +31,8 @@ public class Contribution {
     @Column(name = "country")
     private String country;
 
-    //TODO: valutare se è possibile inserire un tipo "immagine"
-    @Column(name = "photo_url")
-    private String photoURL;
+    @Column(name = "image")
+    private byte[] image;
 
     @Column(name = "description")
     private String description;

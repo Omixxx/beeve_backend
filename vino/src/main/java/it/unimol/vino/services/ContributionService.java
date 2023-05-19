@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.IOException;
 import java.security.Security;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,7 +63,7 @@ public class ContributionService {
                         .description(specificContribution.getDescription())
                         .quantity(specificContribution.getQuantity())
                         .sugarDegree(specificContribution.getSugarDegree())
-                        .photoURL(specificContribution.getPhotoURL())
+                        .image(specificContribution.getImage())
                         .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(specificContribution.getAssociatedGrapeType()))
                         .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
                         .build())
@@ -98,22 +99,26 @@ public class ContributionService {
                 () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + request.getGrapeTypeId() + " non è stato trovato")
         );
 
-        var contribution = Contribution.builder()
-                .origin(request.getCountry())
-                .country(request.getCountry())
-                .photoURL(request.getPhotoURL())
-                .description(request.getDescription())
-                .sugarDegree(request.getSugarDegree())
-                .quantity(request.getQuantity())
-                .date(request.getDate())
-                .associatedGrapeType(grapeType)
-                .provider(provider)
-                .submitter(user)
-                .build();
-  
-        contribution.setSubmitter(user);
-        this.contribution.save(contribution);
-        return "Il conferimento è stato registrato con l'id" + contribution.getId();
+        try {
+            var contribution = Contribution.builder()
+                    .origin(request.getCountry())
+                    .country(request.getCountry())
+                    .image(request.getImage().getBytes())
+                    .description(request.getDescription())
+                    .sugarDegree(request.getSugarDegree())
+                    .quantity(request.getQuantity())
+                    .date(request.getDate())
+                    .associatedGrapeType(grapeType)
+                    .provider(provider)
+                    .submitter(user)
+                    .build();
+            contribution.setSubmitter(user);
+            this.contribution.save(contribution);
+            return "Il conferimento è stato registrato con l'id" + contribution.getId();
+        } catch (IOException e) {
+            return "Errore durante la conversione dell'immagine";
+        }
+
     }
 
 }
