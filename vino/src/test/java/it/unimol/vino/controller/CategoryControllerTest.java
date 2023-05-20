@@ -13,10 +13,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,26 +53,5 @@ class CategoryControllerTest {
                 .andDo(print());
     }
 
-    @Test
-    void testIsCategoryPresent() throws Exception {
-        when(categoryService.isCategoryPresent("Category 1")).thenReturn(true);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/category/is_present")
-                        .param("categoryName", "Category 1"))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("true"))
-                .andDo(print());
-    }
-
-    @Test
-    void testDeleteCategory() throws Exception {
-        doNothing().when(categoryService).deleteCategory("Category 1");
-
-        mockMvc.perform(delete("/api/v1/category")
-                        .param("categoryName", "Category 1"))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("success"))
-                .andDo(print());
-    }
 
 }

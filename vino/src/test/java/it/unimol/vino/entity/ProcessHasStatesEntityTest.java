@@ -1,4 +1,5 @@
 package it.unimol.vino.entity;
+
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.ProcessHasStates;
 import it.unimol.vino.models.entity.State;
