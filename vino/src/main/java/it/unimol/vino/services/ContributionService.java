@@ -41,7 +41,6 @@ public class ContributionService {
     private final UserRepository userRepository;
     private final ProviderRepository provider;
     private final GrapeTypeRepository grapeType;
-    private final String IMAGE_FOLDER = "/src/main/resources/static/images/";
 
     public List<ContributionDTO> getAll() {
         return this.contribution.findAll().stream().map(
@@ -112,8 +111,8 @@ public class ContributionService {
                 () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + request.getGrapeTypeId() + " non è stato trovato")
         );
 
+        String IMAGE_FOLDER = "/src/main/resources/static/images/";
         StringBuilder path = new StringBuilder(System.getProperty("user.dir")).append(IMAGE_FOLDER).append(request.getImage().getOriginalFilename());
-//        String path = IMAGE_FOLDER + request.getImage().getOriginalFilename();
 
         var contribution = Contribution.builder()
                 .origin(request.getCountry())
@@ -132,7 +131,7 @@ public class ContributionService {
             request.getImage()
                     .transferTo(new File(path.toString()));
         } catch (IOException e) {
-            throw new ImageNotLoadedException(e.getMessage());
+            throw new ImageNotLoadedException("Errore nel caricamento dell'immagine");
         }
         this.contribution.save(contribution);
         return "Il conferimento è stato registrato con l'id " + contribution.getId();
