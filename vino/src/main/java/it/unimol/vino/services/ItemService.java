@@ -41,18 +41,14 @@ public class ItemService {
     public String itemRegister(@Valid RegisterItemRequest request) {
 
         Category category = findCategory(request.getCategoryName());
-
-        Item item = this.itemRepository.findByCategoryAndCapacityAndName(category, request.getCapacity(), request.getName().toUpperCase()).orElse(null);
-
         Provider provider = findProvider(request.getProvider_id());
 
+        Item existingItem = this.itemRepository.findByCategoryAndCapacityAndName(category, request.getCapacity(), request.getName().toUpperCase()).orElse(null);
 
-        if (item != null) {
-
-            item.addQuantity(request.getQuantity());
-            item.addProviderMapping(provider, request.getQuantity(), request.getDate());
-
-
+        if (existingItem != null) {
+            existingItem.addQuantity(request.getQuantity());
+            existingItem.addProviderMapping(provider, request.getQuantity(), request.getDate());
+            this.itemRepository.save(existingItem);
         } else {
             Item newItem = Item.builder()
                     .capacity(request.getCapacity())
