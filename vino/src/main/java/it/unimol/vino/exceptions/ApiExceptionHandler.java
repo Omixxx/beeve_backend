@@ -168,11 +168,11 @@ public class ApiExceptionHandler {
     protected ResponseEntity<Object> handleApiRequestException(ImageNotLoadedException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                HttpStatus.NOT_FOUND,
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 ZonedDateTime.now()
         );
         LOGGER.error(ExceptionUtils.getStackTrace(e));
-        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

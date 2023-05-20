@@ -26,7 +26,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,34 +41,48 @@ public class ContributionService {
     private final UserRepository userRepository;
     private final ProviderRepository provider;
     private final GrapeTypeRepository grapeType;
+    private final String IMAGE_FOLDER = "/src/main/resources/static/images/";
 
     public List<ContributionDTO> getAll() {
         return this.contribution.findAll().stream().map(
-                contribution -> ContributionDTO.builder()
-                        .id(contribution.getId())
-                        .quantity(contribution.getQuantity())
-                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(contribution.getAssociatedGrapeType()))
-                        .provider(ProviderDTO.getName(contribution.getProvider()))
-                        .build()
+                contribution -> {
+                    try {
+                        return ContributionDTO.builder()
+                                .id(contribution.getId())
+                                .quantity(contribution.getQuantity())
+                                .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(contribution.getAssociatedGrapeType()))
+                                .provider(ProviderDTO.getName(contribution.getProvider()))
+                                .image(Files.readAllBytes(new File(contribution.getImage()).toPath()))
+                                .build();
+                    } catch (IOException e) {
+                        throw new ImageNotLoadedException(e.getMessage());
+                    }
+                }
         ).collect(Collectors.toList());
     }
 
 
     public ContributionDTO get(Long id) {
         return this.contribution.findById(id)
-                .map(specificContribution -> ContributionDTO.builder()
-                        .id(specificContribution.getId())
-                        .origin(specificContribution.getOrigin())
-                        .country(specificContribution.getCountry())
-                        .description(specificContribution.getDescription())
-                        .quantity(specificContribution.getQuantity())
-                        .sugarDegree(specificContribution.getSugarDegree())
-                        .image(specificContribution.getImage())
-                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(specificContribution.getAssociatedGrapeType()))
-                        .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
-                        .build())
+                .map(specificContribution -> {
+                    try {
+                        return ContributionDTO.builder()
+                                .id(specificContribution.getId())
+                                .origin(specificContribution.getOrigin())
+                                .country(specificContribution.getCountry())
+                                .description(specificContribution.getDescription())
+                                .quantity(specificContribution.getQuantity())
+                                .sugarDegree(specificContribution.getSugarDegree())
+                                .image(Files.readAllBytes(new File(specificContribution.getImage()).toPath()))
+                                .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(specificContribution.getAssociatedGrapeType()))
+                                .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
+                                .build();
+                    } catch (IOException e) {
+                        throw new ImageNotLoadedException("Errore nel caricamento dell'immagine\n" + e.getMessage());
+                    }
+                })
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
-        
+
 
     }
 
@@ -96,26 +112,30 @@ public class ContributionService {
                 () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + request.getGrapeTypeId() + " non è stato trovato")
         );
 
+        StringBuilder path = new StringBuilder(System.getProperty("user.dir")).append(IMAGE_FOLDER).append(request.getImage().getOriginalFilename());
+//        String path = IMAGE_FOLDER + request.getImage().getOriginalFilename();
 
+        var contribution = Contribution.builder()
+                .origin(request.getCountry())
+                .country(request.getCountry())
+                .image(path.toString())
+                .description(request.getDescription())
+                .sugarDegree(request.getSugarDegree())
+                .quantity(request.getQuantity())
+                .date(request.getDate())
+                .associatedGrapeType(grapeType)
+                .provider(provider)
+                .submitter(user)
+                .build();
+        contribution.setSubmitter(user);
         try {
-            var contribution = Contribution.builder()
-                    .origin(request.getCountry())
-                    .country(request.getCountry())
-                    .image(request.getImage().getBytes())
-                    .description(request.getDescription())
-                    .sugarDegree(request.getSugarDegree())
-                    .quantity(request.getQuantity())
-                    .date(request.getDate())
-                    .associatedGrapeType(grapeType)
-                    .provider(provider)
-                    .submitter(user)
-                    .build();
-            contribution.setSubmitter(user);
-            this.contribution.save(contribution);
-            return "Il conferimento è stato registrato con l'id" + contribution.getId();
+            request.getImage()
+                    .transferTo(new File(path.toString()));
         } catch (IOException e) {
-            throw new ImageNotLoadedException("Si è verificato un errore durante il caricamento dell'immagine");
+            throw new ImageNotLoadedException(e.getMessage());
         }
+        this.contribution.save(contribution);
+        return "Il conferimento è stato registrato con l'id " + contribution.getId();
 
 
     }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -32,7 +33,7 @@ public class Contribution {
     private String country;
 
     @Column(name = "image")
-    private byte[] image;
+    private String image;
 
     @Column(name = "description")
     private String description;
@@ -47,6 +48,7 @@ public class Contribution {
 
     @NonNull
     @Column(name = "date")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date date;
 
     @JoinColumn(name = "grape_type")
