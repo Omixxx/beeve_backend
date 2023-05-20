@@ -23,6 +23,9 @@ public class Category {
     @OneToMany
     private List<Item> itemList;
 
+    @Column(nullable = false)
+    private Boolean isPrimary;
+
     public void addItem(Item item) {
         this.itemList.add(item);
     }
