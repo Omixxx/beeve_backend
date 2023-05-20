@@ -7,6 +7,7 @@ import lombok.Data;
 
 
 import java.util.Date;
+
 @Builder
 @AllArgsConstructor
 @Data
@@ -34,7 +35,7 @@ public class ContributionDTO {
     private Double quantity;
 
 
-    private Date date;
+    private Date deliveryDate;
 
 
     private GrapeTypeDTO associatedGrapeType;

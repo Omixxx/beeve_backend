@@ -38,13 +38,14 @@ public class ContributionService {
     private final ProviderRepository provider;
     private final GrapeTypeRepository grapeType;
 
-    private final  ProviderDTOMapper providerDTOMapper;
+    private final ProviderDTOMapper providerDTOMapper;
 
     public List<ContributionDTO> getAll() {
         return this.contribution.findAll().stream().map(
                 contribution -> ContributionDTO.builder()
                         .id(contribution.getId())
                         .quantity(contribution.getQuantity())
+                        .deliveryDate(contribution.getDate())
                         .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
                         .provider(providerDTOMapper.apply(contribution.getProvider()))
                         .build()
@@ -53,13 +54,15 @@ public class ContributionService {
 
 
     public ContributionDTO get(Long id) {
-        ContributionDTO contribution = this.contribution.findById(id)
+
+        return this.contribution.findById(id)
                 .map(specificContribution -> ContributionDTO.builder()
                         .id(specificContribution.getId())
                         .origin(specificContribution.getOrigin())
                         .country(specificContribution.getCountry())
                         .description(specificContribution.getDescription())
                         .quantity(specificContribution.getQuantity())
+                        .deliveryDate(specificContribution.getDate())
                         .sugarDegree(specificContribution.getSugarDegree())
                         .photoURL(specificContribution.getPhotoURL())
                         .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(specificContribution.getAssociatedGrapeType()))
@@ -67,11 +70,9 @@ public class ContributionService {
                         .build())
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
 
-        return contribution;
-
     }
 
-    public UserDTO getUser(Long contributionId){
+    public UserDTO getUser(Long contributionId) {
         User submitterId = this.contribution.findById(contributionId)
                 .map(Contribution::getSubmitter)
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + contributionId + " non esiste"));
@@ -83,12 +84,12 @@ public class ContributionService {
     }
 
     public String put(@Valid RegisterContributionRequest request) {
-  
+
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new UserNotFoundException("L'utente con email " + userEmail + " non esiste")
         );
-  
+
         Provider provider = this.provider.findById(request.getProviderId()).orElseThrow(
                 () -> new ProviderNotFoundException("IL provider con ID " + request.getProviderId() + " non è stato trovato")
         );
@@ -109,7 +110,7 @@ public class ContributionService {
                 .provider(provider)
                 .submitter(user)
                 .build();
-  
+
         contribution.setSubmitter(user);
         this.contribution.save(contribution);
         return "Il conferimento è stato registrato con l'id" + contribution.getId();
