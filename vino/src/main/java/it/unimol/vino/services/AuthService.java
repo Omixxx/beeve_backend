@@ -45,14 +45,14 @@ public class AuthService {
             throw new UserAlreadyRegistered("Email gia in uso");
         }
 
-        //todo: check if Role should be passed by request
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
+                .age(request.getAge())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .permissions(new ArrayList<>())
-                .role(Role.USER)
+                .role(request.getIsAdmin() ? Role.ADMIN : Role.USER)
                 .build();
 
 

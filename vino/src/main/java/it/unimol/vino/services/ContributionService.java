@@ -2,8 +2,8 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.dto.ContributionDTO;
 import it.unimol.vino.dto.GrapeTypeDTO;
-import it.unimol.vino.dto.ProviderDTO;
 import it.unimol.vino.dto.UserDTO;
+import it.unimol.vino.dto.mappers.ProviderDTOMapper;
 import it.unimol.vino.exceptions.ContributionNotFoundException;
 
 import it.unimol.vino.exceptions.UserNotFoundException;
@@ -13,7 +13,6 @@ import it.unimol.vino.models.entity.User;
 import it.unimol.vino.repository.ContributionRepository;
 import it.unimol.vino.repository.UserRepository;
 import jakarta.validation.Valid;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
@@ -21,13 +20,11 @@ import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.repository.GrapeTypeRepository;
 import it.unimol.vino.repository.ProviderRepository;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.security.Security;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,13 +38,15 @@ public class ContributionService {
     private final ProviderRepository provider;
     private final GrapeTypeRepository grapeType;
 
+    private final  ProviderDTOMapper providerDTOMapper;
+
     public List<ContributionDTO> getAll() {
         return this.contribution.findAll().stream().map(
                 contribution -> ContributionDTO.builder()
                         .id(contribution.getId())
                         .quantity(contribution.getQuantity())
-                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(contribution.getAssociatedGrapeType()))
-                        .provider(ProviderDTO.getName(contribution.getProvider()))
+                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
+                        .provider(providerDTOMapper.apply(contribution.getProvider()))
                         .build()
         ).collect(Collectors.toList());
     }
@@ -63,8 +62,8 @@ public class ContributionService {
                         .quantity(specificContribution.getQuantity())
                         .sugarDegree(specificContribution.getSugarDegree())
                         .photoURL(specificContribution.getPhotoURL())
-                        .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(specificContribution.getAssociatedGrapeType()))
-                        .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
+                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(specificContribution.getAssociatedGrapeType()))
+                        .provider(providerDTOMapper.apply(specificContribution.getProvider()))
                         .build())
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
 
@@ -99,7 +98,7 @@ public class ContributionService {
         );
 
         var contribution = Contribution.builder()
-                .origin(request.getCountry())
+                .origin(request.getOrigin())
                 .country(request.getCountry())
                 .photoURL(request.getPhotoURL())
                 .description(request.getDescription())

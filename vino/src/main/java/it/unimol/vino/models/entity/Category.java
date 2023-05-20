@@ -1,6 +1,6 @@
 package it.unimol.vino.models.entity;
 
-;
+
 import jakarta.persistence.*;
 import lombok.*;
 

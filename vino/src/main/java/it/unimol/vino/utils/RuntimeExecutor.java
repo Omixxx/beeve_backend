@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 @Component
 @AllArgsConstructor
 public class RuntimeExecutor implements CommandLineRunner {
-    SectorRepository sectorRepository;
+    private final SectorRepository sectorRepository;
 
     @Override
     public void run(String... args) {

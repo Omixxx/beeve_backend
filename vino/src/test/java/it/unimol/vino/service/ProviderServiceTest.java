@@ -69,16 +69,16 @@ class ProviderServiceTest {
         request.setName(NAME);
         request.setPhone_number(PHONE_NUMBER);
         request.setEmail(EMAIL);
-        request.setAddress(ADDRESS);
-        request.setWebsite_url(WEBSITE_URL);
+        //request.setAddress(ADDRESS);
+        //request.setWebsite_url(WEBSITE_URL);
 
         Provider existingProvider = new Provider();
         existingProvider.setId(ID);
         existingProvider.setName(NAME);
         existingProvider.setPhone_number(PHONE_NUMBER);
         existingProvider.setEmail(EMAIL);
-        existingProvider.setAddress(ADDRESS);
-        existingProvider.setWebsite_url(WEBSITE_URL);
+       // existingProvider.setAddress(ADDRESS);
+       // existingProvider.setWebsite_url(WEBSITE_URL);
         when(providerRepository.findByEmail(EMAIL)).thenReturn(Optional.of(existingProvider));
 
         assertThrows(UserAlreadyRegistered.class, () -> providerService.providerRegister(request));

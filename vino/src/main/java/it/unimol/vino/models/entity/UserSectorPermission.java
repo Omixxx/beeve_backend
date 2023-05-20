@@ -8,6 +8,8 @@ import java.io.Serializable;
 @Entity
 @Data
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class UserSectorPermission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,16 +28,6 @@ public class UserSectorPermission {
     private Boolean canDelete;
 
     private Boolean canUpdate;
-
-    public UserSectorPermission(User user, Sector sector, Boolean canRead, Boolean canWrite, Boolean canDelete, Boolean canUpdate) {
-        this.user = user;
-        this.sector = sector;
-        this.canRead = canRead;
-        this.canWrite = canWrite;
-        this.canDelete = canDelete;
-        this.canUpdate = canUpdate;
-    }
-
 }
 
 
