@@ -30,4 +30,3 @@ public interface ProviderRepository extends JpaRepository<Provider,Long> {
     List<Provider> findByIsVisible(Boolean isVisible);
 
 }
-//item.id,item.capacity,item.description

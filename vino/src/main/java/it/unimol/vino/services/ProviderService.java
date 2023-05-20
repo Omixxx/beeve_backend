@@ -103,6 +103,6 @@ public class ProviderService {
         );
         provider.setIsVisible(false);
         this.providerRepository.save(provider);
-        return "Provider eliminato";
+        return "Provider rimosso dalla lista dei contatti";
     }
 }
