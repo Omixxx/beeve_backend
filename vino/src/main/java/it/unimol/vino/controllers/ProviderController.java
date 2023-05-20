@@ -50,4 +50,9 @@ public class ProviderController {
         return ResponseEntity.ok(this.providerService.updateProvider(request));
     }
 
+    @DeleteMapping("/{name}")
+    public ResponseEntity<String> deleteProvider(@PathVariable String name) {
+        return ResponseEntity.ok(this.providerService.changeVisibility(name));
+    }
+
 }
