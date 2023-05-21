@@ -86,7 +86,7 @@ public class UserService {
     }
 
     public List<UserPermissionDTO> getAllPermissions() {
-        return this.userRepository.findAll().stream().map(
+        return this.userRepository.findByRoleNot(Role.ADMIN).stream().map(
                 user -> UserPermissionDTO.builder()
                         .user(UserDTO.builder()
                                 .email(user.getEmail())
