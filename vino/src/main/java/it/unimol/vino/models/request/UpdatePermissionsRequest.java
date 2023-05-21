@@ -18,5 +18,9 @@ import java.util.HashMap;
 public class UpdatePermissionsRequest {
 
     @NotNull
+    private String email;
+
+    @NotNull
     private HashMap<SectorName, UserSectorPermission> permissions;
+
 }
