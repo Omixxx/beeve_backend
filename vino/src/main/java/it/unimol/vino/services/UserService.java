@@ -6,10 +6,12 @@ import it.unimol.vino.dto.SectorPermissionDTO;
 import it.unimol.vino.dto.UserPermissionDTO;
 import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.exceptions.SectorNotFoundException;
+import it.unimol.vino.exceptions.UnauthorizedAccessException;
 import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Sector;
 import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.entity.UserSectorPermission;
+import it.unimol.vino.models.enums.Role;
 import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.models.request.UpdatePermissionsRequest;
 import it.unimol.vino.models.response.UpdatePermissionResponse;
@@ -35,9 +37,17 @@ public class UserService {
     @Transactional
     public UpdatePermissionResponse updatePermissions(UpdatePermissionsRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = this.userRepository.findByEmail(email).orElseThrow(
+        User updaterUser = this.userRepository.findByEmail(email).orElseThrow(
                 () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
         );
+
+        User updatedUser = this.userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new UserNotFoundException("l'utente con email " + request.getEmail() + " non è stato trovato")
+        );
+
+        if (!updaterUser.getRole().equals(Role.ADMIN))
+            throw new UnauthorizedAccessException("L'utente " + email + " non ha i permessi per effettuare questa operazione");
+
         request.getPermissions().forEach((sectorName, permissions) -> {
 
             Sector sector = this.sectorRepository.findSectorBySectorName(sectorName).orElseThrow(
@@ -46,9 +56,9 @@ public class UserService {
                             + " non appartiene alla lista dei settori: "
                             + Arrays.toString(SectorName.values()))
             );
-            user.updatePermission(sector, permissions);
+            updatedUser.updatePermission(sector, permissions);
         });
-        this.userRepository.save(user);
+        this.userRepository.save(updaterUser);
         return new UpdatePermissionResponse("Permessi aggiornati con successo!");
     }
 
