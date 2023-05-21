@@ -49,7 +49,7 @@ public class ContributionService {
                         return ContributionDTO.builder()
                                 .id(contribution.getId())
                                 .quantity(contribution.getQuantity())
-                                .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(contribution.getAssociatedGrapeType()))
+                                .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
                                 .provider(ProviderDTO.getName(contribution.getProvider()))
                                 .image(Files.readAllBytes(new File(contribution.getImage()).toPath()))
                                 .build();
@@ -73,7 +73,7 @@ public class ContributionService {
                                 .quantity(specificContribution.getQuantity())
                                 .sugarDegree(specificContribution.getSugarDegree())
                                 .image(Files.readAllBytes(new File(specificContribution.getImage()).toPath()))
-                                .associatedGrapeType(GrapeTypeDTO.getOnlyIDGrapeType(specificContribution.getAssociatedGrapeType()))
+                                .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(specificContribution.getAssociatedGrapeType()))
                                 .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
                                 .build();
                     } catch (IOException e) {
