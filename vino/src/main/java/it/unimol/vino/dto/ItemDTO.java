@@ -8,7 +8,7 @@ import lombok.Builder;
 public record ItemDTO(
         Long id,
         String name,
-        Long capacity,
+        Float capacity,
         String description,
         Integer totQuantity
 ) {

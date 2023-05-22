@@ -1,6 +1,8 @@
 package it.unimol.vino.models.request;
 
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
@@ -12,9 +14,9 @@ import java.util.Date;
 @Builder
 public class RegisterItemRequest {
 
-    @NonNull()
-    @Positive
-    private Long capacity;
+    @Min(0)
+    @NonNull
+    private Float capacity;
 
     private String description;
 

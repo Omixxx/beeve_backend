@@ -18,7 +18,7 @@ import java.util.List;
 @Table(name = "item", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"name", "capacity", "category_name"})
 })
-public class Item{
+public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,14 +28,13 @@ public class Item{
     private String name;
 
     @Column(name = "capacity")
-    private Long capacity;
+    private Float capacity;
 
     @Column(name = "description")
     private String description;
 
     @Column(name = "total_quantity")
     private Integer totQuantity;
-
 
 
     @OneToMany(mappedBy = "item", orphanRemoval = true, cascade = CascadeType.ALL)
@@ -49,7 +48,7 @@ public class Item{
 
     public void addProviderMapping(@NonNull Provider provider, @NonNull Integer quantity, @NonNull Date date) {
 
-        ProviderSupplyItem providerSupplyItem =ProviderSupplyItem.builder()
+        ProviderSupplyItem providerSupplyItem = ProviderSupplyItem.builder()
                 .quantity(quantity)
                 .date(date)
                 .provider(provider)
@@ -60,12 +59,13 @@ public class Item{
         this.providerSupplyItemList.add(providerSupplyItem);
 
     }
-    public void addQuantity(Integer quantity){
-        this.totQuantity+=quantity;
+
+    public void addQuantity(Integer quantity) {
+        this.totQuantity += quantity;
     }
 
-    public void decreaseQuantity(Integer quantity){
-        this.totQuantity-=quantity;
+    public void decreaseQuantity(Integer quantity) {
+        this.totQuantity -= quantity;
     }
 
 }
