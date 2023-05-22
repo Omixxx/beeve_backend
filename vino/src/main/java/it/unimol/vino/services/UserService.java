@@ -3,8 +3,8 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.dto.SectorDTO;
 import it.unimol.vino.dto.SectorPermissionDTO;
-import it.unimol.vino.dto.UserPermissionDTO;
 import it.unimol.vino.dto.UserDTO;
+import it.unimol.vino.dto.UserPermissionDTO;
 import it.unimol.vino.exceptions.SectorNotFoundException;
 import it.unimol.vino.exceptions.UnauthorizedAccessException;
 import it.unimol.vino.exceptions.UserNotFoundException;
