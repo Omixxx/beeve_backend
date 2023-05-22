@@ -1,7 +1,6 @@
 package it.unimol.vino.models.request;
 
 
-import it.unimol.vino.models.entity.ProviderSupplyItem;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 

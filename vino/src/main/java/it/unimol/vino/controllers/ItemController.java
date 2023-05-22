@@ -4,10 +4,7 @@ import it.unimol.vino.dto.ItemDTO;
 import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.ItemNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
-import it.unimol.vino.models.entity.Category;
-import it.unimol.vino.models.entity.Item;
 
-import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.models.request.DecreaseTotalQuantityOfItemRequest;
 import it.unimol.vino.models.request.RegisterItemRequest;
 
@@ -29,27 +26,23 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/{categoryName}")
-    public ResponseEntity<List<ItemDTO>> getItem(@Valid @PathVariable String  categoryName) {
+    public ResponseEntity<List<ItemDTO>> getItem(@Valid @PathVariable String categoryName) {
         return ResponseEntity.ok(this.itemService.getItems(categoryName));
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterItemRequest registerItemRequest)
-            throws UserAlreadyRegistered, CategoryNotFoundException {
-
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterItemRequest registerItemRequest) {
         return ResponseEntity.ok(this.itemService.itemRegister(registerItemRequest));
     }
 
     @PostMapping("/decrease")
-    public ResponseEntity<String> decreseTotalQuantityOfItem(
+    public ResponseEntity<String> decreaseTotalQuantityOfItem(
             @RequestBody @Valid DecreaseTotalQuantityOfItemRequest request) {
         return ResponseEntity.ok(this.itemService.decreaseTotalQuantityOfItem(request));
     }
 
     @DeleteMapping("/delete/{id}")
-    // non funziona, il campo ID non esiste più, adattare in base alla nuova chiave
-    // composita.
-    public ResponseEntity<String> delete(@PathVariable Long id) throws ItemNotFoundException {
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         return ResponseEntity.ok(this.itemService.deleteItem(id));
     }
 
