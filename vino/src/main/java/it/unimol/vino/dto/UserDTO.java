@@ -1,7 +1,6 @@
 package it.unimol.vino.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.entity.UserModifyProcess;
 import it.unimol.vino.models.entity.UserProgressesProcess;
 import it.unimol.vino.models.entity.UserSectorPermission;
@@ -15,6 +14,7 @@ import java.util.List;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDTO {
+
     private Long id;
 
     private String firstName;
@@ -32,13 +32,4 @@ public class UserDTO {
 
     private List<UserSectorPermission> permissions;
 
-    public static UserDTO getUserDTOWithoutProcesses(User user) {
-        return UserDTO.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
-    }
 }

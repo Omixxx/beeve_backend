@@ -6,9 +6,6 @@ import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.services.ContributionService;
 
-
-
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/contribution")
@@ -29,7 +27,7 @@ public class ContributionController {
     }
 
     @PostMapping
-    public ResponseEntity<String> put(@RequestBody RegisterContributionRequest request) {
+    public ResponseEntity<String> put(@ModelAttribute RegisterContributionRequest request) {
         return ResponseEntity.ok(this.contributionService.put(request));
     }
 

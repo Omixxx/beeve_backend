@@ -1,16 +1,12 @@
 package it.unimol.vino.controllers;
 
-
 import it.unimol.vino.dto.ProviderDTO;
-import it.unimol.vino.dto.ProviderFull;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.entity.Provider;
 
 import it.unimol.vino.models.request.RegisterProviderRequest;
 
 import it.unimol.vino.models.request.UpdateProviderRequest;
-import it.unimol.vino.models.response.ItemsProvidedByProvider;
-import it.unimol.vino.models.response.ProviderBookResponse;
 import it.unimol.vino.services.ProviderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/provider")
 @RequiredArgsConstructor
@@ -32,17 +29,14 @@ public class ProviderController {
     }
 
     @GetMapping("/{name}")
-    public ResponseEntity<ProviderDTO> getProviderByName(@PathVariable String name){
+    public ResponseEntity<ProviderDTO> getProviderByName(@PathVariable String name) {
         return ResponseEntity.ok(this.providerService.getProviderByName(name));
     }
-
 
     @GetMapping("/book")
     public ResponseEntity<List<ProviderDTO>> getProviderBook() {
         return ResponseEntity.ok(this.providerService.getProviderBook());
     }
-
-
 
     @PostMapping("/register")
     public ResponseEntity<Long> register(@RequestBody @Valid RegisterProviderRequest registerProviderRequest)
@@ -52,9 +46,13 @@ public class ProviderController {
     }
 
     @PostMapping("/updateProvider")
-    public ResponseEntity<String> updateProvider(@RequestBody@Valid UpdateProviderRequest request){
+    public ResponseEntity<String> updateProvider(@RequestBody @Valid UpdateProviderRequest request) {
         return ResponseEntity.ok(this.providerService.updateProvider(request));
     }
 
+    @DeleteMapping("/{name}")
+    public ResponseEntity<String> deleteProvider(@PathVariable String name) {
+        return ResponseEntity.ok(this.providerService.changeVisibility(name));
+    }
 
 }

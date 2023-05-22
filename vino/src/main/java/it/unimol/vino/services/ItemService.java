@@ -32,8 +32,8 @@ public class ItemService {
     private final ItemDTOMapper itemDTOMapper;
 
 
-    public List<ItemDTO> getItems(CategoryRequest request) {
-        Category category = findCategory(request.getName());
+    public List<ItemDTO> getItems(String categoryName) {
+        Category category = findCategory(categoryName);
         return this.itemRepository.findAllByCategory(category).stream().map(itemDTOMapper).toList();
     }
 
@@ -41,18 +41,14 @@ public class ItemService {
     public String itemRegister(@Valid RegisterItemRequest request) {
 
         Category category = findCategory(request.getCategoryName());
-
-        Item item = this.itemRepository.findByCategoryAndCapacityAndName(category, request.getCapacity(), request.getName().toUpperCase()).orElse(null);
-
         Provider provider = findProvider(request.getProvider_id());
 
+        Item existingItem = this.itemRepository.findByCategoryAndCapacityAndName(category, request.getCapacity(), request.getName().toUpperCase()).orElse(null);
 
-        if (item != null) {
-
-            item.addQuantity(request.getQuantity());
-            item.addProviderMapping(provider, request.getQuantity(), request.getDate());
-
-
+        if (existingItem != null) {
+            existingItem.addQuantity(request.getQuantity());
+            existingItem.addProviderMapping(provider, request.getQuantity(), request.getDate());
+            this.itemRepository.save(existingItem);
         } else {
             Item newItem = Item.builder()
                     .capacity(request.getCapacity())
@@ -64,8 +60,9 @@ public class ItemService {
                     .build();
 
             newItem.addProviderMapping(provider, request.getQuantity(), request.getDate());
-            category.addItem(newItem);
             this.itemRepository.save(newItem);
+            category.addItem(newItem);
+
         }
 
 
@@ -87,8 +84,10 @@ public class ItemService {
     @Transactional
     public String decreaseTotalQuantityOfItem(@Valid DecreaseTotalQuantityOfItemRequest request) {
 
-        Category category = findCategory(request.getCategoryName());
-        Item item = findItem(category, request.getCapacity(), request.getName());
+
+        Item item = this.itemRepository.findById(request.getId()).orElseThrow(
+                () -> new ItemNotFoundException("L'item con ID " + request.getId() + " non è stato trovato")
+        );
 
         item.decreaseQuantity(request.getQuantity());
 

@@ -53,6 +53,8 @@ public class Provider implements Serializable {
     private String website_url;
     
      */
+    @Column(name = "is_visible")
+    private Boolean isVisible;
 
     @OneToMany(mappedBy = "provider", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnore

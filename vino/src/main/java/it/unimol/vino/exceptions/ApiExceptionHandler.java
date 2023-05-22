@@ -164,6 +164,17 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {ImageNotLoadedException.class})
+    protected ResponseEntity<Object> handleApiRequestException(ImageNotLoadedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ZonedDateTime.now()
+        );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
+        return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     protected ResponseEntity<Object> handleApiRequestException(HttpMessageNotReadableException e) {
@@ -305,5 +316,45 @@ public class ApiExceptionHandler {
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = {ProcessDidNotProgressException.class})
+    public ResponseEntity<Object> handleApiRequestException(ProcessDidNotProgressException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {InternalServerErrorException.class})
+    public ResponseEntity<Object> handleApiRequestException(InternalServerErrorException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = {CategoryLevelMustBeSpecifiedException.class})
+    public ResponseEntity<Object> handleApiRequestException(CategoryLevelMustBeSpecifiedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {UnauthorizedAccessException.class})
+    public ResponseEntity<Object> handleApiRequestException(UnauthorizedAccessException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.UNAUTHORIZED,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
     }
 }
