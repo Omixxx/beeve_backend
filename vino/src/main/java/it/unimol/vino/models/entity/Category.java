@@ -1,6 +1,6 @@
 package it.unimol.vino.models.entity;
 
-;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +22,9 @@ public class Category {
 
     @OneToMany
     private List<Item> itemList;
+
+    @Column(nullable = false)
+    private Boolean isPrimary;
 
     public void addItem(Item item) {
         this.itemList.add(item);

@@ -2,8 +2,8 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.dto.ContributionDTO;
 import it.unimol.vino.dto.GrapeTypeDTO;
-import it.unimol.vino.dto.ProviderDTO;
 import it.unimol.vino.dto.UserDTO;
+import it.unimol.vino.dto.mappers.ProviderDTOMapper;
 import it.unimol.vino.exceptions.ContributionNotFoundException;
 import it.unimol.vino.exceptions.ImageNotLoadedException;
 
@@ -41,6 +41,8 @@ public class ContributionService {
     private final UserRepository userRepository;
     private final ProviderRepository provider;
     private final GrapeTypeRepository grapeType;
+
+    private final ProviderDTOMapper providerDTOMapper;
 
     public List<ContributionDTO> getAll() {
         return this.contribution.findAll().stream().map(
@@ -81,11 +83,9 @@ public class ContributionService {
                     }
                 })
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
-
-
     }
 
-    public UserDTO getUser(Long contributionId){
+    public UserDTO getUser(Long contributionId) {
         User submitterId = this.contribution.findById(contributionId)
                 .map(Contribution::getSubmitter)
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + contributionId + " non esiste"));
@@ -97,12 +97,12 @@ public class ContributionService {
     }
 
     public String put(@Valid RegisterContributionRequest request) {
-  
+
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new UserNotFoundException("L'utente con email " + userEmail + " non esiste")
         );
-  
+
         Provider provider = this.provider.findById(request.getProviderId()).orElseThrow(
                 () -> new ProviderNotFoundException("IL provider con ID " + request.getProviderId() + " non è stato trovato")
         );
@@ -115,7 +115,7 @@ public class ContributionService {
         StringBuilder path = new StringBuilder(System.getProperty("user.dir")).append(IMAGE_FOLDER).append(request.getImage().getOriginalFilename());
 
         var contribution = Contribution.builder()
-                .origin(request.getCountry())
+                .origin(request.getOrigin())
                 .country(request.getCountry())
                 .image(path.toString())
                 .description(request.getDescription())
@@ -126,6 +126,7 @@ public class ContributionService {
                 .provider(provider)
                 .submitter(user)
                 .build();
+
         contribution.setSubmitter(user);
         try {
             request.getImage()
@@ -135,8 +136,6 @@ public class ContributionService {
         }
         this.contribution.save(contribution);
         return "Il conferimento è stato registrato con l'id " + contribution.getId();
-
-
     }
 
 }

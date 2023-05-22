@@ -1,12 +1,11 @@
 package it.unimol.vino.controllers;
 
-
+import it.unimol.vino.dto.ItemDTO;
 import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.ItemNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
-import it.unimol.vino.models.entity.Item;
 
-
+import it.unimol.vino.models.request.DecreaseTotalQuantityOfItemRequest;
 import it.unimol.vino.models.request.RegisterItemRequest;
 
 import it.unimol.vino.services.ItemService;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/item")
 @RequiredArgsConstructor
@@ -26,23 +25,24 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @GetMapping("{id}")
-    public ResponseEntity<Item> getItem(@PathVariable Long id){
-        return  ResponseEntity.ok(this.itemService.getItem(id));
+    @GetMapping("/{categoryName}")
+    public ResponseEntity<List<ItemDTO>> getItem(@Valid @PathVariable String categoryName) {
+        return ResponseEntity.ok(this.itemService.getItems(categoryName));
     }
-    @GetMapping("/")
-    public ResponseEntity<List<Item>> getItem(){
-        return  ResponseEntity.ok(this.itemService.getItems());
-    }
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterItemRequest registerItemRequest)
-            throws UserAlreadyRegistered, CategoryNotFoundException {
 
+    @PostMapping("/")
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterItemRequest registerItemRequest) {
         return ResponseEntity.ok(this.itemService.itemRegister(registerItemRequest));
     }
 
+    @PostMapping("/decrease")
+    public ResponseEntity<String> decreaseTotalQuantityOfItem(
+            @RequestBody @Valid DecreaseTotalQuantityOfItemRequest request) {
+        return ResponseEntity.ok(this.itemService.decreaseTotalQuantityOfItem(request));
+    }
+
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id)throws ItemNotFoundException {
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         return ResponseEntity.ok(this.itemService.deleteItem(id));
     }
 

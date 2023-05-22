@@ -1,6 +1,9 @@
 package it.unimol.vino.services;
 
-import it.unimol.vino.dto.ProviderDTOMapper;
+import it.unimol.vino.dto.ProviderDTO;
+import it.unimol.vino.dto.mappers.ProviderDTOMapper;
+import it.unimol.vino.dto.ProviderFull;
+import it.unimol.vino.dto.mappers.ProviderFullDTOMapper;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 
@@ -8,10 +11,11 @@ import it.unimol.vino.models.entity.Provider;
 
 import it.unimol.vino.models.request.RegisterProviderRequest;
 
+import it.unimol.vino.models.request.UpdateProviderRequest;
 import it.unimol.vino.models.response.ItemsProvidedByProvider;
 import it.unimol.vino.models.response.ProviderBookResponse;
-import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProviderRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,45 +31,78 @@ public class ProviderService {
     private final ProviderRepository providerRepository;
     private final ProviderDTOMapper providerDTOMapper;
 
+    private final ProviderFullDTOMapper providerFullDTOMapper;
+
 
     public List<Provider> getAll() {
-        return this.providerRepository.findAll();
+        return this.providerRepository.findByIsVisible(true);
     }
 
     public Long providerRegister(@Valid RegisterProviderRequest request) {
 
-        if (this.providerRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new UserAlreadyRegistered("Email already in use");
+        if (this.providerRepository.findByName(request.getName()).isPresent()) {
+            throw new UserAlreadyRegistered("Fornitore con nome: "+request.getName()+" già presente");
+        }
+
+        if(this.providerRepository.findByEmail(request.getEmail()).isPresent()){
+            throw new UserAlreadyRegistered("Fornitore con email: "+request.getEmail()+" già presente");
         }
 
         Provider provider = Provider.builder()
                 .name(request.getName())
                 .phone_number(request.getPhone_number())
                 .email(request.getEmail())
-                .address(request.getAddress())
-                .website_url(request.getWebsite_url())
+                .isVisible(true)
                 .build();
 
         return this.providerRepository.save(provider).getId();
 
     }
+    @Transactional
+    public String updateProvider(UpdateProviderRequest request) {
 
-
-    public List<ItemsProvidedByProvider> getAllProvidedItemsById(Long id) {
-
-        this.providerRepository.findById(id).orElseThrow(
-                () -> new ProviderNotFoundException("IL provider con ID " + id + " non è stato trovato")
+        Provider provider = this.providerRepository.findByName(request.getOldName()).orElseThrow(
+                ()-> new ProviderNotFoundException("Provider non trovato")
         );
 
-        return this.providerRepository.findProvidedItemsById(id);
+        provider.setEmail(request.getEmail());
+        provider.setName(request.getNewName());
+        provider.setPhone_number(request.getPhone_number());
+        this.providerRepository.save(provider);
+
+
+        return "Aggiornato";
     }
 
-    public List<ProviderBookResponse> getProviderBook() {
 
-        return this.providerRepository.findAll()
+
+    public List<ProviderDTO> getProviderBook() {
+
+        return this.providerRepository.findByIsVisible(true)
                 .stream()
                 .map(providerDTOMapper)
-                .sorted(Comparator.comparing(ProviderBookResponse::name))
+                .sorted(Comparator.comparing(ProviderDTO::name))
                 .toList();
+
+    }
+
+
+
+    public ProviderDTO getProviderByName(String name) {
+
+       Provider provider= this.providerRepository.findByName(name).orElseThrow(
+                ()-> new ProviderNotFoundException("Il provider con nome: "+name+"no è stato trovato")
+        );
+
+       return providerDTOMapper.apply(provider);
+    }
+
+    public String changeVisibility(String name) {
+        Provider provider = this.providerRepository.findByName(name).orElseThrow(
+                ()-> new ProviderNotFoundException("Il provider con nome: "+name+" non è stato trovato")
+        );
+        provider.setIsVisible(false);
+        this.providerRepository.save(provider);
+        return "Provider rimosso dalla lista dei contatti";
     }
 }

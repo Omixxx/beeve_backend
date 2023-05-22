@@ -5,13 +5,12 @@ import it.unimol.vino.models.response.ItemsProvidedByProvider;
 import it.unimol.vino.models.response.ProviderBookResponse;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
@@ -36,7 +35,7 @@ public class Provider implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name",unique = true)
     private String name;
 
     @Column(name = "phone_number")
@@ -46,11 +45,16 @@ public class Provider implements Serializable {
     @Column(unique = true)
     private String email;
 
+    /*
     @Column(name = "address")
     private String address;
 
     @Column(name = "website_url")
     private String website_url;
+    
+     */
+    @Column(name = "is_visible")
+    private Boolean isVisible;
 
     @OneToMany(mappedBy = "provider", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnore

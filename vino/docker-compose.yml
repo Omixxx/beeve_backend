@@ -10,7 +10,7 @@ services:
       - "8080:8080"
 
   vino-db:
-    container_name: "vino"
+    container_name: "vino-db"
     environment:
       - MARIADB_DATABASE=${MARIADB_DATABASE}
       - MARIADB_USER=${MARIADB_USER}
@@ -20,3 +20,8 @@ services:
     ports:
       - 3306:3306
     restart: always
+    volumes:
+      - vino-db-volume:/var/lib/mysql
+
+volumes:
+  vino-db-volume:
