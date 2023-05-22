@@ -32,8 +32,8 @@ public class ItemService {
     private final ItemDTOMapper itemDTOMapper;
 
 
-    public List<ItemDTO> getItems(CategoryRequest request) {
-        Category category = findCategory(request.getName());
+    public List<ItemDTO> getItems(String categoryName) {
+        Category category = findCategory(categoryName);
         return this.itemRepository.findAllByCategory(category).stream().map(itemDTOMapper).toList();
     }
 

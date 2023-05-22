@@ -29,7 +29,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/{categoryName}")
-    public ResponseEntity<List<ItemDTO>> getItem(@Valid @PathVariable CategoryRequest categoryName) {
+    public ResponseEntity<List<ItemDTO>> getItem(@Valid @PathVariable String  categoryName) {
         return ResponseEntity.ok(this.itemService.getItems(categoryName));
     }
 
