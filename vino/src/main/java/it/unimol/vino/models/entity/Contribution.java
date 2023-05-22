@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -31,9 +32,8 @@ public class Contribution {
     @Column(name = "country")
     private String country;
 
-    //TODO: valutare se è possibile inserire un tipo "immagine"
-    @Column(name = "photo_url")
-    private String photoURL;
+    @Column(name = "image")
+    private String image;
 
     @Column(name = "description")
     private String description;
@@ -48,6 +48,7 @@ public class Contribution {
 
     @NonNull
     @Column(name = "date")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date date;
 
     @JoinColumn(name = "grape_type")
