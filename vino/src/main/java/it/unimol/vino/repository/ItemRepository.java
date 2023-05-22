@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ItemRepository extends JpaRepository<Item,Long> {
+public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    Optional<Item> findByCategoryAndCapacityAndName(Category category, Long capacity,String name);
+    Optional<Item> findByCategoryAndCapacityAndName(Category category, Float capacity, String name);
 
     List<Item> findAllByCategory(Category category);
 
