@@ -4,14 +4,12 @@ import java.util.List;
 
 import it.unimol.vino.dto.GrapeTypeDTO;
 import it.unimol.vino.exceptions.DuplicateGrapeTypeException;
-import it.unimol.vino.exceptions.GrapeTypeNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import it.unimol.vino.models.entity.GrapeType;
 import it.unimol.vino.repository.GrapeTypeRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @Service
@@ -24,15 +22,23 @@ public class GrapeTypeService {
     public List<GrapeTypeDTO> getAll() {
         return this.grapeType.findAll().stream().map(
                 grapeType -> GrapeTypeDTO.builder()
+                        .id(grapeType.getId())
                         .species(grapeType.getSpecies())
                         .color(grapeType.getColor())
                         .build()
         ).toList();
     }
 
-    public GrapeType get(String type) {
-        return this.grapeType.findBySpecies(type)
-                .orElseThrow(() -> new EntityNotFoundException("Non esiste alcun tipo d'uva " + type));
+    public List<GrapeTypeDTO> getAllBySpecies(String type) {
+        return this.grapeType.findBySpecies(type).stream().map(
+                grapeType1 -> GrapeTypeDTO.builder()
+                        .id(grapeType1.getId())
+                        .species(grapeType1.getSpecies())
+                        .color(grapeType1.getColor())
+                        .build()
+        ).toList();
+
+
     }
 
     public GrapeTypeDTO put(@Valid GrapeType grapeType) {
