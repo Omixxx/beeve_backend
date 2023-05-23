@@ -11,6 +11,6 @@ public record ItemCategoryDTO(
         Float capacity,
         Integer totQuantity,
         String category,
-        Boolean isPrimary
+        Boolean categoryIsPrimary
 ) {
 }
