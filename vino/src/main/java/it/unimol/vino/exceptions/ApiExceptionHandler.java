@@ -357,14 +357,4 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
-
-    @ExceptionHandler(value = {AuthenticationException.class})
-    public ResponseEntity<Object> handleApiRequestException(AuthenticationException e) {
-        ApiException apiException = new ApiException(
-                e.getMessage(),
-                HttpStatus.UNAUTHORIZED,
-                ZonedDateTime.now()
-        );
-        return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
-    }
 }
