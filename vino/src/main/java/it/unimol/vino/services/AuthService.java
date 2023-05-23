@@ -30,7 +30,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
     private final SectorRepository sectorRepository;
 
     @Transactional
@@ -65,17 +64,12 @@ public class AuthService {
     }
 
     public AuthenticationResponse authenticate(@Valid AuthenticationRequest request) {
-        this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        var user = this.userRepository
-                .findByEmail(request.getEmail())
-                .orElseThrow(
-                        () -> new UserNotFoundException("L'utente con email " + request.getEmail() + " non esiste")
-                );
+        User user = this.userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("L'utente con email " + request.getEmail() + " non esiste"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
+            throw new PasswordNotValidException("credenziali non valide");
+
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)

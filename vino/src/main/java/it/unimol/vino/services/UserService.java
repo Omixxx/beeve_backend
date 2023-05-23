@@ -125,16 +125,22 @@ public class UserService {
     }
 
     public void changePassword(String oldPassword, String newPassword) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
         if (oldPassword.equals(newPassword))
             throw new PasswordNotValidException("La nuova password non può essere uguale alla vecchia");
 
         if (PasswordValidator.isPasswordNotValid(newPassword))
             throw new PasswordNotValidException(PasswordValidator.ERROR_MESSAGE);
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userRepository.findByEmail(email).orElseThrow(
                 () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
         );
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword()))
+            throw new PasswordNotValidException("La vecchia password non è corretta");
+
+
         user.setPassword(passwordEncoder.encode(newPassword));
         this.userRepository.save(user);
     }
