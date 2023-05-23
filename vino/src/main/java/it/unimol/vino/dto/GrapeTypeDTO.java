@@ -10,13 +10,15 @@ import lombok.Getter;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GrapeTypeDTO {
+    private Long id;
 
     private String species;
 
     private String color;
 
-    public static GrapeTypeDTO getFullGrapeTypeDTO(@NotNull GrapeType grapeType){
+    public static GrapeTypeDTO getFullGrapeTypeDTO(@NotNull GrapeType grapeType) {
         return GrapeTypeDTO.builder()
+                .id(grapeType.getId())
                 .species(grapeType.getSpecies())
                 .color(grapeType.getColor())
                 .build();

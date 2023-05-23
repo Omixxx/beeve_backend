@@ -42,7 +42,7 @@ public class ProviderControllerTest {
         provider.setName("Provider 1");
         when(providerService.getAll()).thenReturn(Collections.singletonList(provider));
 
-        mockMvc.perform(get("/api/v1/provider/"))
+        mockMvc.perform(getAllBySpecies("/api/v1/provider/"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(1))
@@ -55,7 +55,7 @@ public class ProviderControllerTest {
         itemsProvidedByProvider.setItemName("Item 1");
         when(providerService.getAllProvidedItemsById(1L)).thenReturn(Collections.singletonList(itemsProvidedByProvider));
 
-        mockMvc.perform(get("/api/v1/provider/providedBy/1"))
+        mockMvc.perform(getAllBySpecies("/api/v1/provider/providedBy/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].itemName").value("Item 1"));
@@ -67,7 +67,7 @@ public class ProviderControllerTest {
         providerBookResponse.setItemName("Item 1");
         when(providerService.getProviderBook()).thenReturn(Collections.singletonList(providerBookResponse));
 
-        mockMvc.perform(get("/api/v1/provider/book"))
+        mockMvc.perform(getAllBySpecies("/api/v1/provider/book"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].itemName").value("Item 1"));
