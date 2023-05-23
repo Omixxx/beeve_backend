@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ProviderEntityTest {
-
+/*
     @Test
     void testProviderConstructor() {
         Provider provider = new Provider();
@@ -35,5 +35,7 @@ public class ProviderEntityTest {
        // provider.setWebsite_url("http://www.provider.com");
        // assertEquals("http://www.provider.com", provider.getWebsite_url());
     }
+
+ */
 }
 

@@ -31,8 +31,6 @@ public class ProviderService {
     private final ProviderRepository providerRepository;
     private final ProviderDTOMapper providerDTOMapper;
 
-    private final ProviderFullDTOMapper providerFullDTOMapper;
-
 
     public List<Provider> getAll() {
         return this.providerRepository.findByIsVisible(true);
@@ -52,6 +50,7 @@ public class ProviderService {
                 .name(request.getName())
                 .phone_number(request.getPhone_number())
                 .email(request.getEmail())
+                .address(request.getAddress())
                 .isVisible(true)
                 .build();
 
@@ -68,6 +67,7 @@ public class ProviderService {
         provider.setEmail(request.getEmail());
         provider.setName(request.getNewName());
         provider.setPhone_number(request.getPhone_number());
+        provider.setAddress(request.getAddress());
         this.providerRepository.save(provider);
 
 

@@ -24,6 +24,8 @@ public class UpdateProviderRequest {
     @NotBlank(message = "Email non può essere vuota")
     private String email;
 
+    private String address;
+
 
 
 }

@@ -52,7 +52,7 @@ public class ContributionService {
                                 .id(contribution.getId())
                                 .quantity(contribution.getQuantity())
                                 .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
-                                .provider(ProviderDTO.getName(contribution.getProvider()))
+                                .provider(providerDTOMapper.apply(contribution.getProvider()))
                                 .image(Files.readAllBytes(new File(contribution.getImage()).toPath()))
                                 .build();
                     } catch (IOException e) {
@@ -76,7 +76,7 @@ public class ContributionService {
                                 .sugarDegree(specificContribution.getSugarDegree())
                                 .image(Files.readAllBytes(new File(specificContribution.getImage()).toPath()))
                                 .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(specificContribution.getAssociatedGrapeType()))
-                                .provider(ProviderDTO.getNameNumberEmail(specificContribution.getProvider()))
+                                .provider(providerDTOMapper.apply(specificContribution.getProvider()))
                                 .build();
                     } catch (IOException e) {
                         throw new ImageNotLoadedException("Errore nel caricamento dell'immagine\n" + e.getMessage());
