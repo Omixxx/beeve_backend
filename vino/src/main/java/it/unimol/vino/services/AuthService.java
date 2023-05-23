@@ -11,10 +11,10 @@ import it.unimol.vino.models.request.RegisterRequest;
 import it.unimol.vino.models.response.AuthenticationResponse;
 import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
+import it.unimol.vino.utils.PasswordValidator;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,12 +33,10 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final SectorRepository sectorRepository;
 
-
     @Transactional
     public AuthenticationResponse register(@Valid RegisterRequest request) throws PasswordNotValidException {
-        if (!isPasswordValid(request.getPassword())) {
-            throw new PasswordNotValidException("La password non è valida, deve essere compresa tra 8 e 30 caratteri, " +
-                    "e deve contenere almeno una lettera maiuscola, una lettera minuscola e un numero...");
+        if (PasswordValidator.isPasswordNotValid(request.getPassword())) {
+            throw new PasswordNotValidException(PasswordValidator.ERROR_MESSAGE);
         }
 
         if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -76,7 +74,7 @@ public class AuthService {
         var user = this.userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(
-                        () -> new UserNotFoundException("User not found")
+                        () -> new UserNotFoundException("L'utente con email " + request.getEmail() + " non esiste")
                 );
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
@@ -84,11 +82,4 @@ public class AuthService {
                 .build();
     }
 
-    private boolean isPasswordValid(@NotNull String password) {
-        return password.length() >= 8 &&
-                password.length() <= 30 &&
-                password.matches(".*[A-Z].*") &&
-                password.matches(".*[a-z].*") &&
-                password.matches(".*[0-9].*");
-    }
 }
