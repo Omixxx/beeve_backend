@@ -1,5 +1,6 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.dto.ItemCategoryDTO;
 import it.unimol.vino.dto.ItemDTO;
 import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.ItemNotFoundException;
@@ -26,6 +27,10 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    @GetMapping()
+    public ResponseEntity<List<ItemCategoryDTO>> getAll(){
+        return ResponseEntity.ok(this.itemService.getAll());
+    }
     @GetMapping("/{categoryName}")
     public ResponseEntity<List<ItemDTO>> getItem(@Valid @PathVariable String categoryName) {
         return ResponseEntity.ok(this.itemService.getItems(categoryName));
