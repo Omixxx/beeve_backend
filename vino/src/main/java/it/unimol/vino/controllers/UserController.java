@@ -36,7 +36,7 @@ public class UserController {
         return ResponseEntity.ok(this.userService.getAllPermissions());
     }
 
-    @GetMapping
+    @GetMapping("/info")
     public ResponseEntity<UserDTO> getUserInfo() {
         return ResponseEntity.ok(this.userService.getUserInfo());
     }
