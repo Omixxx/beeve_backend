@@ -1,6 +1,8 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.dto.ItemCategoryDTO;
 import it.unimol.vino.dto.ItemDTO;
+import it.unimol.vino.dto.mappers.ItemCategoryDTOMapper;
 import it.unimol.vino.dto.mappers.ItemDTOMapper;
 import it.unimol.vino.exceptions.CapacityEqualToZeroInAPrimaryItemNotAllowedException;
 import it.unimol.vino.exceptions.CategoryNotFoundException;
@@ -31,8 +33,16 @@ public class ItemService {
     private final ProviderRepository providerRepository;
     private final CategoryRepository categoryRepository;
     private final ItemDTOMapper itemDTOMapper;
+    private final ItemCategoryDTOMapper itemCategoryDTOMapper;
 
-
+    public List<ItemCategoryDTO> getAll(){
+        List<Category> categories = this.categoryRepository.findAll();
+        List<ItemCategoryDTO> items = new ArrayList<>();
+        for (Category category : categories) {
+            items.addAll(this.itemRepository.findAllByCategory(category).stream().map(itemCategoryDTOMapper).toList());
+        }
+        return items;
+    }
     public List<ItemDTO> getItems(String categoryName) {
         Category category = findCategory(categoryName);
         return this.itemRepository.findAllByCategory(category).stream().map(itemDTOMapper).toList();
