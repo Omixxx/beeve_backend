@@ -124,7 +124,8 @@ public class ProcessService {
                 .completedState(process.getCurrentState().getState())
                 .waste(request.getWaste())
                 .date(new Date())
-                .description(request.getDescription())
+                .description(Objects.nonNull(request.getDescription())
+                        ? request.getDescription() : "")
                 .build();
 
         process.getUserProgressProcessList().add(userProgressesProcess);
