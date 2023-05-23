@@ -116,6 +116,7 @@ public class UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userRepository.findByEmail(email).map(
                 user -> UserDTO.builder()
+                        .id(user.getId())
                         .firstName(user.getFirstName())
                         .lastName(user.getLastName())
                         .build()
