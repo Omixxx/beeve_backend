@@ -33,7 +33,7 @@ public class GrapeTypeController {
     }
 
     @GetMapping("/{species}")
-    public ResponseEntity<GrapeType> get(@PathVariable String species) {
-        return ResponseEntity.ok(this.grapeTypeService.get(species));
+    public ResponseEntity<List<GrapeTypeDTO>> get(@PathVariable String species) {
+        return ResponseEntity.ok(this.grapeTypeService.getAllBySpecies(species));
     }
 }
