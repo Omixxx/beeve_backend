@@ -2,6 +2,8 @@ package it.unimol.vino.services;
 
 
 import it.unimol.vino.dto.*;
+import it.unimol.vino.dto.mappers.ItemCategoryDTOMapper;
+import it.unimol.vino.dto.mappers.ItemProcessUseItemDTOMapper;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.*;
@@ -30,6 +32,7 @@ public class ProcessService {
     private final UserProgressProcessRepository userProgressProcessRepository;
     private final ItemRepository itemRepository;
     private final ContributionRepository contributionRepository;
+    private final ItemProcessUseItemDTOMapper itemProcessUseItemDTOMapper;
 
     @Transactional
     public Long createNewProcess(NewProcessRequest request) {
@@ -56,7 +59,6 @@ public class ProcessService {
 
         if (!request.getStates().contains(finalState.getId()))
             request.getStates().add(finalState.getId());
-
 
         request.getStates().forEach((stateId) -> {
             State state = this.stateRepository.findById(stateId).orElseThrow(
@@ -124,7 +126,8 @@ public class ProcessService {
                 .completedState(process.getCurrentState().getState())
                 .waste(request.getWaste())
                 .date(new Date())
-                .description(request.getDescription())
+                .description(Objects.nonNull(request.getDescription())
+                        ? request.getDescription() : "")
                 .build();
 
         process.getUserProgressProcessList().add(userProgressesProcess);
@@ -206,11 +209,9 @@ public class ProcessService {
                                 .build())
                         .toList()
                 )
-                .items(process.getItem().stream().map(processUseItem -> ItemDTO.builder()
-                        .name(processUseItem.getItem().getName())
-                        .totQuantity(processUseItem.getUsedQuantity())
-                        .description(processUseItem.getItem().getDescription())
-                        .build()).toList())
+                .items(process.getItem().stream().map(itemProcessUseItemDTOMapper)
+                        .toList()
+                )
                 .currentWaste(process.getCurrentWaste())
                 .build();
     }

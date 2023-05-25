@@ -1,7 +1,10 @@
 package it.unimol.vino.services;
 
+import it.unimol.vino.dto.ItemCategoryDTO;
 import it.unimol.vino.dto.ItemDTO;
+import it.unimol.vino.dto.mappers.ItemCategoryDTOMapper;
 import it.unimol.vino.dto.mappers.ItemDTOMapper;
+import it.unimol.vino.exceptions.CapacityEqualToZeroInAPrimaryItemNotAllowedException;
 import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.ItemNotFoundException;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
@@ -30,44 +33,56 @@ public class ItemService {
     private final ProviderRepository providerRepository;
     private final CategoryRepository categoryRepository;
     private final ItemDTOMapper itemDTOMapper;
+    private final ItemCategoryDTOMapper itemCategoryDTOMapper;
 
-
+    public List<ItemCategoryDTO> getAll(){
+        List<Category> categories = this.categoryRepository.findAll();
+        List<ItemCategoryDTO> items = new ArrayList<>();
+        for (Category category : categories) {
+            items.addAll(this.itemRepository.findAllByCategory(category).stream().map(itemCategoryDTOMapper).toList());
+        }
+        return items;
+    }
     public List<ItemDTO> getItems(String categoryName) {
         Category category = findCategory(categoryName);
         return this.itemRepository.findAllByCategory(category).stream().map(itemDTOMapper).toList();
     }
 
     @Transactional
-    public String itemRegister(@Valid RegisterItemRequest request) {
+    public Item itemRegister(@Valid RegisterItemRequest request) {
 
         Category category = findCategory(request.getCategoryName());
         Provider provider = findProvider(request.getProvider_id());
+
+        if (request.getCapacity() == 0 && category.getIsPrimary()) {
+            throw new CapacityEqualToZeroInAPrimaryItemNotAllowedException
+                    ("La quantità per un item appartenente a una categoria primaria "
+                            + "deve essere maggiore di 0"
+                    );
+        }
+
 
         Item existingItem = this.itemRepository.findByCategoryAndCapacityAndName(category, request.getCapacity(), request.getName().toUpperCase()).orElse(null);
 
         if (existingItem != null) {
             existingItem.addQuantity(request.getQuantity());
             existingItem.addProviderMapping(provider, request.getQuantity(), request.getDate());
-            this.itemRepository.save(existingItem);
-        } else {
-            Item newItem = Item.builder()
-                    .capacity(request.getCapacity())
-                    .description(request.getDescription())
-                    .providerSupplyItemList(new ArrayList<>())
-                    .category(category)
-                    .totQuantity(request.getQuantity())
-                    .name(request.getName().toUpperCase())
-                    .build();
-
-            newItem.addProviderMapping(provider, request.getQuantity(), request.getDate());
-            this.itemRepository.save(newItem);
-            category.addItem(newItem);
-
+            return this.itemRepository.save(existingItem);
         }
 
+        Item newItem = Item.builder()
+                .capacity(request.getCapacity())
+                .description(request.getDescription())
+                .providerSupplyItemList(new ArrayList<>())
+                .category(category)
+                .totQuantity(request.getQuantity())
+                .name(request.getName().toUpperCase())
+                .build();
 
-        return "Registrato";
-
+        newItem.addProviderMapping(provider, request.getQuantity(), request.getDate());
+        this.itemRepository.save(newItem);
+        category.addItem(newItem);
+        return newItem;
     }
 
     @Transactional
@@ -94,7 +109,7 @@ public class ItemService {
         return "ok";
     }
 
-    public Item findItem(Category category, Long capacity, String name) {
+    public Item findItem(Category category, Float capacity, String name) {
         return this.itemRepository.findByCategoryAndCapacityAndName(category, capacity, name.toUpperCase()).orElseThrow(
                 () -> new ItemNotFoundException("L'item  " + " non è stato trovato"));
     }
@@ -104,7 +119,7 @@ public class ItemService {
                 () -> new CategoryNotFoundException("La categoria con nome: " + name + " non è stata trovata"));
     }
 
-    public Provider findProvider(Long provider_id){
+    public Provider findProvider(Long provider_id) {
         return this.providerRepository.findById(provider_id).orElseThrow(
                 () -> new ProviderNotFoundException("IL provider con ID " + provider_id + " non è stato trovato")
         );

@@ -33,7 +33,7 @@ public class ProcessDTO {
 
     private List<StateDTO> states;
 
-    private List<ItemDTO> items;
+    private List<ItemCategoryDTO> items;
 
     private CurrentStateDTO currentState;
 

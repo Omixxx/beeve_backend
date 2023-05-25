@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -356,5 +357,15 @@ public class ApiExceptionHandler {
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(value = {CapacityEqualToZeroInAPrimaryItemNotAllowedException.class})
+    public ResponseEntity<Object> handleApiRequestException(CapacityEqualToZeroInAPrimaryItemNotAllowedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 }

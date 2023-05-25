@@ -1,10 +1,12 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.dto.ItemCategoryDTO;
 import it.unimol.vino.dto.ItemDTO;
 import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.ItemNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
 
+import it.unimol.vino.models.entity.Item;
 import it.unimol.vino.models.request.DecreaseTotalQuantityOfItemRequest;
 import it.unimol.vino.models.request.RegisterItemRequest;
 
@@ -25,6 +27,10 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    @GetMapping()
+    public ResponseEntity<List<ItemCategoryDTO>> getAll(){
+        return ResponseEntity.ok(this.itemService.getAll());
+    }
     @GetMapping("/{categoryName}")
     public ResponseEntity<List<ItemDTO>> getItem(@Valid @PathVariable String categoryName) {
         return ResponseEntity.ok(this.itemService.getItems(categoryName));
@@ -32,7 +38,8 @@ public class ItemController {
 
     @PostMapping("/")
     public ResponseEntity<String> register(@RequestBody @Valid RegisterItemRequest registerItemRequest) {
-        return ResponseEntity.ok(this.itemService.itemRegister(registerItemRequest));
+        Item item = this.itemService.itemRegister(registerItemRequest);
+        return ResponseEntity.ok("L'item " + item.getName() + " è stato registrato con successo");
     }
 
     @PostMapping("/decrease")

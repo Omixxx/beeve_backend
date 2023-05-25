@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,8 +30,8 @@ import java.util.Optional;
 
 import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -71,7 +72,7 @@ public class ContributionControllerTest {
         contribution.setOrigin("Italia");
         contribution.setCountry("Campania");
         contribution.setDescription("Frizzante");
-        contribution.setSugarDegree(5.5);
+        contribution.setSugarDegree(55.9);
         contribution.setQuantity(10.0);
         contribution.setDate(new Date());
         contribution.setGrapeTypeId(grapeTypeId());
@@ -80,8 +81,8 @@ public class ContributionControllerTest {
         tokenClass = new AuthToken(userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/contribution")
-                        .header("Authorization", "Bearer " + tokenClass.generateToken())
-                        .contentType("application/json")
+                        .header("Authorization", "Bearer " +tokenClass.generateToken() )
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(contribution)))
                 .andExpect(status().isOk());
     }

@@ -2,6 +2,7 @@ package it.unimol.vino.controllers;
 
 import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.dto.UserPermissionDTO;
+import it.unimol.vino.models.request.ChangePasswordRequest;
 import it.unimol.vino.models.request.UpdatePermissionsRequest;
 import it.unimol.vino.models.response.UpdatePermissionResponse;
 import it.unimol.vino.services.UserService;
@@ -35,8 +36,15 @@ public class UserController {
         return ResponseEntity.ok(this.userService.getAllPermissions());
     }
 
-    @GetMapping
+    @GetMapping("/info")
     public ResponseEntity<UserDTO> getUserInfo() {
         return ResponseEntity.ok(this.userService.getUserInfo());
+    }
+
+    @PostMapping("/change/password")
+    public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+        this.userService.changePassword(changePasswordRequest.getOldPassword(),
+                changePasswordRequest.getNewPassword());
+        return ResponseEntity.ok("Password aggiornata con successo");
     }
 }
