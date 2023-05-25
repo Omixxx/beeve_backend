@@ -9,7 +9,7 @@ public record ItemCategoryDTO(
         Long id,
         String name,
         Float capacity,
-        Integer totQuantity,
+        Integer usedQuantity,
         String category,
         Boolean categoryIsPrimary
 ) {
