@@ -15,7 +15,7 @@ public class ItemProcessUseItemDTOMapper implements Function<ProcessUseItem, Ite
         return new ItemCategoryDTO(item.getId(),
                 item.getName(),
                 item.getCapacity(),
-                item.getTotQuantity(),
+                processUseItem.getUsedQuantity(),
                 item.getCategory().getName(),
                 item.getCategory().getIsPrimary());
     }
