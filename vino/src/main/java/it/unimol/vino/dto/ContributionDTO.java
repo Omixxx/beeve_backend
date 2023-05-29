@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.Date;
+
 @Builder
 @AllArgsConstructor
 @Data
@@ -22,7 +25,7 @@ public class ContributionDTO {
     private String country;
 
 
-    private String photoURL;
+    private byte[] image;
 
 
     private String description;
@@ -34,7 +37,7 @@ public class ContributionDTO {
     private Double quantity;
 
 
-    private Date date;
+    private Date deliveryDate;
 
 
     private GrapeTypeDTO associatedGrapeType;

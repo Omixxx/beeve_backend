@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -162,6 +163,17 @@ public class ApiExceptionHandler {
         );
         LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {ImageNotLoadedException.class})
+    protected ResponseEntity<Object> handleApiRequestException(ImageNotLoadedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ZonedDateTime.now()
+        );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
+        return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
@@ -325,5 +337,35 @@ public class ApiExceptionHandler {
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = {CategoryLevelMustBeSpecifiedException.class})
+    public ResponseEntity<Object> handleApiRequestException(CategoryLevelMustBeSpecifiedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {UnauthorizedAccessException.class})
+    public ResponseEntity<Object> handleApiRequestException(UnauthorizedAccessException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.UNAUTHORIZED,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(value = {CapacityEqualToZeroInAPrimaryItemNotAllowedException.class})
+    public ResponseEntity<Object> handleApiRequestException(CapacityEqualToZeroInAPrimaryItemNotAllowedException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 }

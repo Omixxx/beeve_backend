@@ -45,14 +45,12 @@ public class Provider implements Serializable {
     @Column(unique = true)
     private String email;
 
-    /*
+
     @Column(name = "address")
     private String address;
 
-    @Column(name = "website_url")
-    private String website_url;
-    
-     */
+    @Column(name = "is_visible")
+    private Boolean isVisible;
 
     @OneToMany(mappedBy = "provider", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnore
