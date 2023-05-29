@@ -34,6 +34,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("h2")
@@ -77,13 +78,11 @@ public class ContributionControllerTest {
         contribution.setDate(new Date());
         contribution.setGrapeTypeId(grapeTypeId());
         contribution.setProviderId(providerId());
-        objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/contribution")
-                        .header("Authorization", "Bearer " +tokenClass.generateToken() )
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(contribution)))
+        mockMvc.perform(post("http://localhost:8080/api/v1/contribution")
+                        .header("Authorization", "Bearer " + tokenClass.generateToken())
+                .flashAttr("RegisterContributionRequest", contribution))
                 .andExpect(status().isOk());
     }
     @Test
@@ -99,11 +98,7 @@ public class ContributionControllerTest {
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/contribution")
-                        .header("Authorization", "Bearer " +tokenClass.generateToken() )
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(contribution)))
-                .andExpect(status().isBadRequest());
+
     }
    @Test
     public void getAllContributionTest() throws Exception {

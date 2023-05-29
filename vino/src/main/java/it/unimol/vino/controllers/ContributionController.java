@@ -27,7 +27,7 @@ public class ContributionController {
     }
 
     @PostMapping
-    public ResponseEntity<String> put(@ModelAttribute RegisterContributionRequest request) {
+    public ResponseEntity<String> post(@ModelAttribute RegisterContributionRequest request) {
         return ResponseEntity.ok(this.contributionService.put(request));
     }
 
