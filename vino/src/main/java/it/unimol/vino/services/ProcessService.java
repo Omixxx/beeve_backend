@@ -2,6 +2,8 @@ package it.unimol.vino.services;
 
 
 import it.unimol.vino.dto.*;
+import it.unimol.vino.dto.mappers.ItemCategoryDTOMapper;
+import it.unimol.vino.dto.mappers.ItemProcessUseItemDTOMapper;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.*;
@@ -30,12 +32,33 @@ public class ProcessService {
     private final UserProgressProcessRepository userProgressProcessRepository;
     private final ItemRepository itemRepository;
     private final ContributionRepository contributionRepository;
+    private final ItemProcessUseItemDTOMapper itemProcessUseItemDTOMapper;
 
     @Transactional
     public Long createNewProcess(NewProcessRequest request) {
+        State finalState = this.stateRepository.findByName("Completato").orElseThrow(
+                () -> new InternalServerErrorException("Errore Interno, contattare l'amministratore")
+        );
+
         List<State> alreadyOrderedStateList = new ArrayList<>();
         if (DuplicatesChecker.hasDuplicates(request.getStates()))
             throw new DuplicateStateException("Stati duplicati non ammessi");
+
+        if (request.getStates().isEmpty())
+            throw new ProcessHasNoStatesException("Il processo deve avere almeno uno stato");
+
+        if (request.getStates().size() == 1 && request.getStates().get(0).equals(finalState.getId()))
+            throw new ProcessHasNoStatesException("Il processo non puo avere solo lo stato finale");
+
+        if (request.getStates().contains(finalState.getId()) &&
+                !Objects.equals(request.getStates().get(request.getStates().size() - 1),
+                        finalState.getId())
+        )
+            throw new ProcessHasNoStatesException("Il processo non puo avere lo stato finale" +
+                    " in posizioni diverse dall'ultima");
+
+        if (!request.getStates().contains(finalState.getId()))
+            request.getStates().add(finalState.getId());
 
         request.getStates().forEach((stateId) -> {
             State state = this.stateRepository.findById(stateId).orElseThrow(
@@ -93,7 +116,6 @@ public class ProcessService {
     public String progressState(Long processId, ProgressProcessRequest request) {
         Process process = this.getProcessFromDb(processId);
 
-        this.ensureProcessHasStates(process);
         this.ensureProcessIsNotCompleted(process);
         this.ensureProcessIsNotAborted(process);
 
@@ -104,7 +126,8 @@ public class ProcessService {
                 .completedState(process.getCurrentState().getState())
                 .waste(request.getWaste())
                 .date(new Date())
-                .description(request.getDescription())
+                .description(Objects.nonNull(request.getDescription())
+                        ? request.getDescription() : "")
                 .build();
 
         process.getUserProgressProcessList().add(userProgressesProcess);
@@ -121,7 +144,6 @@ public class ProcessService {
         Optional<ProcessHasStates> nextState = process.getNextState();
 
         if (nextState.isEmpty()) {
-            process.setCurrentState(null);
             return "Processo terminato con successo";
         }
 
@@ -133,15 +155,16 @@ public class ProcessService {
     }
 
     public void abortProcess(Long processId, String description) {
+
         Process process = this.getProcessFromDb(processId);
 
+        this.ensureProcessIsNotCompleted(process);
         this.ensureProcessHasStates(process);
         this.ensureProcessIsNotAborted(process);
 
         User user = this.getUser();
 
         process.getCurrentState().setEndDate(new Date());
-        process.setCurrentState(null);
         process.setUserWhoAborted(user);
         process.setAbortionDate(new Date());
         process.setAbortionDescription(description);
@@ -186,11 +209,9 @@ public class ProcessService {
                                 .build())
                         .toList()
                 )
-                .items(process.getItem().stream().map(processUseItem -> ItemDTO.builder()
-                        .name(processUseItem.getItem().getName())
-                        .totQuantity(processUseItem.getUsedQuantity())
-                        .description(processUseItem.getItem().getDescription())
-                        .build()).toList())
+                .items(process.getItem().stream().map(itemProcessUseItemDTOMapper)
+                        .toList()
+                )
                 .currentWaste(process.getCurrentWaste())
                 .build();
     }
@@ -207,7 +228,7 @@ public class ProcessService {
     }
 
     private void ensureProcessIsNotAborted(@NotNull Process process) {
-        if (Objects.isNull(process.getCurrentState()) && Objects.nonNull(process.getUserWhoAborted()))
+        if (Objects.nonNull(process.getUserWhoAborted()) && Objects.nonNull(process.getAbortionDate()))
             throw new ProcessAbortedException("Il processo risulta interrotto");
     }
 
@@ -219,7 +240,10 @@ public class ProcessService {
     }
 
     private void ensureProcessIsNotCompleted(@NonNull Process process) {
-        if (Objects.isNull(process.getCurrentState()))
+        State finalState = this.stateRepository.findByName("Completato").orElseThrow(
+                () -> new InternalServerErrorException("Errore interno, contattare l'amministratore")
+        );
+        if (process.getCurrentState().getState().getId().equals(finalState.getId()))
             throw new ProcessIsCompletedException("Il processo risulta già completato");
     }
 
@@ -243,7 +267,7 @@ public class ProcessService {
 
         if (userProgressesProcesses.isEmpty())
             throw new ProcessDidNotProgressException("il processo "
-                    + processId + " non ha mai completato lo stato " + stateId);
+                    + processId + " non ha mai completato lo stato " + state.getName());
 
         if (userProgressesProcesses.size() > 1)
             throw new InternalServerErrorException("Errore interno, contattare l'amministratore");

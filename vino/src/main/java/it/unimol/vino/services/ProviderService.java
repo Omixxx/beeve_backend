@@ -31,23 +31,27 @@ public class ProviderService {
     private final ProviderRepository providerRepository;
     private final ProviderDTOMapper providerDTOMapper;
 
-    private final ProviderFullDTOMapper providerFullDTOMapper;
-
 
     public List<Provider> getAll() {
-        return this.providerRepository.findAll();
+        return this.providerRepository.findByIsVisible(true);
     }
 
     public Long providerRegister(@Valid RegisterProviderRequest request) {
 
         if (this.providerRepository.findByName(request.getName()).isPresent()) {
-            throw new UserAlreadyRegistered("Fornitore con nome:"+request.getName()+"già presente");
+            throw new UserAlreadyRegistered("Fornitore con nome: "+request.getName()+" già presente");
+        }
+
+        if(this.providerRepository.findByEmail(request.getEmail()).isPresent()){
+            throw new UserAlreadyRegistered("Fornitore con email: "+request.getEmail()+" già presente");
         }
 
         Provider provider = Provider.builder()
                 .name(request.getName())
                 .phone_number(request.getPhone_number())
                 .email(request.getEmail())
+                .address(request.getAddress())
+                .isVisible(true)
                 .build();
 
         return this.providerRepository.save(provider).getId();
@@ -63,6 +67,7 @@ public class ProviderService {
         provider.setEmail(request.getEmail());
         provider.setName(request.getNewName());
         provider.setPhone_number(request.getPhone_number());
+        provider.setAddress(request.getAddress());
         this.providerRepository.save(provider);
 
 
@@ -73,7 +78,7 @@ public class ProviderService {
 
     public List<ProviderDTO> getProviderBook() {
 
-        return this.providerRepository.findAll()
+        return this.providerRepository.findByIsVisible(true)
                 .stream()
                 .map(providerDTOMapper)
                 .sorted(Comparator.comparing(ProviderDTO::name))
@@ -90,5 +95,14 @@ public class ProviderService {
         );
 
        return providerDTOMapper.apply(provider);
+    }
+
+    public String changeVisibility(String name) {
+        Provider provider = this.providerRepository.findByName(name).orElseThrow(
+                ()-> new ProviderNotFoundException("Il provider con nome: "+name+" non è stato trovato")
+        );
+        provider.setIsVisible(false);
+        this.providerRepository.save(provider);
+        return "Provider rimosso dalla lista dei contatti";
     }
 }

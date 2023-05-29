@@ -3,21 +3,26 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.dto.SectorDTO;
 import it.unimol.vino.dto.SectorPermissionDTO;
-import it.unimol.vino.dto.UserPermissionDTO;
 import it.unimol.vino.dto.UserDTO;
+import it.unimol.vino.dto.UserPermissionDTO;
+import it.unimol.vino.exceptions.PasswordNotValidException;
 import it.unimol.vino.exceptions.SectorNotFoundException;
+import it.unimol.vino.exceptions.UnauthorizedAccessException;
 import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Sector;
 import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.entity.UserSectorPermission;
+import it.unimol.vino.models.enums.Role;
 import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.models.request.UpdatePermissionsRequest;
 import it.unimol.vino.models.response.UpdatePermissionResponse;
 import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
+import it.unimol.vino.utils.PasswordValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,13 +36,22 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final SectorRepository sectorRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UpdatePermissionResponse updatePermissions(UpdatePermissionsRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = this.userRepository.findByEmail(email).orElseThrow(
+        User updaterUser = this.userRepository.findByEmail(email).orElseThrow(
                 () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
         );
+
+        User updatedUser = this.userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new UserNotFoundException("l'utente con email " + request.getEmail() + " non è stato trovato")
+        );
+
+        if (!updaterUser.getRole().equals(Role.ADMIN))
+            throw new UnauthorizedAccessException("L'utente " + email + " non ha i permessi per effettuare questa operazione");
+
         request.getPermissions().forEach((sectorName, permissions) -> {
 
             Sector sector = this.sectorRepository.findSectorBySectorName(sectorName).orElseThrow(
@@ -46,9 +60,9 @@ public class UserService {
                             + " non appartiene alla lista dei settori: "
                             + Arrays.toString(SectorName.values()))
             );
-            user.updatePermission(sector, permissions);
+            updatedUser.updatePermission(sector, permissions);
         });
-        this.userRepository.save(user);
+        this.userRepository.save(updaterUser);
         return new UpdatePermissionResponse("Permessi aggiornati con successo!");
     }
 
@@ -76,7 +90,7 @@ public class UserService {
     }
 
     public List<UserPermissionDTO> getAllPermissions() {
-        return this.userRepository.findAll().stream().map(
+        return this.userRepository.findByRoleNot(Role.ADMIN).stream().map(
                 user -> UserPermissionDTO.builder()
                         .user(UserDTO.builder()
                                 .email(user.getEmail())
@@ -102,11 +116,33 @@ public class UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userRepository.findByEmail(email).map(
                 user -> UserDTO.builder()
+                        .id(user.getId())
                         .firstName(user.getFirstName())
                         .lastName(user.getLastName())
                         .build()
         ).orElseThrow(
                 () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
         );
+    }
+
+    public void changePassword(String oldPassword, String newPassword) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (oldPassword.equals(newPassword))
+            throw new PasswordNotValidException("La nuova password non può essere uguale alla vecchia");
+
+        if (PasswordValidator.isPasswordNotValid(newPassword))
+            throw new PasswordNotValidException(PasswordValidator.ERROR_MESSAGE);
+
+        User user = this.userRepository.findByEmail(email).orElseThrow(
+                () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
+        );
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword()))
+            throw new PasswordNotValidException("La vecchia password non è corretta");
+
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        this.userRepository.save(user);
     }
 }

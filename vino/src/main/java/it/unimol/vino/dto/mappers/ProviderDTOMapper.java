@@ -16,7 +16,8 @@ public class ProviderDTOMapper implements Function<Provider, ProviderDTO> {
                 provider.getId(),
                 provider.getName(),
                 provider.getPhone_number(),
-                provider.getEmail()
+                provider.getEmail(),
+                provider.getAddress()
         );
     }
 
