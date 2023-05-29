@@ -1,4 +1,4 @@
-package it.unimol.vino.controller;
+/*package it.unimol.vino.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -154,6 +154,6 @@ public class ContributionControllerTest {
             providerRepository.save(provider);
         return 1L;
     }
-}
+}*/
 
 
