@@ -1,5 +1,6 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.aop.annotation.RequirePermissions;
 import it.unimol.vino.dto.ProcessDTO;
 import it.unimol.vino.dto.StateDTO;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
@@ -54,6 +55,7 @@ public class ProcessController {
     }
 
     @GetMapping
+    @RequirePermissions(value = RequirePermissions.PermissionType.WRITE )
     public ResponseEntity<List<ProcessDTO>> getAllProcesses() {
         return ResponseEntity.ok(this.processService.getAllProcesses());
     }
