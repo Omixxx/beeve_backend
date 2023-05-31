@@ -1,6 +1,8 @@
 package it.unimol.vino.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import it.unimol.vino.models.entity.Category;
 import lombok.Builder;
 
 @Builder

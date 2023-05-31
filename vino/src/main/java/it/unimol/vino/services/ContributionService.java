@@ -5,6 +5,7 @@ import it.unimol.vino.dto.GrapeTypeDTO;
 import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.dto.mappers.ProviderDTOMapper;
 import it.unimol.vino.exceptions.ContributionNotFoundException;
+import it.unimol.vino.exceptions.ImageNotLoadedException;
 
 import it.unimol.vino.exceptions.UserNotFoundException;
 import it.unimol.vino.models.entity.Contribution;
@@ -25,6 +26,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,34 +46,43 @@ public class ContributionService {
 
     public List<ContributionDTO> getAll() {
         return this.contribution.findAll().stream().map(
-                contribution -> ContributionDTO.builder()
-                        .id(contribution.getId())
-                        .quantity(contribution.getQuantity())
-                        .deliveryDate(contribution.getDate())
-                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
-                        .provider(providerDTOMapper.apply(contribution.getProvider()))
-                        .build()
+                contribution -> {
+                    try {
+                        return ContributionDTO.builder()
+                                .id(contribution.getId())
+                                .quantity(contribution.getQuantity())
+                                .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
+                                .provider(providerDTOMapper.apply(contribution.getProvider()))
+                                .image(Files.readAllBytes(new File(contribution.getImage()).toPath()))
+                                .build();
+                    } catch (IOException e) {
+                        throw new ImageNotLoadedException(e.getMessage());
+                    }
+                }
         ).collect(Collectors.toList());
     }
 
 
     public ContributionDTO get(Long id) {
-
         return this.contribution.findById(id)
-                .map(specificContribution -> ContributionDTO.builder()
-                        .id(specificContribution.getId())
-                        .origin(specificContribution.getOrigin())
-                        .country(specificContribution.getCountry())
-                        .description(specificContribution.getDescription())
-                        .quantity(specificContribution.getQuantity())
-                        .deliveryDate(specificContribution.getDate())
-                        .sugarDegree(specificContribution.getSugarDegree())
-                        .photoURL(specificContribution.getPhotoURL())
-                        .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(specificContribution.getAssociatedGrapeType()))
-                        .provider(providerDTOMapper.apply(specificContribution.getProvider()))
-                        .build())
+                .map(specificContribution -> {
+                    try {
+                        return ContributionDTO.builder()
+                                .id(specificContribution.getId())
+                                .origin(specificContribution.getOrigin())
+                                .country(specificContribution.getCountry())
+                                .description(specificContribution.getDescription())
+                                .quantity(specificContribution.getQuantity())
+                                .sugarDegree(specificContribution.getSugarDegree())
+                                .image(Files.readAllBytes(new File(specificContribution.getImage()).toPath()))
+                                .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(specificContribution.getAssociatedGrapeType()))
+                                .provider(providerDTOMapper.apply(specificContribution.getProvider()))
+                                .build();
+                    } catch (IOException e) {
+                        throw new ImageNotLoadedException("Errore nel caricamento dell'immagine\n" + e.getMessage());
+                    }
+                })
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
-
     }
 
     public UserDTO getSubmitter(Long contributionId) {
@@ -98,10 +111,13 @@ public class ContributionService {
                 () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + request.getGrapeTypeId() + " non è stato trovato")
         );
 
+        String IMAGE_FOLDER = "/src/main/resources/static/images/";
+        StringBuilder path = new StringBuilder(System.getProperty("user.dir")).append(IMAGE_FOLDER).append(request.getImage().getOriginalFilename());
+
         var contribution = Contribution.builder()
                 .origin(request.getOrigin())
                 .country(request.getCountry())
-                .photoURL(request.getPhotoURL())
+                .image(path.toString())
                 .description(request.getDescription())
                 .sugarDegree(request.getSugarDegree())
                 .quantity(request.getQuantity())
@@ -112,8 +128,14 @@ public class ContributionService {
                 .build();
 
         contribution.setSubmitter(user);
+        try {
+            request.getImage()
+                    .transferTo(new File(path.toString()));
+        } catch (IOException e) {
+            throw new ImageNotLoadedException("Errore nel caricamento dell'immagine");
+        }
         this.contribution.save(contribution);
-        return "Il conferimento è stato registrato con l'id" + contribution.getId();
+        return "Il conferimento è stato registrato con l'id " + contribution.getId();
     }
 
 }
