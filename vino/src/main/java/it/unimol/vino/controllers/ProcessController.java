@@ -3,6 +3,8 @@ package it.unimol.vino.controllers;
 import it.unimol.vino.aop.annotation.RequirePermissions;
 import it.unimol.vino.dto.ProcessDTO;
 import it.unimol.vino.dto.StateDTO;
+import it.unimol.vino.models.enums.PermissionType;
+import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.CancelProgressRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
@@ -24,12 +26,14 @@ public class ProcessController {
     private final ProcessService processService;
 
     @PostMapping
+    @RequirePermissions(value = {PermissionType.WRITE}, sector = SectorName.PROCESSO)
     public ResponseEntity<String> newProcess(@RequestBody @Valid NewProcessRequest request) {
         return ResponseEntity.ok("Processo con Id " +
                 this.processService.createNewProcess(request) + " creato con successo");
     }
 
     @PutMapping("/addState")
+    @RequirePermissions(value = {PermissionType.WRITE}, sector = SectorName.PROCESSO)
     public ResponseEntity<String> addStates(@RequestBody @Valid AddStateToProcessRequest request) {
         this.processService.addState(request);
         return ResponseEntity.ok("Stato " +
@@ -38,6 +42,7 @@ public class ProcessController {
     }
 
     @PostMapping("/{process_id}/progress")
+    @RequirePermissions(value = {PermissionType.UPDATE}, sector = SectorName.PROCESSO)
     public ResponseEntity<String> progressProcess(
             @PathVariable("process_id") Long processId,
             @RequestBody ProgressProcessRequest request) {
@@ -46,6 +51,7 @@ public class ProcessController {
     }
 
     @PostMapping("/{process_id}/abort")
+    @RequirePermissions(value = {PermissionType.DELETE}, sector = SectorName.PROCESSO)
     public ResponseEntity<String> cancelProcess(
             @PathVariable("process_id") Long processId,
             @RequestBody CancelProgressRequest request) {
@@ -55,22 +61,25 @@ public class ProcessController {
     }
 
     @GetMapping
-    @RequirePermissions(value = RequirePermissions.PermissionType.WRITE )
+    @RequirePermissions(value = {PermissionType.READ}, sector = SectorName.PROCESSO)
     public ResponseEntity<List<ProcessDTO>> getAllProcesses() {
         return ResponseEntity.ok(this.processService.getAllProcesses());
     }
 
     @GetMapping("{process_id}")
+    @RequirePermissions(value = {PermissionType.READ}, sector = SectorName.PROCESSO)
     public ResponseEntity<ProcessDTO> getProcess(@PathVariable("process_id") Long processId) {
         return ResponseEntity.ok(this.processService.getProcess(processId));
     }
 
     @GetMapping("{process_id}/states")
+    @RequirePermissions(value = {PermissionType.READ}, sector = SectorName.PROCESSO)
     public ResponseEntity<List<StateDTO>> getStates(@PathVariable("process_id") Long processId) {
         return ResponseEntity.ok(this.processService.getProcessStates(processId));
     }
 
     @GetMapping("{process_id}/state/{state_id}")
+    @RequirePermissions(value = {PermissionType.READ}, sector = SectorName.PROCESSO)
     public ResponseEntity<CompletedStateResponse> getState(
             @PathVariable("process_id") Long processId,
             @PathVariable("state_id") Long stateId
@@ -79,6 +88,7 @@ public class ProcessController {
     }
 
     @GetMapping("{process_id}/grape/used_quantity")
+    @RequirePermissions(value = {PermissionType.READ}, sector = SectorName.PROCESSO)
     public ResponseEntity<Double> getGrapeUsedQuantity(@PathVariable("process_id") Long processId) {
         return ResponseEntity.ok(this.processService.getGrapeUsedInProcess(processId));
     }

@@ -40,7 +40,7 @@ public class RuntimeExecutor implements CommandLineRunner {
             this.userRepository.save(User.builder()
                     .firstName("Lorenzo")
                     .lastName("Di Menna")
-                    .email("alessio@unimol.it")
+                    .email("dimenna@unimol.it")
                     .role(Role.USER)
                     .build());
         }
