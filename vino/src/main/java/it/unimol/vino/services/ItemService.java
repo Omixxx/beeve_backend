@@ -12,15 +12,16 @@ import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.models.entity.Item;
 import it.unimol.vino.models.entity.Provider;
 
-import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.models.request.DecreaseTotalQuantityOfItemRequest;
 import it.unimol.vino.models.request.RegisterItemRequest;
 import it.unimol.vino.repository.CategoryRepository;
 import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProviderRepository;
+import it.unimol.vino.utils.Logger;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -35,7 +36,7 @@ public class ItemService {
     private final ItemDTOMapper itemDTOMapper;
     private final ItemCategoryDTOMapper itemCategoryDTOMapper;
 
-    public List<ItemCategoryDTO> getAll(){
+    public List<ItemCategoryDTO> getAll() {
         List<Category> categories = this.categoryRepository.findAll();
         List<ItemCategoryDTO> items = new ArrayList<>();
         for (Category category : categories) {
@@ -43,6 +44,7 @@ public class ItemService {
         }
         return items;
     }
+
     public List<ItemDTO> getItems(String categoryName) {
         Category category = findCategory(categoryName);
         return this.itemRepository.findAllByCategory(category).stream().map(itemDTOMapper).toList();
@@ -62,9 +64,15 @@ public class ItemService {
         }
 
 
-        Item existingItem = this.itemRepository.findByCategoryAndCapacityAndName(category, request.getCapacity(), request.getName().toUpperCase()).orElse(null);
+        List<Item> items = this.itemRepository.findAll().stream().filter(
+                item -> item.getCategory().equals(category)
+                        && item.getCapacity().equals(request.getCapacity())
+                        && item.getName().equals(request.getName().toUpperCase())
+        ).toList();
 
-        if (existingItem != null) {
+
+        if (!items.isEmpty()) {
+            Item existingItem = items.get(0);
             existingItem.addQuantity(request.getQuantity());
             existingItem.addProviderMapping(provider, request.getQuantity(), request.getDate());
             return this.itemRepository.save(existingItem);
