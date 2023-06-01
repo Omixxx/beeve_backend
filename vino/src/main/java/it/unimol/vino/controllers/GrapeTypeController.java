@@ -1,6 +1,9 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.aop.annotation.RequirePermissions;
 import it.unimol.vino.dto.GrapeTypeDTO;
+import it.unimol.vino.models.enums.PermissionType;
+import it.unimol.vino.models.enums.SectorName;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

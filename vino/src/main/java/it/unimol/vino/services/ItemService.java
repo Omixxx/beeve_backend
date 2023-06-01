@@ -35,7 +35,7 @@ public class ItemService {
     private final ItemDTOMapper itemDTOMapper;
     private final ItemCategoryDTOMapper itemCategoryDTOMapper;
 
-    public List<ItemCategoryDTO> getAll(){
+    public List<ItemCategoryDTO> getAll() {
         List<Category> categories = this.categoryRepository.findAll();
         List<ItemCategoryDTO> items = new ArrayList<>();
         for (Category category : categories) {
@@ -43,6 +43,7 @@ public class ItemService {
         }
         return items;
     }
+
     public List<ItemDTO> getItems(String categoryName) {
         Category category = findCategory(categoryName);
         return this.itemRepository.findAllByCategory(category).stream().map(itemDTOMapper).toList();

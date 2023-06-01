@@ -357,4 +357,5 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
+
 }

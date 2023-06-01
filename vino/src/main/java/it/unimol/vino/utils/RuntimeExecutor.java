@@ -2,9 +2,12 @@ package it.unimol.vino.utils;
 
 import it.unimol.vino.models.entity.Sector;
 import it.unimol.vino.models.entity.State;
+import it.unimol.vino.models.entity.User;
+import it.unimol.vino.models.enums.Role;
 import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.StateRepository;
+import it.unimol.vino.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -16,6 +19,7 @@ import java.util.stream.Stream;
 public class RuntimeExecutor implements CommandLineRunner {
     private final SectorRepository sectorRepository;
     private final StateRepository stateRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void run(String... args) {
@@ -30,6 +34,15 @@ public class RuntimeExecutor implements CommandLineRunner {
                     .doesProduceWaste(false)
                     .build()
             );
+        }
+
+        if (this.userRepository.findByEmail("dimenna@unimol.it").isEmpty()) {
+            this.userRepository.save(User.builder()
+                    .firstName("Lorenzo")
+                    .lastName("Di Menna")
+                    .email("dimenna@unimol.it")
+                    .role(Role.USER)
+                    .build());
         }
     }
 }
