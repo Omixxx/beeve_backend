@@ -26,16 +26,19 @@ public class GrapeTypeController {
     private final GrapeTypeService grapeTypeService;
 
     @GetMapping
+    @RequirePermissions(value = {PermissionType.READ}, sector = SectorName.CONFERIMENTO)
     public ResponseEntity<List<GrapeTypeDTO>> getAll() {
         return ResponseEntity.ok(this.grapeTypeService.getAll());
     }
 
     @PostMapping
+    @RequirePermissions(value = {PermissionType.WRITE}, sector = SectorName.CONFERIMENTO)
     public ResponseEntity<GrapeTypeDTO> put(@RequestBody GrapeType grapeType) {
         return ResponseEntity.ok(this.grapeTypeService.put(grapeType));
     }
 
     @GetMapping("/{species}")
+    @RequirePermissions(value = {PermissionType.READ}, sector = SectorName.CONFERIMENTO)
     public ResponseEntity<List<GrapeTypeDTO>> get(@PathVariable String species) {
         return ResponseEntity.ok(this.grapeTypeService.getAllBySpecies(species));
     }
