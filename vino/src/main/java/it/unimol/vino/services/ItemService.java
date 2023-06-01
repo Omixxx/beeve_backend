@@ -101,7 +101,7 @@ public class ItemService {
         );
 
         this.itemRepository.delete(item);
-        return "Item è stato eliminato con successo";
+        return "Item eliminato con successo";
     }
 
     @Transactional
@@ -113,14 +113,10 @@ public class ItemService {
         );
 
         item.decreaseQuantity(request.getQuantity());
-
-        return "ok";
+        return request.getQuantity() + " unità sono state rimosse dall'item con ID "
+                + request.getId() + "con successo";
     }
 
-    public Item findItem(Category category, Float capacity, String name) {
-        return this.itemRepository.findByCategoryAndCapacityAndName(category, capacity, name.toUpperCase()).orElseThrow(
-                () -> new ItemNotFoundException("L'item  " + " non è stato trovato"));
-    }
 
     public Category findCategory(String name) {
         return this.categoryRepository.findByName(name.toUpperCase()).orElseThrow(
