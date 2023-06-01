@@ -24,7 +24,7 @@ public class UserDTO {
     private String email;
     private String password;
 
-    private Role role;
+    private Boolean isAdmin;
 
     private List<UserProgressesProcess> progressedProcesses;
 

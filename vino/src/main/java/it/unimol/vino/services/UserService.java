@@ -119,6 +119,7 @@ public class UserService {
                         .id(user.getId())
                         .firstName(user.getFirstName())
                         .lastName(user.getLastName())
+                        .isAdmin(user.getRole().equals(Role.ADMIN))
                         .build()
         ).orElseThrow(
                 () -> new UserNotFoundException("l'utente con email " + email + " non è stato trovato")
