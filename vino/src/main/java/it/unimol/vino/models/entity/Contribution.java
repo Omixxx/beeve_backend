@@ -2,6 +2,7 @@ package it.unimol.vino.models.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
@@ -42,7 +43,7 @@ public class Contribution {
     @Column(name = "sugar_degree")
     private double sugarDegree;
 
-    @Positive(message = "Il comferimento deve avere una quantità positiva")
+    @Min(value = 0, message = "Il conferimento non può avere una quantità negativa")
     @Column(name = "quantity")
     private double quantity;
 
