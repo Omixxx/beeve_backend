@@ -10,8 +10,11 @@ import it.unimol.vino.repository.StateRepository;
 import it.unimol.vino.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Component
@@ -20,6 +23,7 @@ public class RuntimeExecutor implements CommandLineRunner {
     private final SectorRepository sectorRepository;
     private final StateRepository stateRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
@@ -37,12 +41,19 @@ public class RuntimeExecutor implements CommandLineRunner {
         }
 
         if (this.userRepository.findByEmail("dimenna@unimol.it").isEmpty()) {
-            this.userRepository.save(User.builder()
+            User user = User.builder()
                     .firstName("Lorenzo")
                     .lastName("Di Menna")
                     .email("dimenna@unimol.it")
-                    .role(Role.USER)
-                    .build());
+                    .age(22)
+                    .password(passwordEncoder.encode("Admin123"))
+                    .permissions(new ArrayList<>())
+                    .role(Role.ADMIN)
+                    .build();
+
+            List<Sector> sectors = this.sectorRepository.findAll();
+            sectors.forEach(user::addPermission);
+            this.userRepository.save(user);
         }
     }
 }
