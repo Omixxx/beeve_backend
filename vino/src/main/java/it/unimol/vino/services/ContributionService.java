@@ -85,7 +85,7 @@ public class ContributionService {
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + id + " non esiste"));
     }
 
-    public UserDTO getUser(Long contributionId) {
+    public UserDTO getSubmitter(Long contributionId) {
         User submitterId = this.contribution.findById(contributionId)
                 .map(Contribution::getSubmitter)
                 .orElseThrow(() -> new ContributionNotFoundException("Il conferimento con id " + contributionId + " non esiste"));

@@ -1,7 +1,9 @@
 package it.unimol.vino.controllers;
 
+import it.unimol.vino.aop.annotation.RequirePermissions;
 import it.unimol.vino.dto.UserDTO;
 import it.unimol.vino.dto.UserPermissionDTO;
+import it.unimol.vino.models.enums.PermissionType;
 import it.unimol.vino.models.request.ChangePasswordRequest;
 import it.unimol.vino.models.request.UpdatePermissionsRequest;
 import it.unimol.vino.models.response.UpdatePermissionResponse;

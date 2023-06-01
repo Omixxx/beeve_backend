@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/api/v1/sector")
 public class SectorController {
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<SectorName>> getAllSectors() {
         return ResponseEntity.ok(List.of(SectorName.values()));
     }
