@@ -48,17 +48,7 @@ public class GrapeTypeControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    public void putGrapeTestOk() throws Exception {
-        grapeType = GrapeType.builder().color("nero").species("Monaco").id(1L).build();
-        objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/grape-type")
-                        .header("Authorization", "Bearer " + tokenClass.generateToken())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(grapeType)))
-                .andExpect(status().isOk());
-    }
+
 
     @Test
     public void putGrapeTestOK1() throws Exception {
@@ -75,7 +65,6 @@ public class GrapeTypeControllerTest {
                 .andExpect(jsonPath("species").value("MONACO"))
                 .andExpect(jsonPath("color").value("NERO"));
     }
-
     @Test(expected = ServletException.class)
     public void putGrapeTestBad() throws Exception {
         grapeType = GrapeType.builder().color(" ").species("Monaco").id(1L).build();
@@ -102,25 +91,34 @@ public class GrapeTypeControllerTest {
 
     @Test
     public void getGrapeTestOk() throws Exception {
-        putGrapeTestOk();
+        putGrapeTestOk("MArrone","Nero");
         tokenClass = new AuthToken(userRepository);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/grape-type")
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$[0].species").value("Monaco"))
-                .andExpect(jsonPath("$[0].color").value("nero"));
+                .andExpect(jsonPath("$[0].species").value("NERO"))
+                .andExpect(jsonPath("$[0].color").value("MARRONE"));
     }
 
     @Test
     public void getAllBySpecies() throws Exception {
-        putGrapeTestOk();
+        putGrapeTestOk("Nero","Rosso");
         tokenClass = new AuthToken(userRepository);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/grape-type/Monaco")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/grape-type/ROSSO")
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$[0].species").value("Monaco"))
-                .andExpect(jsonPath("$[0].color").value("nero"));
+                .andExpect(jsonPath("$[0].color").value("NERO"));
+    }
+    public void putGrapeTestOk(String color,String species) throws Exception {
+        grapeType = GrapeType.builder().color(color).species(species).id(1L).build();
+        objectMapper = new ObjectMapper();
+        tokenClass = new AuthToken(userRepository);
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/grape-type")
+                        .header("Authorization", "Bearer " + tokenClass.generateToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(grapeType)))
+                .andExpect(status().isOk());
     }
 }

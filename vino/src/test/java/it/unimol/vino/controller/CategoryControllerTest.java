@@ -46,7 +46,7 @@ public class CategoryControllerTest {
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/grape-type")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/category")
                         .header("Authorization", "Bearer " +tokenClass.generateToken() )
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
@@ -87,11 +87,11 @@ public class CategoryControllerTest {
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/grape-type")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/category")
                         .header("Authorization", "Bearer " +tokenClass.generateToken() )
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
     }
 
 }

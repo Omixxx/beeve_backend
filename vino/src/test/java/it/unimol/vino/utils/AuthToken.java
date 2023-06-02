@@ -26,7 +26,6 @@ public class AuthToken {
 
     public String generateToken() {
         List<UserSectorPermission> list = new ArrayList<UserSectorPermission>();
-        UserSectorPermission userSectorPermission = new UserSectorPermission();
         User user = new User();
         user.setId(1L);
         user.setRole(Role.ADMIN);
@@ -34,8 +33,6 @@ public class AuthToken {
         user.setLastName("B");
         user.setEmail("a@a.com");
         user.setPassword("Abcd9876");
-        userSectorPermission.setUser(user);
-        list.add(userSectorPermission);
         user.setPermissions(list);
         userRepository.save(user);
         byte[] keyBytes = Decoders.BASE64.decode(KEY);
