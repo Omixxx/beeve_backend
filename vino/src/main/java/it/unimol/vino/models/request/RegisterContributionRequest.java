@@ -24,18 +24,18 @@ public class RegisterContributionRequest {
     private String description;
 
     @Positive
-    private double sugarDegree;
+    private String sugarDegree;
 
     @Positive
-    private double quantity;
+    private String quantity;
 
     @NonNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date date;
 
     @NonNull
-    private Long grapeTypeId;
+    private String grapeTypeId;
 
     @NonNull
-    private Long providerId;
+    private String providerId;
 }

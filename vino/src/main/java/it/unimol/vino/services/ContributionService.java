@@ -103,11 +103,11 @@ public class ContributionService {
                 () -> new UserNotFoundException("L'utente con email " + userEmail + " non esiste")
         );
 
-        Provider provider = this.provider.findById(request.getProviderId()).orElseThrow(
+        Provider provider = this.provider.findById(Long.parseLong(request.getProviderId())).orElseThrow(
                 () -> new ProviderNotFoundException("IL provider con ID " + request.getProviderId() + " non è stato trovato")
         );
 
-        GrapeType grapeType = this.grapeType.findById(request.getGrapeTypeId()).orElseThrow(
+        GrapeType grapeType = this.grapeType.findById(Long.parseLong(request.getGrapeTypeId())).orElseThrow(
                 () -> new GrapeTypeNotFoundException("Il tipo d'uva con ID " + request.getGrapeTypeId() + " non è stato trovato")
         );
 
@@ -119,8 +119,8 @@ public class ContributionService {
                 .country(request.getCountry())
                 .image(path.toString())
                 .description(request.getDescription())
-                .sugarDegree(request.getSugarDegree())
-                .quantity(request.getQuantity())
+                .sugarDegree(Double.parseDouble(request.getSugarDegree()))
+                .quantity(Double.parseDouble(request.getQuantity()))
                 .date(request.getDate())
                 .associatedGrapeType(grapeType)
                 .provider(provider)
