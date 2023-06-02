@@ -2,6 +2,7 @@ package it.unimol.vino.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unimol.vino.models.request.CategoryRequest;
+import it.unimol.vino.models.request.NewStateRequest;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
 import jakarta.servlet.ServletException;
@@ -25,14 +26,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-public class CategoryControllerTest {
+
+public class StateControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
-    private CategoryRequest categoryRequest;
     @Autowired
     private UserRepository userRepository;
+    private NewStateRequest newStateRequest;
     private AuthToken tokenClass;
 
     @BeforeEach
@@ -40,66 +42,59 @@ public class CategoryControllerTest {
         MockitoAnnotations.openMocks(this);
 
     }
-
     @Test
-    public void postCategoryTestOk() throws Exception {
-        categoryRequest = new CategoryRequest("Roberto", true);
+    public void postNewStateTestOk() throws Exception {
+        newStateRequest= new NewStateRequest("Giovanna", true);
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/category")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/state")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(categoryRequest)))
+                        .content(objectMapper.writeValueAsString(newStateRequest)))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    public void postCategoryTestFail() throws Exception {
-        categoryRequest = new CategoryRequest(" ", false);
+    } @Test
+    public void postNewStateTestBad() throws Exception {
+        newStateRequest= new NewStateRequest(" ", true);
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/category")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/state")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(categoryRequest)))
+                        .content(objectMapper.writeValueAsString(newStateRequest)))
+                .andExpect(status().isBadRequest());
+    }@Test
+    public void postNewStateTestBad1() throws Exception {
+        newStateRequest= new NewStateRequest();
+        objectMapper = new ObjectMapper();
+        tokenClass = new AuthToken(userRepository);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/state")
+                        .header("Authorization", "Bearer " + tokenClass.generateToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newStateRequest)))
                 .andExpect(status().isBadRequest());
     }
-
-    @Test(expected = Exception.class)
-    public void double_post() throws Exception {
-        postCategoryTestOk();
-        postCategoryTestOk();
-
-    }
-
-
     @Test
-    public void getAllCategory() throws Exception {
-        postCategoryTestOk();
+    public void getNewStateTest() throws Exception {
+        newStateRequest= new NewStateRequest("Giovanni", true);
+        objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(userRepository);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/category")
+
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/state")
+                        .header("Authorization", "Bearer " + tokenClass.generateToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newStateRequest)))
+                .andExpect(status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/state")
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$[0].isPrimary").value(true))
-                .andExpect(jsonPath("$[0].name").value("ROBERTO"))
-        ;
-
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].name").value("Giovanni"))
+                .andExpect(jsonPath("$[0].doesProduceWaste").value(true));
     }
 
-    @Test(expected = ServletException.class)
-    public void postCategoryTestbed() throws Exception {
-        categoryRequest = new CategoryRequest(" ", true);
-        objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/category")
-                        .header("Authorization", "Bearer " + tokenClass.generateToken())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(categoryRequest)))
-                .andExpect(status().isBadRequest());
-    }
 
 }

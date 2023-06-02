@@ -25,7 +25,6 @@ public class AuthToken {
     private final String KEY = "3F4428472B4B6250655368566D597133743677397A24432646294A404D635166";
 
     public String generateToken() {
-        List<UserSectorPermission> list = new ArrayList<UserSectorPermission>();
         User user = new User();
         user.setId(1L);
         user.setRole(Role.ADMIN);
@@ -33,7 +32,6 @@ public class AuthToken {
         user.setLastName("B");
         user.setEmail("a@a.com");
         user.setPassword("Abcd9876");
-        user.setPermissions(list);
         userRepository.save(user);
         byte[] keyBytes = Decoders.BASE64.decode(KEY);
         Key secretKey = Keys.hmacShaKeyFor(keyBytes);
