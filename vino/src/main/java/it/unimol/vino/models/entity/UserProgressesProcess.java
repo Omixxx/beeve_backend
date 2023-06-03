@@ -31,7 +31,6 @@ public class UserProgressesProcess {
     @ManyToOne
     private State completedState;
 
-    @NotBlank
     private String description;
 
     private Date date;
