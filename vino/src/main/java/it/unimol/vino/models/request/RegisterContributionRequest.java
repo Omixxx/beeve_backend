@@ -3,6 +3,8 @@ package it.unimol.vino.models.request;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -18,22 +20,22 @@ public class RegisterContributionRequest {
     @NotNull(message = "E' necessario inserire il paese di origine del conferimento")
     private String country;
 
-    private String photoURL;
+    private MultipartFile image;
 
     private String description;
 
-    @Positive(message = "Il grado zuccherino deve essere maggiore di 0")
-    private double sugarDegree;
+    private String sugarDegree;
 
-    @Positive(message = "La quantità deve essere maggiore di 0")
-    private double quantity;
+    private String quantity;
 
     @NotNull(message = "E' necessario inserire la data del conferimento")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date date;
 
     @NotNull(message = "E' necessario inserire l'id del tipo di uva")
-    private Long grapeTypeId;
+    private String grapeTypeId;
 
     @NotNull(message = "E' necessario inserire l'id del fornitore")
-    private Long providerId;
+    private String providerId;
+
 }

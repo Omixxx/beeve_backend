@@ -22,5 +22,7 @@ public class UpdateProviderRequest {
     @NotBlank(message = "E' necessario specificare la email")
     private String email;
 
+    private String address;
+
 
 }

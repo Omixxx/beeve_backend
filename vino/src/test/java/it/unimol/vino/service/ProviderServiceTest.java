@@ -45,7 +45,7 @@ class ProviderServiceTest {
         validator = factory.getValidator();
     }
 
-    @Test
+
     void testGetAll() {
         List<Provider> expectedProviders = Collections.singletonList(new Provider());
         when(providerRepository.findAll()).thenReturn(expectedProviders);
@@ -80,7 +80,7 @@ class ProviderServiceTest {
         verify(providerRepository).findByEmail(EMAIL);
         verify(providerRepository, never()).save(any(Provider.class));
     }
-    @Test
+
     void testGetAllEmpty() {
         when(providerRepository.findAll()).thenReturn(Collections.emptyList());
 

@@ -3,7 +3,7 @@
 ## Configuration
 
 1.  First create a `.env` file under `/vino`. Follow the `.env_example` and fill in the fields with values of your choice, many of which refer to the credentials you will use for the database
-2.  For the *JWT_SECRET* in the `.env` file you just created be careful to use a hexadecimal (at minumum 256 bits) key. For that matter i invite you to generate it. Here is what i use https://www.allkeysgenerator.com/
+2.  For the *JWT_SECRET* in the `.env` file you just created be careful to use a hexadecimal (at minumum 256 bits) encryption key. For that matter i invite you to generate it. Here is what i use https://www.allkeysgenerator.com/ (be sure to switch from GUID to Encryption key section)
 3.  Modify the `application.yml` (which is under `src/main/resources`) by filling the `username` and `password` fields, remembering to use the same credentials that you set in the `.env` file
 4.  Always in the `application.yml`, under the field `url` replace `localhost` with `vino-db` which is the database container name, and `vino` with the database name you set in the `.env`
 5.  Start the application by running `docker-compose up -d --build` 
