@@ -3,7 +3,9 @@ package it.unimol.vino.aop.aspect;
 import it.unimol.vino.aop.annotation.RequirePermissions;
 import it.unimol.vino.exceptions.UnauthorizedAccessException;
 import it.unimol.vino.models.entity.User;
+import it.unimol.vino.models.entity.UserSectorPermission;
 import it.unimol.vino.models.enums.PermissionType;
+import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -32,34 +34,31 @@ public class PermissionAspect {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        user.getPermissions().forEach(permission -> {
+        user.getPermissions()
+                .stream()
+                .filter(permission -> permission.getSector().getSectorName().equals(permissions.sector()))
+                .forEach(permission -> {
+                    validatePermissions(permissions, requiredPermissionType, email, permission);
+                });
 
-            if (!permission.getCanUpdate() && requiredPermissionType.contains(PermissionType.UPDATE)) {
-                throw new UnauthorizedAccessException(user.getEmail()
-                        + " non ha i permessi di aggiornamento per il settore "
-                        + annotation.sector().name().toLowerCase()
-                );
-            }
-            if (!permission.getCanDelete() && requiredPermissionType.contains(PermissionType.DELETE)) {
-                throw new UnauthorizedAccessException(user.getEmail()
-                        + " non ha i permessi di eliminazione per il settore "
-                        + annotation.sector().name().toLowerCase()
-                );
-            }
-            if (!permission.getCanUpdate() && requiredPermissionType.contains(PermissionType.WRITE)) {
-                throw new UnauthorizedAccessException(user.getEmail()
-                        + " non ha i permessi di scrittura per il settore "
-                        + annotation.sector().name().toLowerCase()
-                );
-            }
-            if (!permission.getCanRead() && requiredPermissionType.contains(PermissionType.READ)) {
-                throw new UnauthorizedAccessException(user.getEmail()
-                        + " non ha i permessi di lettura per il settore "
-                        + annotation.sector().name().toLowerCase()
-                );
-            }
-
-        });
         return joinPoint.proceed();
+    }
+
+    private void validatePermissions(RequirePermissions permissions, List<PermissionType> requiredPermissionType, String email, UserSectorPermission permission) {
+        if (requiredPermissionType.contains(PermissionType.WRITE) && !permission.getCanWrite())
+            throwUnauthorizedAccessException(email, permissions.sector());
+        if (requiredPermissionType.contains(PermissionType.READ) && !permission.getCanRead())
+            throwUnauthorizedAccessException(email, permissions.sector());
+        if (requiredPermissionType.contains(PermissionType.UPDATE) && !permission.getCanUpdate())
+            throwUnauthorizedAccessException(email, permissions.sector());
+        if (requiredPermissionType.contains(PermissionType.DELETE) && !permission.getCanDelete())
+            throwUnauthorizedAccessException(email, permissions.sector());
+    }
+
+    private void throwUnauthorizedAccessException(String userEmail, SectorName sectorName) {
+        throw new UnauthorizedAccessException(userEmail
+                + " non ha i permessi di aggiornamento per il settore "
+                + sectorName.toString().toLowerCase()
+        );
     }
 }
