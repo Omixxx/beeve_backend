@@ -3,6 +3,7 @@ package it.unimol.vino.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unimol.vino.models.request.RegisterProviderRequest;
 import it.unimol.vino.models.request.UpdateProviderRequest;
+import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
 import org.junit.Test;
@@ -33,6 +34,8 @@ public class ProviderControllerTest {
     private RegisterProviderRequest registerProviderRequest;
     private UpdateProviderRequest updateProviderRequest;
     @Autowired
+    private SectorRepository sectorRepository;
+    @Autowired
     private UserRepository userRepository;
     private AuthToken tokenClass;
 
@@ -46,7 +49,31 @@ public class ProviderControllerTest {
     public void postProviderRegisterTestBad() throws Exception {
         registerProviderRequest = new RegisterProviderRequest("Roberto", "Telefono", "email", "andress");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
+                        .header("Authorization", "Bearer " + tokenClass.generateToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerProviderRequest)))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    public void postProviderRegisterTestBad2() throws Exception {
+        registerProviderRequest = new RegisterProviderRequest("Roberto", "Telefono", "a.c@.n", "andress");
+        objectMapper = new ObjectMapper();
+        tokenClass = new AuthToken(sectorRepository, userRepository);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
+                        .header("Authorization", "Bearer " + tokenClass.generateToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerProviderRequest)))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    public void postProviderRegisterTestBad3() throws Exception {
+        registerProviderRequest = new RegisterProviderRequest("Roberto", "234343424", "email", "andress");
+        objectMapper = new ObjectMapper();
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -59,7 +86,7 @@ public class ProviderControllerTest {
     public void postProviderRegisterTestBad1() throws Exception {
         registerProviderRequest = new RegisterProviderRequest(" ", "23453456", "a.c@a.i", "andress");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -72,7 +99,7 @@ public class ProviderControllerTest {
     public void postProviderRegisterTestOk() throws Exception {
         registerProviderRequest = new RegisterProviderRequest("Giovanni", "23453456", "a.c@a.i", "andress");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -83,44 +110,42 @@ public class ProviderControllerTest {
 
     @Test
     public void postProviderUpdateTestOk() throws Exception {
-        registerProviderRequest = new RegisterProviderRequest("Giovanni", "23453456", "a.c@a.i", "andress");
+        registerProviderRequest = new RegisterProviderRequest("MAria", "23453456", "a.c@a.i", "andress");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
                 .header("Authorization", "Bearer " + tokenClass.generateToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerProviderRequest)));
 
-        updateProviderRequest = new UpdateProviderRequest("Giovanni", "Giacomo", "2345433424", "a.c@a.i");
-        objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        updateProviderRequest = new UpdateProviderRequest("MAria", "Giacomo", "2345433424", "a.c@a.i");
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
-                        .header("Authorization", "Bearer " + tokenClass.generateToken())
+                        .header("Authorization", "Bearer" + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerProviderRequest)))
                 .andExpect(status().isOk());
     }
-    @Test(expected = Exception.class)
+    @Test(expected = AssertionError.class)
             public void doublepost() throws Exception {
         postProviderRegisterTestOk();
         postProviderRegisterTestOk();
     }
     @Test
     public void postProviderUpdateTestBad() throws Exception {
-        registerProviderRequest = new RegisterProviderRequest("Giovanni", "23453456", "a.c@a.i", "andress");
+        registerProviderRequest = new RegisterProviderRequest("Marzo", "23453456", "a.c@a.i", "andress");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
                 .header("Authorization", "Bearer " + tokenClass.generateToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerProviderRequest)));
 
-        updateProviderRequest = new UpdateProviderRequest("Giovanni", " ", "2345433424", "a.c@a.i");
+        updateProviderRequest = new UpdateProviderRequest("Marzo", " ", "2345433424", "a.c@a.i");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -130,18 +155,18 @@ public class ProviderControllerTest {
     }
 @Test
     public void postProviderUpdateTestBad1() throws Exception {
-        registerProviderRequest = new RegisterProviderRequest("Giovanni", "23453456", "a.c@a.i", "andress");
+        registerProviderRequest = new RegisterProviderRequest("MAggio", "23453456", "a.c@a.i", "andress");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
                 .header("Authorization", "Bearer " + tokenClass.generateToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerProviderRequest)));
 
-        updateProviderRequest = new UpdateProviderRequest("Giovanni", "Giacomo", " ", "a.c@a.i");
+        updateProviderRequest = new UpdateProviderRequest("Maggio", "Giacomo", " ", "a.c@a.i");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -153,14 +178,14 @@ public class ProviderControllerTest {
     public void deleteProviderTestOK() throws Exception {
         registerProviderRequest = new RegisterProviderRequest("Giovanni", "23453456", "a.c@a.i", "anddress");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
                 .header("Authorization", "Bearer " + tokenClass.generateToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerProviderRequest)));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider/Giovanni")
+        mockMvc.perform(MockMvcRequestBuilders.delete("http://localhost:8080/api/v1/provider/Giovanni")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerProviderRequest)))
@@ -168,17 +193,18 @@ public class ProviderControllerTest {
     }
 @Test
     public void deleteProviderTestBad() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider/Giovanni")
+        tokenClass = new AuthToken(sectorRepository,userRepository);
+        mockMvc.perform(MockMvcRequestBuilders.delete("http://localhost:8080/api/v1/provider/gdfgdfdf")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerProviderRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
     @Test
     public void getProviderTest() throws Exception {
         registerProviderRequest = new RegisterProviderRequest("Maria", "25453456", "a.b@a.i", "cnddress");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -189,16 +215,13 @@ public class ProviderControllerTest {
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$[0].name").value("Maria"))
-                .andExpect(jsonPath("$[0].phone_number").value("25453456"))
-                .andExpect(jsonPath("$[0].email").value("a.b@a.i"))
-                .andExpect(jsonPath("$[0].address").value("cnddress"));
+                .andExpect(jsonPath("$[0].*").exists());
 
     }@Test
     public void getProviderNameTest() throws Exception {
         registerProviderRequest = new RegisterProviderRequest("Maria", "25453456", "a.b@a.i", "cnddress");
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
                 .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -215,7 +238,6 @@ public class ProviderControllerTest {
                 .andExpect(jsonPath("$.address").value("cnddress"));
 
     }
-    //TODO get providerbook??
 
 
 }

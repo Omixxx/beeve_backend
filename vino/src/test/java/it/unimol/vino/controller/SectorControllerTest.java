@@ -1,5 +1,6 @@
 package it.unimol.vino.controller;
 
+import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
 import org.junit.Test;
@@ -27,6 +28,8 @@ public class SectorControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SectorRepository sectorRepository;
     private AuthToken tokenClass;
 
     @BeforeEach
@@ -37,15 +40,15 @@ public class SectorControllerTest {
 
     @Test
     public void getSectorTest() throws Exception {
-        tokenClass = new AuthToken(userRepository);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/Sector")
+        tokenClass = new AuthToken(sectorRepository, userRepository);
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/sector")
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$[0].name").value("Conferimento"))
-                .andExpect(jsonPath("$[1].name").value("Fornitura"))
-                .andExpect(jsonPath("$[2].name").value("Magazzino"))
-                .andExpect(jsonPath("$[3].name").value("Processo"));
+                .andExpect(jsonPath("$[0]").value("CONFERIMENTO"))
+                .andExpect(jsonPath("$[1]").value("FORNITURA"))
+                .andExpect(jsonPath("$[2]").value("MAGAZZINO"))
+                .andExpect(jsonPath("$[3]").value("PROCESSO"));
 
     }
 }

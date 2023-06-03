@@ -3,6 +3,7 @@ package it.unimol.vino.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.unimol.vino.models.entity.GrapeType;
+import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
 import jakarta.servlet.ServletException;
@@ -38,6 +39,8 @@ public class GrapeTypeControllerTest {
     private GrapeType grapeType;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SectorRepository sectorRepository;
     private AuthToken tokenClass;
 
     @BeforeEach
@@ -50,7 +53,7 @@ public class GrapeTypeControllerTest {
     public void putGrapeTestOK1() throws Exception {
         grapeType = GrapeType.builder().color("nero").species("Monaco").id(1L).build();
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/grape-type")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -66,7 +69,7 @@ public class GrapeTypeControllerTest {
     public void putGrapeTestBad() throws Exception {
         grapeType = GrapeType.builder().color(" ").species("Monaco").id(1L).build();
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/grape-type")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +81,7 @@ public class GrapeTypeControllerTest {
     public void putGrapeTestBad1() throws Exception {
         grapeType = GrapeType.builder().color("Nero").species(" ").id(1L).build();
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/grape-type")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -89,7 +92,7 @@ public class GrapeTypeControllerTest {
     @Test
     public void getGrapeTestOk() throws Exception {
         putGrapeTestOk("MArrone", "Nero");
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/grape-type")
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
@@ -101,7 +104,7 @@ public class GrapeTypeControllerTest {
     @Test
     public void getAllBySpecies() throws Exception {
         putGrapeTestOk("Nero", "Rosso");
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/grape-type/ROSSO")
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
@@ -112,7 +115,7 @@ public class GrapeTypeControllerTest {
     public void putGrapeTestOk(String color, String species) throws Exception {
         grapeType = GrapeType.builder().color(color).species(species).id(1L).build();
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/grape-type")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)

@@ -1,5 +1,9 @@
 package it.unimol.vino.controller;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.unimol.vino.dto.SectorDTO;
+import it.unimol.vino.dto.SectorPermissionDTO;
 import it.unimol.vino.models.entity.Sector;
 import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.entity.UserSectorPermission;
@@ -7,9 +11,11 @@ import it.unimol.vino.models.enums.Role;
 import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.models.request.UpdatePermissionsRequest;
+import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
 import jakarta.servlet.ServletException;
+import lombok.*;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -24,7 +30,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.security.Permission;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,38 +51,82 @@ public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
     private AuthToken tokenClass;
+    @Autowired
+    private SectorRepository sectorRepository;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
     }
+
     @Test
     public void postCategoryTestOk() throws Exception {
+        List<UserSectorPermission> list = new ArrayList<UserSectorPermission>();
+        UserSectorPermission userSectorPermission = new UserSectorPermission();
         User user = new User();
-        user.setId(1L);
         user.setRole(Role.USER);
-        user.setFirstName("B");
-        user.setLastName("C");
+        user.setFirstName("C");
+        user.setLastName("H");
         user.setEmail("a@b.com");
         user.setPassword("Abcd9876");
+        userSectorPermission.setUser(user);
+        list.add(userSectorPermission);
+        user.setPermissions(list);
+        List<Sector> sectors = this.sectorRepository.findAll();
+        sectors.forEach(user::addPermission);
         userRepository.save(user);
-        Sector sector= new Sector(SectorName.CONFERIMENTO);
-        UserSectorPermission userSectorPermission= new UserSectorPermission(1L,user,sector,true,true,true,true);
-        HashMap<SectorName, UserSectorPermission> permission =new HashMap<SectorName,UserSectorPermission>();
-        permission.put(SectorName.CONFERIMENTO,userSectorPermission);
-        updatePermissionsRequest = new UpdatePermissionsRequest("a@b.com",permission);
-        objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/user")
+
+        objectMapper = new ObjectMapper();
+        tokenClass = new AuthToken(sectorRepository, userRepository);
+
+        UpdatePermissionsRequestDTO updatePermissionsRequestDTO = new UpdatePermissionsRequestDTO();
+        updatePermissionsRequestDTO.setEmail("a@b.com");
+
+        HashMap<SectorName, UserSectorPermissionDTO> permissions = new HashMap<>();
+        UserSectorPermissionDTO userSectorPermissionDTO = new UserSectorPermissionDTO();
+        userSectorPermissionDTO.setCanRead(false);
+        userSectorPermissionDTO.setCanWrite(false);
+        userSectorPermissionDTO.setCanUpdate(false);
+        userSectorPermissionDTO.setCanDelete(false);
+        userSectorPermissionDTO.setSector(null);
+
+        permissions.put(SectorName.CONFERIMENTO, userSectorPermissionDTO);
+
+        updatePermissionsRequestDTO.setPermissions(permissions);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/user/update_permissions")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePermissionsRequest)))
+                        .content(objectMapper.writeValueAsString(updatePermissionsRequestDTO)))
                 .andExpect(status().isOk());
     }
 
+}
 
+@Data
+@Setter
+@Getter
+@NoArgsConstructor
+class UpdatePermissionsRequestDTO {
+    private String email;
+    private HashMap<SectorName, UserSectorPermissionDTO> permissions;
+
+}
+
+@NoArgsConstructor
+@Setter
+@Getter
+@Data
+class UserSectorPermissionDTO {
+    private Long id;
+    private Sector sector;
+    private Boolean canRead;
+    private Boolean canWrite;
+    private Boolean canUpdate;
+    private Boolean canDelete;
 
 
 }
+

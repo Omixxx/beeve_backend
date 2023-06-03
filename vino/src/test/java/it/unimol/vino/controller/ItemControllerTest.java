@@ -8,6 +8,7 @@ import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.RegisterItemRequest;
 import it.unimol.vino.repository.CategoryRepository;
 import it.unimol.vino.repository.ProviderRepository;
+import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
 
@@ -45,6 +46,8 @@ private  CategoryRepository categoryRepository;
     @Autowired
     private ProviderRepository providerRepository;
     @Autowired
+    private SectorRepository sectorRepository;
+    @Autowired
     private MockMvc mockMvc;
     private GrapeType grapeType;
     @Autowired
@@ -69,15 +72,14 @@ private  CategoryRepository categoryRepository;
                 .build();
 
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/item/")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/item")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerItemRequest)))
                 .andExpect(status().isOk());
     }
-
 
     @Test
     public void putItemTestOk1() throws Exception {
@@ -93,9 +95,9 @@ private  CategoryRepository categoryRepository;
                     .build();
 
             objectMapper = new ObjectMapper();
-            tokenClass = new AuthToken(userRepository);
+            tokenClass = new AuthToken(sectorRepository, userRepository);
 
-            mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/item/")
+            mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/item")
                             .header("Authorization", "Bearer " + tokenClass.generateToken())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(registerItemRequest)))
@@ -116,9 +118,9 @@ private  CategoryRepository categoryRepository;
                 .build();
 
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/item/")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/item")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerItemRequest)))

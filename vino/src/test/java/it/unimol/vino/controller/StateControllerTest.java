@@ -3,6 +3,7 @@ package it.unimol.vino.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.models.request.NewStateRequest;
+import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
 import jakarta.servlet.ServletException;
@@ -36,7 +37,8 @@ public class StateControllerTest {
     private UserRepository userRepository;
     private NewStateRequest newStateRequest;
     private AuthToken tokenClass;
-
+    @Autowired
+    private SectorRepository sectorRepository;
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -46,7 +48,7 @@ public class StateControllerTest {
     public void postNewStateTestOk() throws Exception {
         newStateRequest= new NewStateRequest("Giovanna", true);
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/state")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -57,7 +59,7 @@ public class StateControllerTest {
     public void postNewStateTestBad() throws Exception {
         newStateRequest= new NewStateRequest(" ", true);
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/state")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -68,7 +70,7 @@ public class StateControllerTest {
     public void postNewStateTestBad1() throws Exception {
         newStateRequest= new NewStateRequest();
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/state")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -80,7 +82,7 @@ public class StateControllerTest {
     public void getNewStateTest() throws Exception {
         newStateRequest= new NewStateRequest("Giovanni", true);
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/state")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
@@ -91,9 +93,9 @@ public class StateControllerTest {
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("Giovanni"))
-                .andExpect(jsonPath("$[0].doesProduceWaste").value(true));
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].name").value("Giovanni"))
+                .andExpect(jsonPath("$[1].doesProduceWaste").value(true));
     }
 
 

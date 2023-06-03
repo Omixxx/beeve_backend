@@ -4,10 +4,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unimol.vino.models.entity.*;
 import it.unimol.vino.models.enums.Role;
-import it.unimol.vino.repository.ContributionRepository;
-import it.unimol.vino.repository.GrapeTypeRepository;
-import it.unimol.vino.repository.ProviderRepository;
-import it.unimol.vino.repository.UserRepository;
+import it.unimol.vino.repository.*;
 import it.unimol.vino.utils.AuthToken;
 import it.unimol.vino.models.request.RegisterContributionRequest;
 
@@ -49,7 +46,8 @@ public class ContributionControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-
+    @Autowired
+    private SectorRepository sectorRepository;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -73,16 +71,17 @@ public class ContributionControllerTest {
         contribution.setOrigin("Italia");
         contribution.setCountry("Campania");
         contribution.setDescription("Frizzante");
-        contribution.setSugarDegree(55.9);
-        contribution.setQuantity(10.0);
+        contribution.setSugarDegree("55.9");
+        contribution.setQuantity("10.0");
         contribution.setDate(new Date());
         contribution.setGrapeTypeId(grapeTypeId());
         contribution.setProviderId(providerId());
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
-        mockMvc.perform(post("http://localhost:8080/api/v1/contribution")
+        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/contribution")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
-                .flashAttr("RegisterContributionRequest", contribution))
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(contribution)))
                 .andExpect(status().isOk());
     }
     @Test
@@ -96,14 +95,14 @@ public class ContributionControllerTest {
         contribution.setGrapeTypeId(grapeTypeId());
         contribution.setProviderId(providerId());
         objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
 
 
     }
    @Test
     public void getAllContributionTest() throws Exception {
        putContributionTest();
-       tokenClass = new AuthToken(userRepository);
+       tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/contribution")
                     .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
@@ -116,7 +115,7 @@ public class ContributionControllerTest {
     @Test
     public void getContributionTest() throws Exception {
         putContributionTest();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/contribution/1")
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
@@ -134,25 +133,24 @@ public class ContributionControllerTest {
     @Test
     public void testGetUser() throws Exception {
         putContributionTest();
-        tokenClass = new AuthToken(userRepository);
+        tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/contribution/user/{id}",1L)
                 .header("Authorization", "Bearer " + tokenClass.generateToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L));
     }
-
-    public long grapeTypeId() {
+    public String grapeTypeId() {
         GrapeType grapeType = GrapeType.builder().id(1L).species("Roberto").color("nera").build();
-        if (grapeTypeRepository.findById(1L).isEmpty()) {
+       if (grapeTypeRepository.findById(1L).isEmpty()) {
             grapeTypeRepository.save(grapeType);
         }
-        return 1L;
+        return "1L";
     }
-    public long providerId() {
+    public String providerId() {
         Provider provider=Provider.builder().id(1L).email("a.a@c").build();
         if(providerRepository.findById(1L).isEmpty())
             providerRepository.save(provider);
-        return 1L;
+        return "1L";
     }
 }*/
 
