@@ -8,7 +8,6 @@ import lombok.Data;
 public class ProgressProcessRequest {
 
     private String description;
-
     @NotNull
     @Positive
     private Integer waste;
