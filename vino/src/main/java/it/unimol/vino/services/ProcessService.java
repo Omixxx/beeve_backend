@@ -45,6 +45,9 @@ public class ProcessService {
         if (request.getItemIdUsedQuantity().values().stream().mapToInt(Integer::intValue).sum() == 0)
             throw new InvalidItemQuantityException("La quantità di item deve essere maggiore di 0");
 
+        if (request.getContributionIdQuantity().values().stream().mapToDouble(Double::doubleValue).sum() == 0)
+            throw new InvalidContributionQuantityException("La quantità di conferimento utilizzata deve essere maggiore di 0");
+
         if (DuplicatesChecker.hasDuplicates(request.getStates()))
             throw new DuplicateStateException("Stati duplicati non ammessi");
 
