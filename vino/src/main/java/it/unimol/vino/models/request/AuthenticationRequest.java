@@ -9,10 +9,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AuthenticationRequest {
-    @Email
-    @NotNull
+
+    @Email(message = "E' necessario inserire una mail valida")
+    @NotNull(message = "E' necessario inserire una mail")
     private String email;
 
-    @NotNull
+    @NotNull(message = "E' necessario inserire una password")
     private String password;
 }

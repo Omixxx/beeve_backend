@@ -60,7 +60,15 @@ public class UserService {
                             + " non appartiene alla lista dei settori: "
                             + Arrays.toString(SectorName.values()))
             );
-            updatedUser.updatePermission(sector, permissions);
+
+            UserSectorPermission userSectorPermission = UserSectorPermission.builder()
+                    .canRead(permissions.getCanRead())
+                    .canWrite(permissions.getCanWrite())
+                    .canDelete(permissions.getCanDelete())
+                    .canUpdate(permissions.getCanUpdate())
+                    .build();
+
+            updatedUser.updatePermission(sector, userSectorPermission);
         });
         this.userRepository.save(updaterUser);
         return new UpdatePermissionResponse("Permessi aggiornati con successo!");
@@ -73,19 +81,17 @@ public class UserService {
         );
         List<UserSectorPermission> userSectorPermission = user.getPermissions();
         List<UserPermissionDTO> permissions = new ArrayList<>();
-        userSectorPermission.forEach(userSectorPermission1 -> {
-            permissions.add(UserPermissionDTO.builder()
-                    .permissions(Collections.singletonList(SectorPermissionDTO.builder()
-                            .sector(SectorDTO.builder()
-                                    .sectorName(userSectorPermission1.getSector().getSectorName())
-                                    .build())
-                            .canRead(userSectorPermission1.getCanRead())
-                            .canWrite(userSectorPermission1.getCanWrite())
-                            .canDelete(userSectorPermission1.getCanDelete())
-                            .canUpdate(userSectorPermission1.getCanUpdate())
-                            .build())
-                    ).build());
-        });
+        userSectorPermission.forEach(userSectorPermission1 -> permissions.add(UserPermissionDTO.builder()
+                .permissions(Collections.singletonList(SectorPermissionDTO.builder()
+                        .sector(SectorDTO.builder()
+                                .sectorName(userSectorPermission1.getSector().getSectorName())
+                                .build())
+                        .canRead(userSectorPermission1.getCanRead())
+                        .canWrite(userSectorPermission1.getCanWrite())
+                        .canDelete(userSectorPermission1.getCanDelete())
+                        .canUpdate(userSectorPermission1.getCanUpdate())
+                        .build())
+                ).build()));
         return permissions;
     }
 
@@ -141,7 +147,6 @@ public class UserService {
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword()))
             throw new PasswordNotValidException("La vecchia password non è corretta");
-
 
         user.setPassword(passwordEncoder.encode(newPassword));
         this.userRepository.save(user);
