@@ -30,21 +30,25 @@ public class GrapeTypeService {
     }
 
     public List<GrapeTypeDTO> getAllBySpecies(String type) {
-        return this.grapeType.findBySpecies(type).stream().map(
+        return this.grapeType.findBySpecies(type.toUpperCase()).stream().map(
                 grapeType1 -> GrapeTypeDTO.builder()
                         .id(grapeType1.getId())
                         .species(grapeType1.getSpecies())
                         .color(grapeType1.getColor())
                         .build()
         ).toList();
-
-
     }
 
     public GrapeTypeDTO put(@Valid GrapeType grapeType) {
+        grapeType.setColor(grapeType.getColor().toUpperCase());
+        grapeType.setSpecies(grapeType.getSpecies().toUpperCase());
+
         this.grapeType.findBySpeciesAndColor(grapeType.getSpecies(), grapeType.getColor())
                 .ifPresent(existingGrapeType -> {
-                    throw new DuplicateGrapeTypeException("Esiste già un tipo d'uva " + grapeType.getSpecies() + " di colore " + grapeType.getColor());
+                    throw new DuplicateGrapeTypeException("Esiste già un tipo d'uva "
+                            + grapeType.getSpecies() +
+                            " di colore " + grapeType.getColor()
+                    );
                 });
         return GrapeTypeDTO.getFullGrapeTypeDTO(this.grapeType.save(grapeType));
     }

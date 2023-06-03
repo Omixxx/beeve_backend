@@ -106,17 +106,6 @@ public class ProcessService {
         return this.processRepository.save(process).getId();
     }
 
-
-    public void addState(@NotNull AddStateToProcessRequest request) {
-        Process process = this.getProcessFromDb(request.getProcessId());
-
-        State state = this.stateRepository.findById(request.getStateId()).orElseThrow(
-                () -> new StateNotFoundException("Stato non trovato")
-        );
-
-        process.addState(state, request.getSequence());
-    }
-
     @Transactional
     public String progressState(Long processId, ProgressProcessRequest request) {
         Process process = this.getProcessFromDb(processId);
@@ -126,8 +115,7 @@ public class ProcessService {
 
         User user = this.getUser();
         UserProgressesProcess userProgressesProcess = UserProgressesProcess.builder()
-                .user(user)
-                .process(process)
+                .user(user).process(process)
                 .completedState(process.getCurrentState().getState())
                 .waste(request.getWaste())
                 .date(new Date())
