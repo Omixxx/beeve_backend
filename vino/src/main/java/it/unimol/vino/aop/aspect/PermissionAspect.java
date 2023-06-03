@@ -37,28 +37,28 @@ public class PermissionAspect {
         user.getPermissions()
                 .stream()
                 .filter(permission -> permission.getSector().getSectorName().equals(permissions.sector()))
-                .forEach(permission -> {
-                    validatePermissions(permissions, requiredPermissionType, email, permission);
-                });
+                .forEach(permission -> validatePermissions(permissions, requiredPermissionType, email, permission));
 
         return joinPoint.proceed();
     }
 
-    private void validatePermissions(RequirePermissions permissions, List<PermissionType> requiredPermissionType, String email, UserSectorPermission permission) {
+    private void validatePermissions(
+            RequirePermissions permissions,
+            List<PermissionType> requiredPermissionType,
+            String email,
+            UserSectorPermission permission
+    ) {
+        String sectorName = permissions.sector().toString().toLowerCase();
         if (requiredPermissionType.contains(PermissionType.WRITE) && !permission.getCanWrite())
-            throwUnauthorizedAccessException(email, permissions.sector());
-        if (requiredPermissionType.contains(PermissionType.READ) && !permission.getCanRead())
-            throwUnauthorizedAccessException(email, permissions.sector());
-        if (requiredPermissionType.contains(PermissionType.UPDATE) && !permission.getCanUpdate())
-            throwUnauthorizedAccessException(email, permissions.sector());
-        if (requiredPermissionType.contains(PermissionType.DELETE) && !permission.getCanDelete())
-            throwUnauthorizedAccessException(email, permissions.sector());
-    }
+            throw new UnauthorizedAccessException(email + " non ha i permessi di scrittura per il settore " + sectorName);
 
-    private void throwUnauthorizedAccessException(String userEmail, SectorName sectorName) {
-        throw new UnauthorizedAccessException(userEmail
-                + " non ha i permessi di aggiornamento per il settore "
-                + sectorName.toString().toLowerCase()
-        );
+        if (requiredPermissionType.contains(PermissionType.READ) && !permission.getCanRead())
+            throw new UnauthorizedAccessException(email + " non ha i permessi di lettura per il settore " + sectorName);
+
+        if (requiredPermissionType.contains(PermissionType.UPDATE) && !permission.getCanUpdate())
+            throw new UnauthorizedAccessException(email + " non ha i permessi di aggiornamento per il settore " + sectorName);
+
+        if (requiredPermissionType.contains(PermissionType.DELETE) && !permission.getCanDelete())
+            throw new UnauthorizedAccessException(email + " non ha i permessi di eliminazione per il settore " + sectorName);
     }
 }
