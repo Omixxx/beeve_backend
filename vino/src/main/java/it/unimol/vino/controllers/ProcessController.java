@@ -32,15 +32,6 @@ public class ProcessController {
                 this.processService.createNewProcess(request) + " creato con successo");
     }
 
-    @PutMapping("/addState")
-    @RequirePermissions(value = {PermissionType.WRITE}, sector = SectorName.PROCESSO)
-    public ResponseEntity<String> addStates(@RequestBody @Valid AddStateToProcessRequest request) {
-        this.processService.addState(request);
-        return ResponseEntity.ok("Stato " +
-                request.getStateId() + " aggiunto al processo " +
-                request.getProcessId() + " con successo");
-    }
-
     @PostMapping("/{process_id}/progress")
     @RequirePermissions(value = {PermissionType.UPDATE}, sector = SectorName.PROCESSO)
     public ResponseEntity<String> progressProcess(
