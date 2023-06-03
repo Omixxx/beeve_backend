@@ -36,11 +36,15 @@ public class ProcessService {
 
     @Transactional
     public Long createNewProcess(NewProcessRequest request) {
+        List<State> alreadyOrderedStateList = new ArrayList<>();
+
         State finalState = this.stateRepository.findByName("Completato").orElseThrow(
                 () -> new InternalServerErrorException("Errore Interno, contattare l'amministratore")
         );
 
-        List<State> alreadyOrderedStateList = new ArrayList<>();
+        if (request.getItemIdUsedQuantity().values().stream().mapToInt(Integer::intValue).sum() == 0)
+            throw new InvalidItemQuantityException("La quantità di item deve essere maggiore di 0");
+
         if (DuplicatesChecker.hasDuplicates(request.getStates()))
             throw new DuplicateStateException("Stati duplicati non ammessi");
 
@@ -51,9 +55,7 @@ public class ProcessService {
             throw new ProcessHasNoStatesException("Il processo non puo avere solo lo stato finale");
 
         if (request.getStates().contains(finalState.getId()) &&
-                !Objects.equals(request.getStates().get(request.getStates().size() - 1),
-                        finalState.getId())
-        )
+                !Objects.equals(request.getStates().get(request.getStates().size() - 1), finalState.getId()))
             throw new ProcessHasNoStatesException("Il processo non puo avere lo stato finale" +
                     " in posizioni diverse dall'ultima");
 
