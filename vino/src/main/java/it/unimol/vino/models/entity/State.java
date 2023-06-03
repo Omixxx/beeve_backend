@@ -19,7 +19,6 @@ public class State {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
     @NotBlank(message = "Il nome dello stato non può essere vuoto")
     @Column(unique = true)
     private String name;

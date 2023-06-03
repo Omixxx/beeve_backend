@@ -1,13 +1,17 @@
 package it.unimol.vino.exceptions;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.UnexpectedTypeException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -180,7 +184,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     protected ResponseEntity<Object> handleApiRequestException(HttpMessageNotReadableException e) {
         ApiException apiException = new ApiException(
-                e.getMessage(),
+                e.getLocalizedMessage(),
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
@@ -369,4 +373,60 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = {InvalidItemQuantityException.class})
+    public ResponseEntity<Object> handleApiRequestException(InvalidItemQuantityException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {InvalidContributionQuantityException.class})
+    public ResponseEntity<Object> handleApiRequestException(InvalidContributionQuantityException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    public ResponseEntity<Object> handleApiRequestException(MethodArgumentNotValidException e) {
+        ApiException apiException = new ApiException(
+                e.getBindingResult()
+                        .getFieldErrors()
+                        .stream()
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .toList().get(0).replace("[", "").replace("]", ""),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {UnexpectedTypeException.class})
+    public ResponseEntity<Object> handleApiRequestException(UnexpectedTypeException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    public ResponseEntity<Object> handleApiRequestException(ConstraintViolationException e) {
+        ApiException apiException = new ApiException(
+                e.getConstraintViolations()
+                        .stream()
+                        .map(ConstraintViolation::getMessage)
+                        .toList().get(0).replace("[", "").replace("]", ""),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
 }

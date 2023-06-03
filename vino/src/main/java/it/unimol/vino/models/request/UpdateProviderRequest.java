@@ -2,30 +2,27 @@ package it.unimol.vino.models.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NonNull;
 
 @Data
 public class UpdateProviderRequest {
 
-    @NonNull()
+    @NotNull(message = "E' necessario specificare il vecchio nome")
     private String oldName;
 
-    @NonNull()
-    @NotBlank(message = "name must be not blank")
+    @NotBlank(message = "E' necessario specificare il nuovo nome")
     private String newName;
 
-    @NonNull()
-    @NotBlank(message = "Numero di telefono non può essere vuoto")
+    @NotBlank(message = "E' necessario specificare il nuovo numero di telefono")
     private String phone_number;
 
-    @NonNull()
     @Email(message = "Email deve essere valida")
-    @NotBlank(message = "Email non può essere vuota")
+    @NotBlank(message = "E' necessario specificare la email")
     private String email;
 
     private String address;
-
 
 
 }

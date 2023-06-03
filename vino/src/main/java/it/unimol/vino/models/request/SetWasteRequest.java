@@ -1,5 +1,6 @@
 package it.unimol.vino.models.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
@@ -8,12 +9,13 @@ import lombok.*;
 @Builder
 public class SetWasteRequest {
 
-    @NonNull
+    @NotNull(message = "E' necessario inserire la quantità di rifiuti prodotti")
     private Long waste;
-    @NonNull
+
+    @NotNull(message = "E' necessario inserire l'id del processo")
     private Long processId;
 
-    @NonNull
+    @NotNull(message = "E' necessario inserire l'id dello stato")
     private Long stateId;
 
 }
