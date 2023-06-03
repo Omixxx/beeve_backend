@@ -369,4 +369,24 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = {InvalidItemQuantityException.class})
+    public ResponseEntity<Object> handleApiRequestException(InvalidItemQuantityException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {InvalidContributionQuantityException.class})
+    public ResponseEntity<Object> handleApiRequestException(InvalidContributionQuantityException e) {
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
 }
