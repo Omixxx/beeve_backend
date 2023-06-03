@@ -19,7 +19,8 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven
-        run: mvn -B package --file vino/pom.xml
+        run: mvn -B package --file pom.xml
+        working-directory: vino
 
       - name: Test with Maven
         run: mvn test
