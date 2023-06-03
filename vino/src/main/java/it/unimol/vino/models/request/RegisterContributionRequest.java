@@ -1,5 +1,6 @@
 package it.unimol.vino.models.request;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,29 +14,28 @@ import java.util.Date;
 @Builder
 public class RegisterContributionRequest {
 
-    @NonNull
+    @NotNull(message = "E' necessario inserire l'origine del conferimento")
     private String origin;
 
-    @NonNull
+    @NotNull(message = "E' necessario inserire il paese di origine del conferimento")
     private String country;
 
     private MultipartFile image;
 
     private String description;
 
-    @Positive
     private String sugarDegree;
 
-    @Positive
     private String quantity;
 
-    @NonNull
+    @NotNull(message = "E' necessario inserire la data del conferimento")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date date;
 
-    @NonNull
+    @NotNull(message = "E' necessario inserire l'id del tipo di uva")
     private String grapeTypeId;
 
-    @NonNull
+    @NotNull(message = "E' necessario inserire l'id del fornitore")
     private String providerId;
+
 }

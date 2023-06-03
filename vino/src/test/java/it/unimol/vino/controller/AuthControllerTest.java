@@ -1,32 +1,8 @@
 package it.unimol.vino.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-import it.unimol.vino.controllers.AuthController;
-import it.unimol.vino.models.entity.User;
-import it.unimol.vino.models.enums.Role;
-import it.unimol.vino.services.JwtService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import it.unimol.vino.exceptions.PasswordNotValidException;
-import it.unimol.vino.exceptions.UserAlreadyRegistered;
-import it.unimol.vino.models.request.AuthenticationRequest;
-import it.unimol.vino.models.request.RegisterRequest;
-import it.unimol.vino.models.response.AuthenticationResponse;
-import it.unimol.vino.services.AuthService;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class AuthControllerTest {

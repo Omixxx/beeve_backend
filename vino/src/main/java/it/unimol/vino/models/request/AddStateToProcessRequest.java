@@ -1,6 +1,6 @@
 package it.unimol.vino.models.request;
 
-import it.unimol.vino.models.entity.State;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Date;
@@ -10,13 +10,13 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class AddStateToProcessRequest {
-    @NonNull
+    @NotNull(message = "L'id dello stato non può essere nullo")
     private Long stateId;
 
-    @NonNull
+    @NotNull(message = "L'id del processo non può essere nullo")
     private Long processId;
 
-    @NonNull
+    @NotNull(message = "La sequenza non può essere nulla")
     private Integer sequence;
 
     private Long waste = null;
