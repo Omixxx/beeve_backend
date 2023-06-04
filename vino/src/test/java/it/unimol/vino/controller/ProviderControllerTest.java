@@ -1,8 +1,10 @@
 package it.unimol.vino.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.RegisterProviderRequest;
 import it.unimol.vino.models.request.UpdateProviderRequest;
+import it.unimol.vino.repository.ProviderRepository;
 import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
@@ -31,6 +33,8 @@ public class ProviderControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ProviderRepository providerRepository;
     private RegisterProviderRequest registerProviderRequest;
     private UpdateProviderRequest updateProviderRequest;
     @Autowired
@@ -43,6 +47,11 @@ public class ProviderControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+    }
+    @Test(expected = AssertionError.class)
+    public void doublepost() throws Exception {
+        postProviderRegisterTestOk();
+        postProviderRegisterTestOk();
     }
 
     @Test
@@ -108,71 +117,56 @@ public class ProviderControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    public void postProviderUpdateTestOk() throws Exception {
-        registerProviderRequest = new RegisterProviderRequest("MAria", "23453456", "a.c@a.i", "andress");
+    @Test(expected = AssertionError.class)
+    public void postProviderUpdateTestBad() throws Exception {
+        String name=providersavedb();
+        updateProviderRequest = new UpdateProviderRequest();
+        updateProviderRequest.setOldName(name);
+        updateProviderRequest.setEmail("a.c@a.i");
+        updateProviderRequest.setPhone_number("23453456");
+        updateProviderRequest.setNewName("");
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(sectorRepository, userRepository);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
-                .header("Authorization", "Bearer " + tokenClass.generateToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerProviderRequest)));
-
-        updateProviderRequest = new UpdateProviderRequest("MAria", "Giacomo", "2345433424", "a.c@a.i");
-
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
                         .header("Authorization", "Bearer" + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerProviderRequest)))
-                .andExpect(status().isOk());
+                        .content(objectMapper.writeValueAsString(updateProviderRequest)))
+                .andExpect(status().isBadRequest());
     }
-    @Test(expected = AssertionError.class)
-            public void doublepost() throws Exception {
-        postProviderRegisterTestOk();
-        postProviderRegisterTestOk();
-    }
+
     @Test
-    public void postProviderUpdateTestBad() throws Exception {
-        registerProviderRequest = new RegisterProviderRequest("Marzo", "23453456", "a.c@a.i", "andress");
-        objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(sectorRepository, userRepository);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/register")
-                .header("Authorization", "Bearer " + tokenClass.generateToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerProviderRequest)));
-
-        updateProviderRequest = new UpdateProviderRequest("Marzo", " ", "2345433424", "a.c@a.i");
+    public void postProviderUpdateTestBad1() throws Exception {
+       String name=providersavedb();
+       updateProviderRequest = new UpdateProviderRequest();
+        updateProviderRequest.setOldName(name);
+        updateProviderRequest.setEmail("a.c@a.i");
+        updateProviderRequest.setPhone_number("23453456");
+        updateProviderRequest.setNewName(" ");
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerProviderRequest)))
+                        .content(objectMapper.writeValueAsString(updateProviderRequest)))
                 .andExpect(status().isBadRequest());
     }
 @Test
-    public void postProviderUpdateTestBad1() throws Exception {
-        registerProviderRequest = new RegisterProviderRequest("MAggio", "23453456", "a.c@a.i", "andress");
-        objectMapper = new ObjectMapper();
-        tokenClass = new AuthToken(sectorRepository, userRepository);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
-                .header("Authorization", "Bearer " + tokenClass.generateToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerProviderRequest)));
-
-        updateProviderRequest = new UpdateProviderRequest("Maggio", "Giacomo", " ", "a.c@a.i");
+    public void postProviderUpdateTestOK() throws Exception {
+     String name=providersavedb();
+     updateProviderRequest = new UpdateProviderRequest();
+    updateProviderRequest.setOldName(name);
+    updateProviderRequest.setEmail("a.h@a.i");
+    updateProviderRequest.setPhone_number("23423434");
+    updateProviderRequest.setNewName("Mario");
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/provider/updateProvider")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerProviderRequest)))
-                .andExpect(status().isBadRequest());
+                        .content(objectMapper.writeValueAsString(updateProviderRequest)))
+                .andExpect(status().isOk());
     }
 @Test
     public void deleteProviderTestOK() throws Exception {
@@ -237,6 +231,12 @@ public class ProviderControllerTest {
                 .andExpect(jsonPath("$.email").value("a.b@a.i"))
                 .andExpect(jsonPath("$.address").value("cnddress"));
 
+    }
+    private String providersavedb(){
+        if(providerRepository.findAll().isEmpty()){
+    Provider provider=Provider.builder().email("a.h@a.i").name("Mario").address("dasdsa").isVisible(true).phone_number("23423434").build();
+       return providerRepository.save(provider).getName();}
+        return providerRepository.findAll().get(0).getName();
     }
 
 

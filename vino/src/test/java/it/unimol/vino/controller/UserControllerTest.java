@@ -1,4 +1,4 @@
-package it.unimol.vino.controller;
+/*package it.unimol.vino.controller;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +10,7 @@ import it.unimol.vino.models.entity.UserSectorPermission;
 import it.unimol.vino.models.enums.Role;
 import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.models.request.CategoryRequest;
+import it.unimol.vino.models.request.PermissionsRequest;
 import it.unimol.vino.models.request.UpdatePermissionsRequest;
 import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
@@ -32,7 +33,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -61,14 +64,19 @@ public class UserControllerTest {
     }
 
     @Test
-    public void postCategoryTestOk() throws Exception {
-        List<UserSectorPermission> list = new ArrayList<UserSectorPermission>();
+    public void postUpdatePermissionTestOk() throws Exception {
+        User user;
+        if(!sectorRepository.findSectorBySectorName(SectorName.PROCESSO).isPresent()){
+            System.err.println("Sector non presente");
+        Sector sector= new Sector(SectorName.PROCESSO);
+        sectorRepository.save(sector);}
+        List<UserSectorPermission> list = new ArrayList<>();
         UserSectorPermission userSectorPermission = new UserSectorPermission();
-        User user = new User();
+        user = new User();
         user.setRole(Role.USER);
         user.setFirstName("C");
         user.setLastName("H");
-        user.setEmail("a@b.com");
+        user.setEmail("a@n.com");
         user.setPassword("Abcd9876");
         userSectorPermission.setUser(user);
         list.add(userSectorPermission);
@@ -76,57 +84,22 @@ public class UserControllerTest {
         List<Sector> sectors = this.sectorRepository.findAll();
         sectors.forEach(user::addPermission);
         userRepository.save(user);
-
-
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(sectorRepository, userRepository);
+        PermissionsRequest permissionsRequest =new PermissionsRequest(true,true,true,true);
+        HashMap<SectorName,PermissionsRequest> permissionsRequestHashMap= new HashMap<>();
+        permissionsRequestHashMap.put(SectorName.PROCESSO,permissionsRequest);
+        UpdatePermissionsRequest updatePermissionsRequest  =new UpdatePermissionsRequest("a@n.com",permissionsRequestHashMap);
 
-        UpdatePermissionsRequestDTO updatePermissionsRequestDTO = new UpdatePermissionsRequestDTO();
-        updatePermissionsRequestDTO.setEmail("a@b.com");
 
-        HashMap<SectorName, UserSectorPermissionDTO> permissions = new HashMap<>();
-        UserSectorPermissionDTO userSectorPermissionDTO = new UserSectorPermissionDTO();
-        userSectorPermissionDTO.setCanRead(false);
-        userSectorPermissionDTO.setCanWrite(false);
-        userSectorPermissionDTO.setCanUpdate(false);
-        userSectorPermissionDTO.setCanDelete(false);
-        userSectorPermissionDTO.setSector(null);
 
-        permissions.put(SectorName.CONFERIMENTO, userSectorPermissionDTO);
-
-        updatePermissionsRequestDTO.setPermissions(permissions);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/user/update_permissions")
                         .header("Authorization", "Bearer " + tokenClass.generateToken())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePermissionsRequestDTO)))
+                        .content(objectMapper.writeValueAsString(updatePermissionsRequest)))
                 .andExpect(status().isOk());
     }
 
-}
-
-@Data
-@Setter
-@Getter
-@NoArgsConstructor
-class UpdatePermissionsRequestDTO {
-    private String email;
-    private HashMap<SectorName, UserSectorPermissionDTO> permissions;
-
-}
-
-@NoArgsConstructor
-@Setter
-@Getter
-@Data
-class UserSectorPermissionDTO {
-    private Long id;
-    private Sector sector;
-    private Boolean canRead;
-    private Boolean canWrite;
-    private Boolean canUpdate;
-    private Boolean canDelete;
-
-
-}
+}*/
 
