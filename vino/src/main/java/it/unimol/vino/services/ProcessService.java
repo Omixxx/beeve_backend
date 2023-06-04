@@ -1,13 +1,12 @@
 package it.unimol.vino.services;
 
 
-import it.unimol.vino.dto.*;
-import it.unimol.vino.dto.mappers.ItemCategoryDTOMapper;
-import it.unimol.vino.dto.mappers.ItemProcessUseItemDTOMapper;
+import it.unimol.vino.dto.ProcessDTO;
+import it.unimol.vino.dto.StateDTO;
+import it.unimol.vino.dto.mappers.*;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.*;
-import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
 import it.unimol.vino.models.request.ProgressProcessRequest;
 import it.unimol.vino.models.response.CompletedStateResponse;
@@ -32,7 +31,9 @@ public class ProcessService {
     private final UserProgressProcessRepository userProgressProcessRepository;
     private final ItemRepository itemRepository;
     private final ContributionRepository contributionRepository;
-    private final ItemProcessUseItemDTOMapper itemProcessUseItemDTOMapper;
+    private final PartialProcessDTOMapper partialProcessDTOMapper;
+    private final FullProcessDTOMapper fullProcessDTOMapper;
+
 
     @Transactional
     public Long createNewProcess(NewProcessRequest request) {
@@ -166,47 +167,13 @@ public class ProcessService {
 
     public List<ProcessDTO> getAllProcesses() {
         return this.processRepository.findByCurrentStateNotNull().stream()
-                .map(process -> ProcessDTO.builder()
-                        .id(process.getId())
-                        .currentState(
-                                CurrentStateDTO.builder()
-                                        .user(null)
-                                        .state(StateDTO.builder()
-                                                .name(process.getCurrentState().getState().getName())
-                                                .build())
-                                        .build())
-                        .build()
-                )
+                .map(partialProcessDTOMapper)
                 .toList();
     }
 
     public ProcessDTO getProcess(Long processId) {
-
         Process process = this.getProcessFromDb(processId);
-        return ProcessDTO.builder()
-                .currentState(CurrentStateDTO.builder()
-                        .user(UserDTO.builder()
-                                .firstName(process.getUserWhoProgressedToTheCurrentState().getFirstName())
-                                .build())
-                        .state(
-                                StateDTO.builder()
-                                        .id(process.getCurrentState().getState().getId())
-                                        .name(process.getCurrentState().getState().getName())
-                                        .build())
-                        .build()
-                )
-                .contributions(process.getContribution().stream().map(processUseContribution -> ContributionDTO.builder()
-                                .id(processUseContribution.getContribution().getId())
-                                .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(processUseContribution.getContribution().getAssociatedGrapeType()))
-                                .quantity(processUseContribution.getQuantity())
-                                .build())
-                        .toList()
-                )
-                .items(process.getItem().stream().map(itemProcessUseItemDTOMapper)
-                        .toList()
-                )
-                .currentWaste(process.getCurrentWaste())
-                .build();
+        return this.fullProcessDTOMapper.apply(process);
     }
 
     private Process getProcessFromDb(Long processId) {
