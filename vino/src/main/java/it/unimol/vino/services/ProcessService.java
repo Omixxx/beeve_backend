@@ -74,31 +74,11 @@ public class ProcessService {
             alreadyOrderedStateList.add(state);
         });
 
-        HashMap<Item, Integer> itemQuantityMap = new HashMap<>();
-        request.getItemIdUsedQuantity().forEach((itemId, quantity) -> {
-            Item item = this.itemRepository.findById(itemId).orElseThrow(
-                    () -> new ItemNotFoundException("Item con id " + itemId + " non trovato")
-            );
-            Integer totalQuantity = item.getTotQuantity();
-            if (totalQuantity < quantity)
-                throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() +
-                        " richiesta: " + quantity + " disponibile: " + totalQuantity);
-            item.setTotQuantity(totalQuantity - quantity);
-            itemQuantityMap.put(item, quantity);
-        });
+        HashMap<Item, Integer> itemQuantityMap =
+                this.reserveItemsToAProcess(request.getItemIdUsedQuantity());
 
-        HashMap<Contribution, Double> contributionQuantityMap = new HashMap<>();
-        request.getContributionIdQuantity().forEach((contributionId, quantity) -> {
-            Contribution contribution = this.contributionRepository.findById(contributionId).orElseThrow(
-                    () -> new ContributionNotFoundException("Conferimento con id " + contributionId + " non trovato")
-            );
-            Double totalQuantity = contribution.getQuantity();
-            if (totalQuantity < quantity)
-                throw new QuantityNotAvailableException("Quantità non sufficiente per il conferimento "
-                        + contribution.getId() + " richiesta: " + quantity + " disponibile: " + totalQuantity);
-            contribution.setQuantity(totalQuantity - quantity);
-            contributionQuantityMap.put(contribution, quantity);
-        });
+        HashMap<Contribution, Double> contributionQuantityMap =
+                this.reserveContributionToProcess(request.getContributionIdQuantity());
 
         Process process = new Process(alreadyOrderedStateList, itemQuantityMap, contributionQuantityMap);
         User user = this.getUser();
@@ -106,6 +86,7 @@ public class ProcessService {
 
         return this.processRepository.save(process).getId();
     }
+
 
     @Transactional
     public String progressState(Long processId, ProgressProcessRequest request) {
@@ -176,37 +157,6 @@ public class ProcessService {
         return this.fullProcessDTOMapper.apply(process);
     }
 
-    private Process getProcessFromDb(Long processId) {
-        return this.processRepository.findById(processId).orElseThrow(
-                () -> new ProcessNotFoundException("Processo non trovato")
-        );
-    }
-
-    private void ensureProcessHasStates(@NotNull Process process) {
-        if (process.getStatesOrderedBySequence().isEmpty())
-            throw new ProcessHasNoStatesException("Il processo non ha stati");
-    }
-
-    private void ensureProcessIsNotAborted(@NotNull Process process) {
-        if (Objects.nonNull(process.getUserWhoAborted()) && Objects.nonNull(process.getAbortionDate()))
-            throw new ProcessAbortedException("Il processo risulta interrotto");
-    }
-
-    private User getUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.userRepository.findByEmail(email).orElseThrow(
-                () -> new UserNotFoundException("Utente non trovato")
-        );
-    }
-
-    private void ensureProcessIsNotCompleted(@NonNull Process process) {
-        State finalState = this.stateRepository.findByName("Completato").orElseThrow(
-                () -> new InternalServerErrorException("Errore interno, contattare l'amministratore")
-        );
-        if (process.getCurrentState().getState().getId().equals(finalState.getId()))
-            throw new ProcessIsCompletedException("Il processo risulta già completato");
-    }
-
     public List<StateDTO> getProcessStates(Long processId) {
         return this.getProcessFromDb(processId).getStates().stream().map(processHasStates -> StateDTO.builder()
                 .id(processHasStates.getState().getId())
@@ -243,5 +193,70 @@ public class ProcessService {
         return this.processRepository.findById(processId).orElseThrow(
                 () -> new ProcessNotFoundException("Processo non trovato")
         ).getContribution().stream().mapToDouble(ProcessUseContribution::getQuantity).sum();
+    }
+
+    private Process getProcessFromDb(Long processId) {
+        return this.processRepository.findById(processId).orElseThrow(
+                () -> new ProcessNotFoundException("Processo non trovato")
+        );
+    }
+
+    private void ensureProcessHasStates(@NotNull Process process) {
+        if (process.getStatesOrderedBySequence().isEmpty())
+            throw new ProcessHasNoStatesException("Il processo non ha stati");
+    }
+
+    private void ensureProcessIsNotAborted(@NotNull Process process) {
+        if (Objects.nonNull(process.getUserWhoAborted()) && Objects.nonNull(process.getAbortionDate()))
+            throw new ProcessAbortedException("Il processo risulta interrotto");
+    }
+
+    private User getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userRepository.findByEmail(email).orElseThrow(
+                () -> new UserNotFoundException("Utente non trovato")
+        );
+    }
+
+    private void ensureProcessIsNotCompleted(@NonNull Process process) {
+        State finalState = this.stateRepository.findByName("Completato").orElseThrow(
+                () -> new InternalServerErrorException("Errore interno, contattare l'amministratore")
+        );
+        if (process.getCurrentState().getState().getId().equals(finalState.getId()))
+            throw new ProcessIsCompletedException("Il processo risulta già completato");
+    }
+
+    @NotNull
+    private HashMap<Contribution, Double> reserveContributionToProcess(HashMap<Long, Double> contributionIdQuantityMap) {
+        HashMap<Contribution, Double> contributionQuantityMap = new HashMap<>();
+        contributionIdQuantityMap.forEach((contributionId, quantity) -> {
+            Contribution contribution = this.contributionRepository.findById(contributionId).orElseThrow(
+                    () -> new ContributionNotFoundException("Conferimento con id " + contributionId + " non trovato")
+            );
+            Double totalQuantity = contribution.getQuantity();
+            if (totalQuantity < quantity)
+                throw new QuantityNotAvailableException("Quantità non sufficiente per il conferimento "
+                        + contribution.getId() + " richiesta: " + quantity + " disponibile: " + totalQuantity);
+            contribution.setQuantity(totalQuantity - quantity);
+            contributionQuantityMap.put(contribution, quantity);
+        });
+        return contributionQuantityMap;
+    }
+
+    @NotNull
+    private HashMap<Item, Integer> reserveItemsToAProcess(HashMap<Long, Integer> itemUsedQuantityMap) {
+        HashMap<Item, Integer> itemQuantityMap = new HashMap<>();
+        itemUsedQuantityMap.forEach((itemId, quantity) -> {
+            Item item = this.itemRepository.findById(itemId).orElseThrow(
+                    () -> new ItemNotFoundException("Item con id " + itemId + " non trovato")
+            );
+            Integer totalQuantity = item.getTotQuantity();
+            if (totalQuantity < quantity)
+                throw new QuantityNotAvailableException("Quantità non sufficiente per l'item " + item.getDescription() +
+                        " richiesta: " + quantity + " disponibile: " + totalQuantity);
+            item.setTotQuantity(totalQuantity - quantity);
+            itemQuantityMap.put(item, quantity);
+        });
+        return itemQuantityMap;
     }
 }
