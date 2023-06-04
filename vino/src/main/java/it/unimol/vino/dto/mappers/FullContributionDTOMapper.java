@@ -5,6 +5,7 @@ import it.unimol.vino.dto.GrapeTypeDTO;
 import it.unimol.vino.exceptions.ImageNotLoadedException;
 import it.unimol.vino.models.entity.Contribution;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -20,23 +21,29 @@ public class FullContributionDTOMapper implements Function<Contribution, Contrib
 
     @Override
     public ContributionDTO apply(Contribution contribution) {
+        String imagePath = contribution.getImage();
+        return ContributionDTO.builder()
+                .id(contribution.getId())
+                .origin(contribution.getOrigin())
+                .country(contribution.getCountry())
+                .description(contribution.getDescription())
+                .quantity(contribution.getQuantity())
+                .sugarDegree(contribution.getSugarDegree())
+                .image(imagePath != null ? loadImage(imagePath) : null)
+                .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
+                .provider(providerDTOMapper.apply(contribution.getProvider()))
+                .build();
+    }
+
+
+    @NotNull
+    private byte[] loadImage(String imagePath) {
         try {
-            return ContributionDTO.builder()
-                    .id(contribution.getId())
-                    .origin(contribution.getOrigin())
-                    .country(contribution.getCountry())
-                    .description(contribution.getDescription())
-                    .quantity(contribution.getQuantity())
-                    .sugarDegree(contribution.getSugarDegree())
-                    .image(contribution.getImage() != null ?
-                            Files.readAllBytes(new File(contribution.getImage()).toPath())
-                            : null
-                    )
-                    .associatedGrapeType(GrapeTypeDTO.getFullGrapeTypeDTO(contribution.getAssociatedGrapeType()))
-                    .provider(providerDTOMapper.apply(contribution.getProvider()))
-                    .build();
+            return Files.readAllBytes(new File(imagePath).toPath());
         } catch (IOException e) {
-            throw new ImageNotLoadedException("Errore nel caricamento dell'immagine\n" + e.getMessage());
+            throw new ImageNotLoadedException(
+                    "Errore nel caricamento. " +
+                            "DTT corrotto o mancante");
         }
     }
 }
