@@ -97,6 +97,9 @@ public class ContributionService {
             String IMAGE_FOLDER = "/src/main/resources/static/images/";
             StringBuilder path = new StringBuilder(System.getProperty("user.dir")).append(IMAGE_FOLDER).append(request.getImage().getOriginalFilename());
 
+            File imagesFolder = new File(System.getProperty("user.dir") + IMAGE_FOLDER);
+            if (!imagesFolder.exists()) imagesFolder.mkdirs();
+
             try {
                 contribution.setImage(path.toString());
                 request.getImage().transferTo(new File(path.toString()));
