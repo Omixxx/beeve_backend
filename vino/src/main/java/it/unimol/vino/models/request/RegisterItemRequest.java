@@ -2,7 +2,7 @@ package it.unimol.vino.models.request;
 
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
@@ -14,26 +14,26 @@ import java.util.Date;
 @Builder
 public class RegisterItemRequest {
 
-    @Min(0)
+    @Min(value = 0, message = "la capacità deve essere maggiore di 0")
     @NonNull
     private Float capacity;
 
     private String description;
 
-    @NonNull()
+    @NotNull(message = "E' necessario specificare il fornitore")
     private Long provider_id;
 
-    @NonNull()
+    @NotNull(message = "E' necessario specificare la data di registrazione")
     private Date date;
 
-    @NonNull()
-    @Positive
+    @NotNull(message = "E' necessario specificare la quantità")
+    @Positive(message = "La quantità deve essere maggiore di 0")
     private Integer quantity;
 
-    @NonNull()
+    @NotNull(message = "E' necessario specificare il nome della categoria")
     private String categoryName;
 
-    @NonNull()
+    @NotNull(message = "E' necessario specificare il nome dell'item")
     private String name;
 
 }

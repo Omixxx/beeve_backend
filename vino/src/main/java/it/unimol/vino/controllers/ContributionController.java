@@ -32,7 +32,7 @@ public class ContributionController {
 
     @PostMapping
     @RequirePermissions(value = {PermissionType.WRITE}, sector = SectorName.CONFERIMENTO)
-    public ResponseEntity<String> put(@RequestBody RegisterContributionRequest request) {
+    public ResponseEntity<String> put(@ModelAttribute RegisterContributionRequest request) {
         return ResponseEntity.ok(this.contributionService.put(request));
     }
 

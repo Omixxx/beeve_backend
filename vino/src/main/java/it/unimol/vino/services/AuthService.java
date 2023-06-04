@@ -7,7 +7,7 @@ import it.unimol.vino.models.entity.Sector;
 import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.enums.Role;
 import it.unimol.vino.models.request.AuthenticationRequest;
-import it.unimol.vino.models.request.RegisterRequest;
+import it.unimol.vino.models.request.RegisterUserRequest;
 import it.unimol.vino.models.response.AuthenticationResponse;
 import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
@@ -15,8 +15,6 @@ import it.unimol.vino.utils.PasswordValidator;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +31,7 @@ public class AuthService {
     private final SectorRepository sectorRepository;
 
     @Transactional
-    public AuthenticationResponse register(@Valid RegisterRequest request) throws PasswordNotValidException {
+    public AuthenticationResponse register(@Valid RegisterUserRequest request) throws PasswordNotValidException {
         if (PasswordValidator.isPasswordNotValid(request.getPassword())) {
             throw new PasswordNotValidException(PasswordValidator.ERROR_MESSAGE);
         }

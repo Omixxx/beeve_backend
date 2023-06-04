@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.Date;
@@ -23,7 +25,7 @@ public class ContributionDTO {
     private String country;
 
 
-    private String photoURL;
+    private byte[] image;
 
 
     private String description;
