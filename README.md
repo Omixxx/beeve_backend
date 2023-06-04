@@ -1,48 +1,120 @@
-# Vino Backend
+<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 
-## Configuration
+<a name="readme-top"></a>
 
-1.  First create a `.env` file under `/vino`. Follow the `.env_example` and fill in the fields with values of your choice, many of which refer to the credentials you will use for the database
-2.  For the *JWT_SECRET* in the `.env` file you just created be careful to use a hexadecimal (at minumum 256 bits) encryption key. For that matter i invite you to generate it. Here is what i use https://www.allkeysgenerator.com/ (be sure to switch from GUID to Encryption key section)
+<!--
+*** Thanks for checking out the Best-README-Template. If you have a suggestion
+*** that would make this better, please fork the repo and create a pull request
+*** or simply open an issue with the tag "enhancement".
+*** Don't forget to give the project a star!
+*** Thanks again! Now go create something AMAZING! :D
+-->
+
+<!-- PROJECT SHIELDS -->
+
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
+
+<!-- PROJECT LOGO -->
+
+<br />
+<div align="center">
+    <img src="./static/logo.svg" alt="Logo" width="80" height="80">
+  <h3 align="center">Beeve</h3>
+
+  <p align="center">The ultimate application for wine production management</p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#configuration">Configuration</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
+
+<!-- ABOUT THE PROJECT -->
+
+## About The Project
+
+Application created to facilitate the management of a wine cellar. <br>Aims to solve problems related to managing production processes, contact management, and many more, by providing intuitive and functional APIs
+
+<!-- GETTING STARTED -->
+
+## Getting Started
+
+### Prerequisites :vertical\_traffic\_light:
+
+*   Docker
+
+### Configuration :hammer:
+
+1.  Create a `.env` file under `/vino`. Follow the `.env_example` and fill in the fields with values of your choice, many of which refer to the credentials you will use for the database
+
+2.  For the ***JWT\_SECRET*** in the `.env` file you just created be careful to use a hexadecimal (at minumum 256 bits) encryption key. For that matter i invite you to generate it. Here is what i use https://www.allkeysgenerator.com/ (be sure to switch from GUID to Encryption key section)
+
 3.  Modify the `application.yml` (which is under `src/main/resources`) by filling the `username` and `password` fields, remembering to use the same credentials that you set in the `.env` file
-4.  Always in the `application.yml`, under the field `url` replace `localhost` with `vino-db` which is the database container name, and `vino` with the database name you set in the `.env`
-5.  Start the application by running `docker-compose up -d --build` 
 
-The project will be running on `localhost:8080` unless you change the port in the `application.properties` file.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## API
+<!-- USAGE EXAMPLES -->
 
-api should follow the following format:
+## Usage :wine\_glass:
 
-`/api/v*/{resource}`
+Assuming that the configuration has been done correctly, is now possible to start the application by running<br> `docker-compose up -d --build`
 
-where `v*` is the version of the api. <br>Currently the version is `v1`
+The project will be running on port `8080` unless you change it in the `application.properties` file.<br><br>
 
-> #### swagger
->
-> you can visit, once the application is running, the swagger documentation at `localhost:8080/swagger-ui.html`
+:warning:<br>
+**Remember to wait until the container has completed initialisation before using the application. You can check the status of the container by running the command**<br> `docker logs wine-backend`
 
-## Exceptions
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-Exceptions are handled by the `ApiExceptionHandler` class. <br>We do that to give a custom format to all error responses <br> as well as eliminating all the clunky try-catch blocks we may be tempted to add.
+<!-- CONTACT -->
 
-To add a new exception first create a new class in the `exception package` and then handle it in
-the `ApiExceptionHandler` class sticking to the following
-format
+## Contact :scroll:
 
-```java
-@ExceptionHandler(value = {UserNotFoundException.class})
-public ResponseEntity<Object> handleApiRequestException(UserNotFoundException e){
-        ApiException apiException = new ApiException(
-                e.getMessage(),
-                HttpStatus.NOT_FOUND,
-                ZonedDateTime.now()
-        );
-        return new ResponseEntity<>(apiException,HttpStatus.NOT_FOUND);
-}
-```
+#### Managers
 
-as you can see, with the `@ExceptionHandler` annotation we specify the exception we want to handle and the HttpStatus we
-want to return.
+Lorenzo Di Menna - <br>
+Giulia Guarino - <br>
+Alessio Del Riccio - <br>
 
-> as now, we are not able yet to fully handle spring security exceptions 
+#### Developers
+
+Marco Omicini - m.omicini1@studenti.unimol.it<br>
+Christian D'alleva - <br>
+Mario Autore - marioautore8@gmail.com<br>
+Angelo Conca -  <br>
+Mattia Natale -  <br>
+Giuseppe Di Menna - giuseppedim@outlook.it<br>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- ACKNOWLEDGMENTS -->
+
+## Acknowledgments
+
+*   [SpringBoot](https://github.com/spring-projects/spring-boot)
+*   [Maven](https://github.com/apache/maven)
+*   [JUnit](https://github.com/junit-team/junit4)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
