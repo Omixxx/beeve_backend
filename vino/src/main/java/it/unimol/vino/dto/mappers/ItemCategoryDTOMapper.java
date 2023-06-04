@@ -1,7 +1,6 @@
 package it.unimol.vino.dto.mappers;
 
 import it.unimol.vino.dto.ItemCategoryDTO;
-import it.unimol.vino.dto.ItemDTO;
 import it.unimol.vino.models.entity.Item;
 import org.springframework.stereotype.Service;
 

@@ -2,11 +2,9 @@
 package it.unimol.vino.services;
 
 import it.unimol.vino.dto.CategoryDTO;
-import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.exceptions.CategoryAlreadyExistingException;
-import it.unimol.vino.exceptions.ProviderNotFoundException;
+import it.unimol.vino.exceptions.CategoryNotFoundException;
 import it.unimol.vino.models.entity.Category;
-import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.repository.CategoryRepository;
 import jakarta.validation.Valid;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 
 @Service

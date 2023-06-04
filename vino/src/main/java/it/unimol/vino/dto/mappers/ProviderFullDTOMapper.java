@@ -2,7 +2,6 @@ package it.unimol.vino.dto.mappers;
 
 import it.unimol.vino.dto.ItemDTO;
 import it.unimol.vino.dto.ProviderFull;
-import it.unimol.vino.dto.mappers.ItemDTOMapper;
 import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.entity.ProviderSupplyItem;
 import org.springframework.stereotype.Service;
@@ -22,16 +21,16 @@ public class ProviderFullDTOMapper implements Function<Provider, ProviderFull> {
     @Override
     public ProviderFull apply(Provider provider) {
         List<ProviderSupplyItem> supply = provider.getProviderSupplyItemList();
-        List<ItemDTO> items= supply.stream()
+        List<ItemDTO> items = supply.stream()
                 .map(ProviderSupplyItem::getItem)
                 .map(itemDTOMapper)
                 .toList();
 
-        return  new ProviderFull(provider.getId(),
+        return new ProviderFull(provider.getId(),
                 provider.getName(),
                 provider.getPhone_number(),
                 provider.getEmail(),
                 items
-                );
+        );
     }
 }
