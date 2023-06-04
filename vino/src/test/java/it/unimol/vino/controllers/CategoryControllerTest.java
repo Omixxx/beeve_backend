@@ -1,16 +1,14 @@
-package it.unimol.vino.controller;
+package it.unimol.vino.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.unimol.vino.models.entity.Sector;
-import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.models.request.CategoryRequest;
 import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
-import jakarta.servlet.ServletException;
+
+
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +20,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.stream.Stream;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@ActiveProfiles("h2")
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@ActiveProfiles("h2")
 @AutoConfigureMockMvc
 public class CategoryControllerTest {
     @Autowired
@@ -43,8 +39,8 @@ public class CategoryControllerTest {
     private UserRepository userRepository;
     private AuthToken tokenClass;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+   public void setUp() {
         MockitoAnnotations.openMocks(this);
 
     }
@@ -77,15 +73,15 @@ public class CategoryControllerTest {
 
     @Test
     public void double_post() throws Exception {
-        postCategory("MARCO",true);
-        categoryRequest = new CategoryRequest("marco",false);
+        postCategory("MARCO", true);
+        categoryRequest = new CategoryRequest("marco", false);
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/category")
-                .header("Authorization", "Bearer " + tokenClass.generateToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(categoryRequest)))
+                        .header("Authorization", "Bearer " + tokenClass.generateToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(categoryRequest)))
                 .andExpect(status().isConflict());
 
     }
@@ -93,7 +89,7 @@ public class CategoryControllerTest {
 
     @Test
     public void getAllCategory() throws Exception {
-        postCategory("Giovanna",true);
+        postCategory("Giovanna", true);
         tokenClass = new AuthToken(sectorRepository, userRepository);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/category")
                         .header("Authorization", "Bearer " + tokenClass.generateToken()))
@@ -103,7 +99,7 @@ public class CategoryControllerTest {
 
     }
 
-    @Test(expected = ServletException.class)
+    @Test
     public void postCategoryTestbed() throws Exception {
         categoryRequest = new CategoryRequest(" ", true);
         objectMapper = new ObjectMapper();
@@ -115,15 +111,16 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(categoryRequest)))
                 .andExpect(status().isBadRequest());
     }
-    public void  postCategory(String name,boolean isPrimary) throws Exception {
-        categoryRequest = new CategoryRequest(name,isPrimary);
+
+    public void postCategory(String name, boolean isPrimary) throws Exception {
+        categoryRequest = new CategoryRequest(name, isPrimary);
         objectMapper = new ObjectMapper();
         tokenClass = new AuthToken(sectorRepository, userRepository);
 
         mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/category")
-                        .header("Authorization", "Bearer " + tokenClass.generateToken())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(categoryRequest)));
+                .header("Authorization", "Bearer " + tokenClass.generateToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(categoryRequest)));
 
     }
 

@@ -1,4 +1,4 @@
-package it.unimol.vino.controller;
+package it.unimol.vino.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -7,8 +7,9 @@ import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
 import jakarta.servlet.ServletException;
+
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,8 @@ public class GrapeTypeControllerTest {
     private SectorRepository sectorRepository;
     private AuthToken tokenClass;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -65,7 +66,7 @@ public class GrapeTypeControllerTest {
                 .andExpect(jsonPath("color").value("NERO"));
     }
 
-    @Test(expected = ServletException.class)
+    @Test
     public void putGrapeTestBad() throws Exception {
         grapeType = GrapeType.builder().color(" ").species("Monaco").id(1L).build();
         objectMapper = new ObjectMapper();
@@ -77,7 +78,7 @@ public class GrapeTypeControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test(expected = ServletException.class)
+    @Test
     public void putGrapeTestBad1() throws Exception {
         grapeType = GrapeType.builder().color("Nero").species(" ").id(1L).build();
         objectMapper = new ObjectMapper();

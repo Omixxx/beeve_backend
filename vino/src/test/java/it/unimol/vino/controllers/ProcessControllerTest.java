@@ -1,4 +1,4 @@
-package it.unimol.vino.controller;
+package it.unimol.vino.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unimol.vino.exceptions.*;
@@ -7,25 +7,21 @@ import it.unimol.vino.models.entity.*;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.enums.Role;
 import it.unimol.vino.models.enums.SectorName;
-import it.unimol.vino.models.request.AddStateToProcessRequest;
 import it.unimol.vino.models.request.NewProcessRequest;
-import it.unimol.vino.models.request.ProgressProcessRequest;
 import it.unimol.vino.repository.*;
 import it.unimol.vino.utils.AuthToken;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.apache.commons.lang3.ObjectUtils;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -74,10 +70,11 @@ public class ProcessControllerTest {
     private StateRepository stateRepository;
     private AuthToken tokenClass;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+
     @Transactional
     private void setupdb() {
         tokenClass = new AuthToken(sectorRepository, userRepository);
@@ -85,18 +82,20 @@ public class ProcessControllerTest {
             state = State.builder().name("progresso").doesProduceWaste(false).build();
             stateRepository.save(state);
             state1 = State.builder().name("pigiatura").doesProduceWaste(false).build();
-            stateRepository.save(state1);}
-            if(stateRepository.findAll().size()<2){
+            stateRepository.save(state1);
+        }
+        if (stateRepository.findAll().size() < 2) {
             state1 = State.builder().name("pigiatura").doesProduceWaste(false).build();
-            stateRepository.save(state1);}
-            if(itemRepository.findAll().isEmpty()){
+            stateRepository.save(state1);
+        }
+        if (itemRepository.findAll().isEmpty()) {
             Category category = Category.builder().name("GIACOMO").isPrimary(true).build();
             System.out.println(category);
             categoryRepository.save(category);
             item = Item.builder().name("bottiglieVerdi").totQuantity(500).category(categoryRepository.findByName("GIACOMO").get()).build();
             itemRepository.save(item);
-            }
-            if(contributionRepository.findAll().isEmpty()){
+        }
+        if (contributionRepository.findAll().isEmpty()) {
             GrapeType grapeType = GrapeType.builder().id(1L).species("Roberto").color("nera").build();
             grapeTypeRepository.save(grapeType);
             Provider provider = Provider.builder().id(1L).email("a.a@c").build();
@@ -106,10 +105,10 @@ public class ProcessControllerTest {
                     submitter(tokenClass.getUser()).build();
             contributionRepository.save(contribution);
         }
-            state1=stateRepository.findAll().get(1);
-            state=stateRepository.findAll().get(0);
-            item=itemRepository.findAll().get(0);
-            contribution=contributionRepository.findAll().get(0);
+        state1 = stateRepository.findAll().get(1);
+        state = stateRepository.findAll().get(0);
+        item = itemRepository.findAll().get(0);
+        contribution = contributionRepository.findAll().get(0);
 
     }
 
@@ -163,9 +162,10 @@ public class ProcessControllerTest {
 
         return this.processRepository.save(process).getId();
     }
+
     private User getUser() {
         User user;
-        if(userRepository.findAll().isEmpty()){
+        if (userRepository.findAll().isEmpty()) {
             Stream.of(SectorName.values()).forEach(sectorName -> {
                 Sector permission = new Sector(sectorName);
                 if (this.sectorRepository.findSectorBySectorName(permission.getSectorName()).isEmpty())
@@ -190,7 +190,7 @@ public class ProcessControllerTest {
     }
 
     @Transactional
-    private Long processdbsave(){
+    private Long processdbsave() {
         setupdb();
         List<Long> list = new ArrayList<>();
 
@@ -203,19 +203,10 @@ public class ProcessControllerTest {
 
         NewProcessRequest newProcessRequest = new NewProcessRequest(list, itemid, contributionid);
         return createNewProcess(newProcessRequest);
-       /* setupdb();
-        ArrayList<State> staearrey=new ArrayList<>();
-        staearrey.add(stateRepository.findAll().get(0));
-        HashMap<Item,Integer> itemIntegerHashMap=new HashMap<>();
-        itemIntegerHashMap.put(item,1);
-        HashMap<Contribution,Double> contributionDoubleHashMap=new HashMap<>();
-        contributionDoubleHashMap.put(contribution,1.0);
-        process=new Process(staearrey,itemIntegerHashMap,contributionDoubleHashMap);
-        process.setCreator(userRepository.findAll().get(0));
-        processRepository.save(process);*/
-        }
-        @Test
-        public void postNewProcessTestOK() throws Exception {
+    }
+
+    @Test
+    public void postNewProcessTestOK() throws Exception {
         setupdb();
         List<Long> list = new ArrayList<>();
 
@@ -259,6 +250,7 @@ public class ProcessControllerTest {
                         .content(objectMapper.writeValueAsString(newProcessRequest)))
                 .andExpect(status().isConflict());
     }
+
     @Test
     public void postNewProcessTestbad2() throws Exception {
         setupdb();
@@ -302,19 +294,6 @@ public class ProcessControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-   /* @Test
-    public void ProgressRequestTest()throws Exception{
-        Long id=processdbsave();
-        objectMapper = new ObjectMapper();
-
-        ProgressProcessRequest processRequest=new ProgressProcessRequest();
-        processRequest.setWaste(10);
-        mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/process/"+id+"/progress")
-                .header("Authorization", "Bearer" + tokenClass.generateToken())
-            .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(processRequest)))
-            .andExpect(status().isOk());
-}*/
 }
 
 

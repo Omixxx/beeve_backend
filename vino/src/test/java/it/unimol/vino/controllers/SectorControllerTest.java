@@ -1,10 +1,10 @@
-package it.unimol.vino.controller;
+package it.unimol.vino.controllers;
 
 import it.unimol.vino.repository.SectorRepository;
 import it.unimol.vino.repository.UserRepository;
 import it.unimol.vino.utils.AuthToken;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +32,8 @@ public class SectorControllerTest {
     private SectorRepository sectorRepository;
     private AuthToken tokenClass;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+   public void setUp() {
         MockitoAnnotations.openMocks(this);
 
     }
