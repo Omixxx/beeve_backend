@@ -2,10 +2,8 @@ package it.unimol.vino.models.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unimol.vino.models.response.ItemsProvidedByProvider;
-import it.unimol.vino.models.response.ProviderBookResponse;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.io.Serializable;
 import java.util.List;
@@ -35,7 +33,7 @@ public class Provider implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name",unique = true)
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "phone_number")

@@ -1,16 +1,15 @@
 package it.unimol.vino.services;
 
-import java.util.List;
-
 import it.unimol.vino.dto.GrapeTypeDTO;
 import it.unimol.vino.exceptions.DuplicateGrapeTypeException;
+import it.unimol.vino.models.entity.GrapeType;
+import it.unimol.vino.repository.GrapeTypeRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import it.unimol.vino.models.entity.GrapeType;
-import it.unimol.vino.repository.GrapeTypeRepository;
-import jakarta.validation.Valid;
+import java.util.List;
 
 @Service
 @Validated

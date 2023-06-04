@@ -1,12 +1,10 @@
 package it.unimol.vino.exceptions;
 
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -199,6 +197,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -209,6 +208,7 @@ public class ApiExceptionHandler {
                 HttpStatus.CONFLICT,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
@@ -219,6 +219,7 @@ public class ApiExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
 
@@ -229,6 +230,7 @@ public class ApiExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
 
@@ -239,6 +241,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -249,6 +252,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -259,6 +263,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -270,6 +275,7 @@ public class ApiExceptionHandler {
                 HttpStatus.CONFLICT,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
@@ -280,6 +286,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -290,6 +297,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -300,6 +308,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -310,6 +319,7 @@ public class ApiExceptionHandler {
                 HttpStatus.CONFLICT,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
@@ -320,6 +330,7 @@ public class ApiExceptionHandler {
                 HttpStatus.CONFLICT,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
@@ -330,6 +341,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -340,6 +352,7 @@ public class ApiExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -350,6 +363,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -360,6 +374,7 @@ public class ApiExceptionHandler {
                 HttpStatus.UNAUTHORIZED,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
     }
 
@@ -370,6 +385,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -380,6 +396,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -390,6 +407,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -400,6 +418,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -410,6 +429,7 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 
@@ -417,9 +437,10 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleApiRequestException(ConstraintViolationException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-            HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
+        LOGGER.error(ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
 }

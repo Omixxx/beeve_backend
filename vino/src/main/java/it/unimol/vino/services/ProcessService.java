@@ -3,7 +3,8 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.dto.ProcessDTO;
 import it.unimol.vino.dto.StateDTO;
-import it.unimol.vino.dto.mappers.*;
+import it.unimol.vino.dto.mappers.FullProcessDTOMapper;
+import it.unimol.vino.dto.mappers.PartialProcessDTOMapper;
 import it.unimol.vino.exceptions.*;
 import it.unimol.vino.models.entity.Process;
 import it.unimol.vino.models.entity.*;

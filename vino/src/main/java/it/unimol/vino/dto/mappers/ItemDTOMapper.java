@@ -2,7 +2,6 @@ package it.unimol.vino.dto.mappers;
 
 import it.unimol.vino.dto.ItemDTO;
 import it.unimol.vino.models.entity.Item;
-import it.unimol.vino.models.response.ItemsProvidedByProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
