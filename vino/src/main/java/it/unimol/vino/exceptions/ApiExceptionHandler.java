@@ -396,11 +396,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<Object> handleApiRequestException(MethodArgumentNotValidException e) {
         ApiException apiException = new ApiException(
-                e.getBindingResult()
-                        .getFieldErrors()
-                        .stream()
-                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                        .toList().get(0).replace("[", "").replace("]", ""),
+                e.getMessage(),
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
@@ -420,11 +416,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ResponseEntity<Object> handleApiRequestException(ConstraintViolationException e) {
         ApiException apiException = new ApiException(
-                e.getConstraintViolations()
-                        .stream()
-                        .map(ConstraintViolation::getMessage)
-                        .toList().get(0).replace("[", "").replace("]", ""),
-                HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+            HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
