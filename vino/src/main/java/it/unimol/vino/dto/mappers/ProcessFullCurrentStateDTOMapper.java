@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 @RequiredArgsConstructor
 @Service
-public class FullProcessCurrentStateDTOMapper implements Function<Process, CurrentStateDTO> {
+public class ProcessFullCurrentStateDTOMapper implements Function<Process, CurrentStateDTO> {
     private final StateDTOMapper stateDTOMapper;
 
     @Override

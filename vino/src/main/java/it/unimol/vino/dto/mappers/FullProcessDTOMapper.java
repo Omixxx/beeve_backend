@@ -10,14 +10,14 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 @Service
 public class FullProcessDTOMapper implements Function<Process, ProcessDTO> {
-    private final FullProcessCurrentStateDTOMapper fullProcessCurrentStateDTOMapper;
+    private final ProcessFullCurrentStateDTOMapper processFullCurrentStateDTOMapper;
     private final ProcessPartialContributionDTOMapper processPartialContributionDTOMapper;
     private final ItemProcessUseItemDTOMapper itemProcessUseItemDTOMapper;
 
     @Override
     public ProcessDTO apply(Process process) {
         return ProcessDTO.builder()
-                .currentState(fullProcessCurrentStateDTOMapper.apply(process))
+                .currentState(processFullCurrentStateDTOMapper.apply(process))
                 .contributions(process.getContribution().stream()
                         .map(processPartialContributionDTOMapper).toList())
 
