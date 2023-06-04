@@ -1,7 +1,5 @@
 package it.unimol.vino.controllers;
 
-import it.unimol.vino.exceptions.PasswordNotValidException;
-import it.unimol.vino.exceptions.UserAlreadyRegistered;
 import it.unimol.vino.models.request.AuthenticationRequest;
 import it.unimol.vino.models.request.RegisterUserRequest;
 import it.unimol.vino.models.response.AuthenticationResponse;

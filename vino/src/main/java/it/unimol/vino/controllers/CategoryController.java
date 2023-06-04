@@ -25,7 +25,7 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryDTO>> getAllCategory(HttpServletRequest servletRequest) {
-        Logger.getLogger().info(Network.getClientIp(servletRequest) + " is requesting all categories"));
+        Logger.getLogger().info(Network.getClientIp(servletRequest) + " is requesting all categories");
         return ResponseEntity.ok(this.service.getAllCategory());
 
     }

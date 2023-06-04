@@ -3,7 +3,6 @@ package it.unimol.vino.models.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import lombok.extern.apachecommons.CommonsLog;
 
 import java.util.List;
 

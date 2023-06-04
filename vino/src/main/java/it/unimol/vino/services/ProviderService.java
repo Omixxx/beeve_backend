@@ -2,18 +2,11 @@ package it.unimol.vino.services;
 
 import it.unimol.vino.dto.ProviderDTO;
 import it.unimol.vino.dto.mappers.ProviderDTOMapper;
-import it.unimol.vino.dto.ProviderFull;
-import it.unimol.vino.dto.mappers.ProviderFullDTOMapper;
 import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.exceptions.UserAlreadyRegistered;
-
 import it.unimol.vino.models.entity.Provider;
-
 import it.unimol.vino.models.request.RegisterProviderRequest;
-
 import it.unimol.vino.models.request.UpdateProviderRequest;
-import it.unimol.vino.models.response.ItemsProvidedByProvider;
-import it.unimol.vino.models.response.ProviderBookResponse;
 import it.unimol.vino.repository.ProviderRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

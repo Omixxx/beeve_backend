@@ -11,20 +11,18 @@ import it.unimol.vino.exceptions.ProviderNotFoundException;
 import it.unimol.vino.models.entity.Category;
 import it.unimol.vino.models.entity.Item;
 import it.unimol.vino.models.entity.Provider;
-
 import it.unimol.vino.models.request.DecreaseTotalQuantityOfItemRequest;
 import it.unimol.vino.models.request.RegisterItemRequest;
 import it.unimol.vino.repository.CategoryRepository;
 import it.unimol.vino.repository.ItemRepository;
 import it.unimol.vino.repository.ProviderRepository;
-import it.unimol.vino.utils.Logger;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor

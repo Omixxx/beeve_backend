@@ -2,22 +2,18 @@ package it.unimol.vino.controllers;
 
 import it.unimol.vino.aop.annotation.RequirePermissions;
 import it.unimol.vino.dto.GrapeTypeDTO;
+import it.unimol.vino.models.entity.GrapeType;
 import it.unimol.vino.models.enums.PermissionType;
 import it.unimol.vino.models.enums.SectorName;
+import it.unimol.vino.services.GrapeTypeService;
 import it.unimol.vino.utils.Logger;
 import it.unimol.vino.utils.Network;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import it.unimol.vino.models.entity.GrapeType;
-import it.unimol.vino.services.GrapeTypeService;
+import java.util.List;
 
 @CrossOrigin
 @RestController

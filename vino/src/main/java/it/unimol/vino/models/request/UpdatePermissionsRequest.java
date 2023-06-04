@@ -1,6 +1,5 @@
 package it.unimol.vino.models.request;
 
-import it.unimol.vino.models.entity.UserSectorPermission;
 import it.unimol.vino.models.enums.SectorName;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;

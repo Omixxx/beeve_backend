@@ -2,7 +2,6 @@ package it.unimol.vino.repository;
 
 import it.unimol.vino.models.entity.Provider;
 import it.unimol.vino.models.response.ItemsProvidedByProvider;
-import it.unimol.vino.models.response.ProviderBookResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

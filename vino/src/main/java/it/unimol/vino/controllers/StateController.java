@@ -1,7 +1,6 @@
 package it.unimol.vino.controllers;
 
 import it.unimol.vino.dto.StateDTO;
-import it.unimol.vino.models.entity.State;
 import it.unimol.vino.models.request.NewStateRequest;
 import it.unimol.vino.services.StateService;
 import it.unimol.vino.utils.Logger;

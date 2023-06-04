@@ -3,17 +3,14 @@ package it.unimol.vino.controllers;
 import it.unimol.vino.aop.annotation.RequirePermissions;
 import it.unimol.vino.dto.ContributionDTO;
 import it.unimol.vino.dto.UserDTO;
-
 import it.unimol.vino.models.enums.PermissionType;
 import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.models.request.RegisterContributionRequest;
 import it.unimol.vino.services.ContributionService;
-
 import it.unimol.vino.utils.Logger;
 import it.unimol.vino.utils.Network;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
