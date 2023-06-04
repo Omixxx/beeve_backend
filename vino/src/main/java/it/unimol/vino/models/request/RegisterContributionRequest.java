@@ -24,8 +24,10 @@ public class RegisterContributionRequest {
 
     private String description;
 
+    @Positive(message = "Il grado zuccherino deve essere maggiore di 0")
     private String sugarDegree;
 
+    @Positive(message = "La quantità deve essere maggiore di 0")
     private String quantity;
 
     @NotNull(message = "E' necessario inserire la data del conferimento")
