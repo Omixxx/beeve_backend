@@ -84,7 +84,7 @@ Assuming that the configuration has been done correctly, is now possible to star
 The project will be running on port `8080` unless you change it in the `application.properties` file.<br><br>
 
 :warning:<br>
-**Remember to wait until the container has completed initialisation before using the application. You can check the status of the container by running the command**<br> `docker logs wine-backend`
+**Remember to wait until the container has completed initialisation before using the application. You can check the status of the container by running the command**<br> `docker logs vino-backend`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
