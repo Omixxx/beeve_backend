@@ -104,10 +104,10 @@ Alessio Del Riccio - <br>
 #### Developers
 
 Marco Omicini - m.omicini1@studenti.unimol.it<br>
-Christian D'alleva - <br>
+Christian D'alleva - c.dalleva@studenti.unimol.it<br>
 Mario Autore - marioautore8@gmail.com<br>
-Angelo Conca -  <br>
-Mattia Natale -  <br>
+Angelo Conca -  angelo.conca99@gmail.com<br>
+Mattia Natale -  mattia.natale225@gmail.com<br>
 Giuseppe Di Menna - giuseppedim@outlook.it<br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
