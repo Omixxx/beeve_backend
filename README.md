@@ -73,6 +73,9 @@ Application created to facilitate the management of a wine cellar. <br>Aims to s
 
 3.  Modify the `application.yml` (which is under `src/main/resources`) by filling the `username` and `password` fields, remembering to use the same credentials that you set in the `.env` file
 
+4.  Also in the `application.yml` under `datasource` change the url by replacing the database name with the one chosen in the `.env` file. <br>For example, if you chose to call the database `foo` then the url should look like this<br>
+    `jdbc:mariadb://vino-db:3306/foo`
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
