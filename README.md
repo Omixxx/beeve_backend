@@ -46,6 +46,7 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
@@ -69,7 +70,7 @@ Application created to facilitate the management of a wine cellar. <br>Aims to s
 
 1.  Create a `.env` file under `/vino`. Follow the `.env_example` and fill in the fields with values of your choice, many of which refer to the credentials you will use for the database
 
-2.  For the ***JWT\_SECRET*** in the `.env` file you just created be careful to use a hexadecimal (at minumum 256 bits) encryption key. For that matter i invite you to generate it. Here is what i use https://www.allkeysgenerator.com/ (be sure to switch from GUID to Encryption key section)
+2.  For the ***JWT\_SECRET*** in the `.env` file you just created be careful to use a _**hexadecimal**_ (at minumum 256 bits) encryption key. For that matter i invite you to generate it. Here is what i use https://www.allkeysgenerator.com/ <br>(be sure to switch from GUID to Encryption key section, and tick the "HEX" box)
 
 3.  Modify the `application.yml` (which is under `src/main/resources`) by filling the `username` and `password` fields, remembering to use the same credentials that you set in the `.env` file
 
@@ -91,15 +92,26 @@ The project will be running on port `8080` unless you change it in the `applicat
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Roadmap
+
+- [x] Full applicative Logic
+- [x] DTT storage
+- [ ] Push notifications
+- [ ] Statistics
+
+See the [open issues](https://github.com/lordimens/vino_backend/issues) for a full list of proposed features (and known issues).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- CONTACT -->
 
 ## Contact :scroll:
 
 #### Managers
 
-Lorenzo Di Menna - <br>
-Giulia Guarino - <br>
-Alessio Del Riccio - <br>
+Lorenzo Di Menna - l.dimenna1@studenti.unimol.it<br>
+Giulia Guarino - g.guarino3@studenti.unimol.it<br>
+Alessio Del Riccio - a.delriccio1@studenti.unimol.it<br>
 
 #### Developers
 
