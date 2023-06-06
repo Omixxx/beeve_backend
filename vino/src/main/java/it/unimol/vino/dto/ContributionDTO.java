@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-
 import java.util.Date;
 
 @Builder
@@ -23,7 +22,7 @@ public class ContributionDTO {
     private String country;
 
 
-    private String photoURL;
+    private byte[] image;
 
 
     private String description;

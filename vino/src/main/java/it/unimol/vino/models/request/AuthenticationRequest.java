@@ -2,17 +2,21 @@ package it.unimol.vino.models.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AuthenticationRequest {
-    @Email
-    @NotNull
+
+    @Email(message = "E' necessario inserire una mail valida")
+    @NotNull(message = "E' necessario inserire una mail")
     private String email;
 
-    @NotNull
+    @NotNull(message = "E' necessario inserire una password")
     private String password;
 }

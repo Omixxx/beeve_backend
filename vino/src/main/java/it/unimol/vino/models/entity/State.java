@@ -3,7 +3,6 @@ package it.unimol.vino.models.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import lombok.extern.apachecommons.CommonsLog;
 
 import java.util.List;
 
@@ -19,7 +18,6 @@ public class State {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
     @NotBlank(message = "Il nome dello stato non può essere vuoto")
     @Column(unique = true)
     private String name;

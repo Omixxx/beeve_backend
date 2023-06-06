@@ -2,7 +2,6 @@ package it.unimol.vino.dto.mappers;
 
 import it.unimol.vino.dto.ProviderDTO;
 import it.unimol.vino.models.entity.Provider;
-import it.unimol.vino.models.response.ProviderBookResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
@@ -16,10 +15,10 @@ public class ProviderDTOMapper implements Function<Provider, ProviderDTO> {
                 provider.getId(),
                 provider.getName(),
                 provider.getPhone_number(),
-                provider.getEmail()
+                provider.getEmail(),
+                provider.getAddress()
         );
     }
-
 
 
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import it.unimol.vino.models.entity.UserModifyProcess;
 import it.unimol.vino.models.entity.UserProgressesProcess;
 import it.unimol.vino.models.entity.UserSectorPermission;
-import it.unimol.vino.models.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -5,7 +5,6 @@ import it.unimol.vino.exceptions.UnauthorizedAccessException;
 import it.unimol.vino.models.entity.User;
 import it.unimol.vino.models.entity.UserSectorPermission;
 import it.unimol.vino.models.enums.PermissionType;
-import it.unimol.vino.models.enums.SectorName;
 import it.unimol.vino.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
