@@ -94,7 +94,7 @@ The project will be running on port `8080` unless you change it in the `applicat
 
 ## Roadmap
 
-- [x] Full applicative Logic
+- [x] Full applicative logic
 - [x] DTT storage
 - [ ] Push notifications
 - [ ] Statistics
